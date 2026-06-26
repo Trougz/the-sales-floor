@@ -4,48 +4,44 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Sales Floor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sree+Krushnadevaraya&family=Syncopate:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <header>
     <nav>
-      <div class="logo">The Sales Floor</div>
-      <ul>
-        <li><a href="#about">About</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
+      <div class="logo">Nate Mills Sales Floor</div>
+      <a href="#waitlist" class="btn-nav">Join Wait List</a>
     </nav>
   </header>
 
   <main>
     <section class="hero">
+      <div class="hero-media">
+        <img src="assets/hero.png" alt="Sales Floor preview" />
+      </div>
       <div class="hero-content">
-        <h1>Welcome to The Sales Floor</h1>
-        <p>Your go-to destination for sales excellence.</p>
-        <a href="#contact" class="btn">Get Started</a>
+        <h1>The Sales Floor Mission</h1>
+        <p>the sales floor is built for reps who are struggling and looking for a place to learn tactics tested by top performers across B2B SaaS</p>
+        <a href="#waitlist" class="btn-primary">Join the Community</a>
       </div>
     </section>
 
-    <section id="about" class="section">
-      <h2>About</h2>
-      <p>Coming soon.</p>
-    </section>
-
-    <section id="features" class="section">
-      <h2>Features</h2>
-      <p>Coming soon.</p>
-    </section>
-
-    <section id="contact" class="section">
-      <h2>Contact</h2>
-      <p>Coming soon.</p>
+    <section id="waitlist" class="waitlist">
+      <h2>Get Early Access</h2>
+      <p>Be the first to know when we launch.</p>
+      <form class="waitlist-form">
+        <input type="email" placeholder="Your email address" required />
+        <button type="submit" class="btn-primary">Join Wait List</button>
+      </form>
     </section>
   </main>
 
   <footer>
-    <p>&copy; 2026 The Sales Floor. All rights reserved.</p>
+    <p>&copy; 2026 Nate Mills Sales Floor. All rights reserved.</p>
   </footer>
 
   <script src="script.js"></script>
