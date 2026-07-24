@@ -1,11 +1,48 @@
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbx-BfqjKLgveHnFs7cxN5oyoJ7P7xuk0SOaDPNqDhNZ5Klz5kut9voxCPJnDMUgoVv7/exec';
 
-const form = document.getElementById('intake-form');
-const success = document.getElementById('success');
-const fileInput = document.getElementById('resume');
-const fileName = document.getElementById('file-name');
-const submitBtn = form.querySelector('.btn-submit');
+const form       = document.getElementById('intake-form');
+const step1      = document.getElementById('step-1');
+const step2      = document.getElementById('step-2');
+const ind1       = document.getElementById('ind-1');
+const ind2       = document.getElementById('ind-2');
+const btnNext    = document.getElementById('btn-next');
+const btnBack    = document.getElementById('btn-back');
+const success    = document.getElementById('success');
+const fileInput  = document.getElementById('resume');
+const fileName   = document.getElementById('file-name');
+const submitBtn  = form.querySelector('.btn-submit');
 
+// Step 1 → Step 2
+btnNext.addEventListener('click', () => {
+  const step1Fields = step1.querySelectorAll('input, select, textarea');
+  let valid = true;
+  step1Fields.forEach(field => {
+    if (!field.checkValidity()) {
+      field.reportValidity();
+      valid = false;
+    }
+  });
+  if (!valid) return;
+
+  step1.hidden = true;
+  step2.hidden = false;
+  ind1.classList.remove('active');
+  ind1.classList.add('done');
+  ind2.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Step 2 → Step 1
+btnBack.addEventListener('click', () => {
+  step2.hidden = true;
+  step1.hidden = false;
+  ind2.classList.remove('active');
+  ind1.classList.remove('done');
+  ind1.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// File name display
 fileInput.addEventListener('change', () => {
   fileName.textContent = fileInput.files[0]?.name || 'Upload PDF, DOC, or DOCX';
 });
@@ -13,12 +50,13 @@ fileInput.addEventListener('change', () => {
 function readFileAsBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result.split(',')[1]); // strip data URL prefix
+    reader.onload = () => resolve(reader.result.split(',')[1]);
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
 }
 
+// Submit
 form.addEventListener('submit', async e => {
   e.preventDefault();
 
@@ -32,9 +70,7 @@ form.addEventListener('submit', async e => {
 
   const file = fileInput.files[0];
   let fileData = null;
-  if (file) {
-    fileData = await readFileAsBase64(file);
-  }
+  if (file) fileData = await readFileAsBase64(file);
 
   const data = {
     name:            form.name.value.trim(),
@@ -59,17 +95,13 @@ form.addEventListener('submit', async e => {
   };
 
   try {
-    // Content-Type must be text/plain for no-cors simple requests;
-    // Apps Script reads the raw body via e.postData.contents regardless
     await fetch(SHEETS_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(data),
     });
-  } catch (_) {
-    // with no-cors, fetch resolves opaquely — data still reaches the endpoint
-  }
+  } catch (_) {}
 
   form.hidden = true;
   success.hidden = false;
