@@ -10,7 +10,12 @@
 //    - Who has access: Anyone
 // 4. Click Deploy, copy the Web App URL
 // 5. Paste that URL into script.js where it says SHEETS_URL
+//
+// Resumes are saved to a "Sales Floor Resumes" folder in your Google
+// Drive. The sheet stores a direct link to each file.
 // ─────────────────────────────────────────────────────────────────
+
+const RESUME_FOLDER_NAME = 'Sales Floor Resumes';
 
 const HEADERS = [
   'Timestamp',
@@ -22,28 +27,46 @@ const HEADERS = [
   'Current Title',
   'Years in B2B Sales',
   '% to Quota',
-  'Current Base Salary',
-  'Current OTE',
+  'Current Base Salary [USD]',
+  'Current OTE (Base + Commission)',
   'Desired OTE',
   'Open to Relocation',
   'Preferred Location(s)',
   'Industries Interested In',
   'CRM / Tool Experience',
   "President's Club / Awards",
-  'Resume Filename',
+  'Resume',
 ];
+
+function getOrCreateFolder(name) {
+  var folders = DriveApp.getFoldersByName(name);
+  return folders.hasNext() ? folders.next() : DriveApp.createFolder(name);
+}
 
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
-    // Write headers on first submission
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(HEADERS);
       sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
     }
 
     var data = JSON.parse(e.postData.contents);
+
+    // Save resume to Drive and get a shareable link
+    var resumeLink = '';
+    if (data.resume_data && data.resume_filename) {
+      var folder = getOrCreateFolder(RESUME_FOLDER_NAME);
+      var blob = Utilities.newBlob(
+        Utilities.base64Decode(data.resume_data),
+        data.resume_type || 'application/octet-stream',
+        data.resume_filename
+      );
+      var file = folder.createFile(blob);
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      resumeLink = file.getUrl();
+    }
 
     sheet.appendRow([
       new Date(),
@@ -63,11 +86,11 @@ function doPost(e) {
       (data.industry || []).join(', '),
       (data.crm || []).join(', '),
       data.awards || '',
-      data.resume_filename || '',
+      resumeLink,
     ]);
 
     return ContentService
-      .createTextOutput(JSON.stringify({ result: 'success' }))
+      .createTextOutput(JSON.stringify({ result: 'success', resume: resumeLink }))
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
@@ -77,7 +100,6 @@ function doPost(e) {
   }
 }
 
-// Test this by running doGet — visits the URL in a browser
 function doGet() {
   return ContentService
     .createTextOutput('The Sales Floor intake endpoint is live.')
