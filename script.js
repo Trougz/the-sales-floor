@@ -1,4 +1,4 @@
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycby3PxfYA3OGmmhau38XbgZspVIJPHA3wMlPssIZGsMCU8gMO1gGSQUb1K-ABL3PgPEv/exec';
+const SHEETS_URL = https://script.google.com/macros/s/AKfycby3PxfYA3OGmmhau38XbgZspVIJPHA3wMlPssIZGsMCU8gMO1gGSQUb1K-ABL3PgPEv/exec;
 
 const form = document.getElementById('intake-form');
 const success = document.getElementById('success');
