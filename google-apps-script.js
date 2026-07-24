@@ -57,15 +57,21 @@ function doPost(e) {
     // Save resume to Drive and get a shareable link
     var resumeLink = '';
     if (data.resume_data && data.resume_filename) {
-      var folder = getOrCreateFolder(RESUME_FOLDER_NAME);
-      var blob = Utilities.newBlob(
-        Utilities.base64Decode(data.resume_data),
-        data.resume_type || 'application/octet-stream',
-        data.resume_filename
-      );
-      var file = folder.createFile(blob);
-      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-      resumeLink = file.getUrl();
+      try {
+        var folder = getOrCreateFolder(RESUME_FOLDER_NAME);
+        var blob = Utilities.newBlob(
+          Utilities.base64Decode(data.resume_data),
+          data.resume_type || 'application/octet-stream',
+          data.resume_filename
+        );
+        var file = folder.createFile(blob);
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        resumeLink = file.getUrl();
+      } catch (driveErr) {
+        resumeLink = 'DRIVE ERROR: ' + driveErr.toString();
+      }
+    } else {
+      resumeLink = 'NO FILE DATA RECEIVED (filename=' + (data.resume_filename || 'none') + ')';
     }
 
     sheet.appendRow([
