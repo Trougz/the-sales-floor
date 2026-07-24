@@ -59,10 +59,12 @@ form.addEventListener('submit', async e => {
   };
 
   try {
+    // Content-Type must be text/plain for no-cors simple requests;
+    // Apps Script reads the raw body via e.postData.contents regardless
     await fetch(SHEETS_URL, {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(data),
     });
   } catch (_) {
