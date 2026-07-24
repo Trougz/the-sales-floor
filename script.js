@@ -1,5 +1,5 @@
 // Paste your deployed Apps Script Web App URL here
-const SHEETS_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+const SHEETS_URL = https://script.google.com/macros/s/AKfycby3PxfYA3OGmmhau38XbgZspVIJPHA3wMlPssIZGsMCU8gMO1gGSQUb1K-ABL3PgPEv/exec;
 
 const form = document.getElementById('intake-form');
 const success = document.getElementById('success');
