@@ -50,7 +50,7 @@ Single app, `candidates`, in project `salesfloor`:
 - `Industry` / `CrmTool` / `WorkStyle` — small lookup tables (not hardcoded choices) so recruiters can add new values from the admin without a code change; seeded via a data migration (`candidates/migrations/0002_seed_lookups.py`) with the same values the current static form offers.
 - `candidates/admin.py` — all of the above registered with `list_display`/`list_filter`/`search_fields` tuned for triage (filter candidates by industry/CRM/relocation, sort by ranking, inline-edit status), and `Match` inlined on both `Candidate` and `Requisition` admin pages so recruiters can work the matching workflow from either side.
 
-**Not done yet**: the public form still posts to Apps Script, not this backend (that's the Phase 2 cutover); hosting, Postgres, and resume storage-at-scale are deploy-time decisions, not yet made; no company-facing portal (internal-only by design for now).
+**Current status / next action**: hosting decision is made (Render, via `render.yaml` — see "Deploying" above) and the code is production-ready, but nothing is deployed there yet. **The next concrete step is on Zach, not code**: create a Render account, deploy via "New Blueprint Instance" pointed at this repo, create the admin login via Render's shell (`manage.py createsuperuser`), and confirm `/admin/` loads on the resulting public URL. Once that's confirmed, the remaining work is code again: point `script.js`'s production branch (currently still posting to Apps Script) at the live Render URL, verify the real live site end-to-end, then retire `google-apps-script.js`. No company-facing portal yet either (internal-only by design for now).
 
 ## Git workflow
 
