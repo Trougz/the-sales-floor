@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: salesfloor-api
+    env: python
+    rootDir: backend
+    plan: starter
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    startCommand: "gunicorn salesfloor.wsgi:application"
+    disk:
+      name: resumes
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: salesfloor-api.onrender.com
+      - key: MEDIA_ROOT
+        value: /var/data/media
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: salesfloor-db
+          property: connectionString
+
+databases:
+  - name: salesfloor-db
+    plan: starter

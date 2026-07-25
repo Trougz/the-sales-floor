@@ -45,16 +45,10 @@ function getOrCreateFolder(name) {
 
 function doPost(e) {
   try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(HEADERS);
-      sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
-    }
-
     var data = JSON.parse(e.postData.contents);
 
-    // Save resume to Drive and get a shareable link
+    // Upload before taking the lock — this can be slow, and doesn't touch
+    // the shared sheet, so it shouldn't hold up other concurrent submitters.
     var resumeLink = '';
     if (data.resume_data && data.resume_filename) {
       try {
@@ -74,7 +68,7 @@ function doPost(e) {
       resumeLink = 'NO FILE DATA RECEIVED (filename=' + (data.resume_filename || 'none') + ')';
     }
 
-    sheet.appendRow([
+    var row = [
       new Date(),
       data.name || '',
       data.email || '',
@@ -93,7 +87,22 @@ function doPost(e) {
       (data.crm || []).join(', '),
       data.awards || '',
       resumeLink,
-    ]);
+    ];
+
+    // Concurrent submissions can otherwise interleave (or both see an
+    // empty sheet and both try to write the header row) and drop rows.
+    var lock = LockService.getScriptLock();
+    lock.waitLock(30000);
+    try {
+      var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+      if (sheet.getLastRow() === 0) {
+        sheet.appendRow(HEADERS);
+        sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
+      }
+      sheet.appendRow(row);
+    } finally {
+      lock.releaseLock();
+    }
 
     return ContentService
       .createTextOutput(JSON.stringify({ result: 'success', resume: resumeLink }))

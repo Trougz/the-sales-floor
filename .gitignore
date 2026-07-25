@@ -8,3 +8,13 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Python / Django
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/db.sqlite3
+backend/.env
+backend/media/
+backend/staticfiles/
