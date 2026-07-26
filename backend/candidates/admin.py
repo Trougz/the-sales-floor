@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.urls import reverse
 from django.utils.html import format_html
 
 from .models import Candidate, Company, CrmTool, Industry, Match, Requisition, WorkStyle
@@ -30,13 +29,12 @@ class CandidateAdmin(admin.ModelAdmin):
 
     @admin.display(description='resume')
     def resume_link(self, obj):
-        # The FileField widget's own link points at MEDIA_URL, which nothing
-        # serves -- link to the staff-only download view instead.
+        # Convenience column for the changelist; MEDIA_URL is served by
+        # serve_media, so obj.resume.url resolves here and in the file widget.
         if not obj.resume:
             return '—'
         return format_html(
-            '<a href="{}" target="_blank" rel="noopener">Open</a>',
-            reverse('candidate-resume', args=[obj.pk]),
+            '<a href="{}" target="_blank" rel="noopener">Open</a>', obj.resume.url
         )
 
 

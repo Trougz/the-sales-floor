@@ -22,8 +22,8 @@ from candidates import views as candidate_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('candidates.urls')),
-    # Staff-only resume download. Deliberately NOT under /api/ (that prefix is
-    # the public, unauthenticated intake namespace) and deliberately not a
-    # plain static() route over MEDIA_ROOT -- see download_resume's docstring.
-    path('resumes/<int:pk>/', candidate_views.download_resume, name='candidate-resume'),
+    # Backs MEDIA_URL, so FileField.url (what the admin's file widget links to)
+    # resolves. Staff-only, and deliberately not a plain static() route over
+    # MEDIA_ROOT -- see serve_media's docstring.
+    path('media/<path:path>', candidate_views.serve_media, name='serve-media'),
 ]

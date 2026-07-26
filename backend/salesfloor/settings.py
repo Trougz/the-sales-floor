@@ -147,7 +147,9 @@ STORAGES = {
 # Resume uploads. MEDIA_ROOT defaults to a local folder for dev; on Render
 # this must be set to the mounted persistent disk path (e.g. /var/data/media)
 # via the MEDIA_ROOT env var, or uploaded resumes are lost on every redeploy.
-MEDIA_URL = 'media/'
+# MEDIA_URL is backed by the staff-only serve_media view (see salesfloor/urls.py),
+# not by a static file route -- resumes are candidate PII.
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.environ.get('MEDIA_ROOT', str(BASE_DIR / 'media'))
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

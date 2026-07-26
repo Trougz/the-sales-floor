@@ -1,6 +1,6 @@
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.files.storage import default_storage
 from django.http import FileResponse, Http404, JsonResponse
-from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
@@ -103,25 +103,28 @@ def submit_employer_request(request):
 
 
 @staff_member_required
-def download_resume(request, pk):
-    """Serve a candidate's resume to logged-in staff only.
+def serve_media(request, path):
+    """Serve anything under MEDIA_ROOT (i.e. resumes) to logged-in staff only.
 
-    Resumes live under MEDIA_ROOT, which nothing serves in production --
-    whitenoise only covers STATIC_ROOT, and the `static()` helper in
-    salesfloor/urls.py is DEBUG-only. Rather than exposing MEDIA_URL
-    publicly (these are candidate PII, and the paths are guessable),
-    the admin links here and Django streams the file behind auth.
+    Nothing else serves MEDIA_ROOT in production: whitenoise only covers
+    STATIC_ROOT, and the `static()` helper is DEBUG-only, so resume links
+    404'd on Render. This backs MEDIA_URL itself rather than adding a
+    separate download route, so `FileField.url` -- which is what the admin's
+    file widget links to -- resolves correctly everywhere it appears.
+
+    It stays behind auth because resume paths are guessable and resumes are
+    candidate PII; a plain static route would publish every one of them.
+    Traversal is handled by FileSystemStorage, which runs the name through
+    safe_join and raises SuspiciousFileOperation (a 400) on escape attempts.
     """
-    candidate = get_object_or_404(Candidate, pk=pk)
-    if not candidate.resume:
-        raise Http404('This candidate has no resume on file.')
-
-    try:
-        handle = candidate.resume.open('rb')
-    except FileNotFoundError:
-        # Row survived but the file didn't -- e.g. uploaded before the
-        # persistent disk was mounted, so it went to ephemeral storage.
-        raise Http404('Resume file is missing from storage.')
+    if not default_storage.exists(path):
+        # Covers both a bad path and a row whose file is gone -- e.g. uploaded
+        # before the persistent disk was mounted, so it went to ephemeral disk.
+        raise Http404('No such file.')
 
     # as_attachment=False so PDFs open in a browser tab instead of downloading.
-    return FileResponse(handle, as_attachment=False, filename=candidate.resume.name.rsplit('/', 1)[-1])
+    return FileResponse(
+        default_storage.open(path, 'rb'),
+        as_attachment=False,
+        filename=path.rsplit('/', 1)[-1],
+    )
