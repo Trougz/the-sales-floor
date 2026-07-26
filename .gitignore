@@ -9,6 +9,19 @@ Thumbs.db
 # Logs
 *.log
 
+# Internal brand/content research — kept locally, never published.
+# GitHub Pages serves the repo root, so anything tracked here is publicly
+# downloadable at thesalesfloor.biz/<filename>.
+ColdCallVids.md
+comedyvideos.md
+lessonvideos.md
+personalconversationvideos.md
+500k+viewsvids.md
+brand/
+*.zip
+image*.png
+The Sales*.png
+
 # Python / Django
 backend/.venv/
 backend/__pycache__/
