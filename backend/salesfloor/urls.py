@@ -14,15 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+
+from candidates import views as candidate_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('candidates.urls')),
+    # Staff-only resume download. Deliberately NOT under /api/ (that prefix is
+    # the public, unauthenticated intake namespace) and deliberately not a
+    # plain static() route over MEDIA_ROOT -- see download_resume's docstring.
+    path('resumes/<int:pk>/', candidate_views.download_resume, name='candidate-resume'),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

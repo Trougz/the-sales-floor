@@ -1,4 +1,6 @@
-from django.http import JsonResponse
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import FileResponse, Http404, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
@@ -98,3 +100,28 @@ def submit_employer_request(request):
         return JsonResponse({'result': 'error', 'message': f'Invalid field value: {err}'}, status=400)
 
     return JsonResponse({'result': 'success', 'id': company.id})
+
+
+@staff_member_required
+def download_resume(request, pk):
+    """Serve a candidate's resume to logged-in staff only.
+
+    Resumes live under MEDIA_ROOT, which nothing serves in production --
+    whitenoise only covers STATIC_ROOT, and the `static()` helper in
+    salesfloor/urls.py is DEBUG-only. Rather than exposing MEDIA_URL
+    publicly (these are candidate PII, and the paths are guessable),
+    the admin links here and Django streams the file behind auth.
+    """
+    candidate = get_object_or_404(Candidate, pk=pk)
+    if not candidate.resume:
+        raise Http404('This candidate has no resume on file.')
+
+    try:
+        handle = candidate.resume.open('rb')
+    except FileNotFoundError:
+        # Row survived but the file didn't -- e.g. uploaded before the
+        # persistent disk was mounted, so it went to ephemeral storage.
+        raise Http404('Resume file is missing from storage.')
+
+    # as_attachment=False so PDFs open in a browser tab instead of downloading.
+    return FileResponse(handle, as_attachment=False, filename=candidate.resume.name.rsplit('/', 1)[-1])

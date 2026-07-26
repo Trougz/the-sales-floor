@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import format_html
 
 from .models import Candidate, Company, CrmTool, Industry, Match, Requisition, WorkStyle
 
@@ -13,7 +15,8 @@ class MatchInline(admin.TabularInline):
 class CandidateAdmin(admin.ModelAdmin):
     list_display = [
         'name', 'current_title', 'current_company_name', 'years_experience',
-        'quota_attainment_pct', 'desired_ote', 'status', 'ranking_score', 'created_at',
+        'quota_attainment_pct', 'desired_ote', 'resume_link', 'status',
+        'ranking_score', 'created_at',
     ]
     list_filter = [
         'status', 'current_title', 'open_to_relocation', 'work_styles', 'industries', 'crm_tools',
@@ -21,8 +24,20 @@ class CandidateAdmin(admin.ModelAdmin):
     search_fields = ['name', 'email', 'phone', 'current_company_name', 'linkedin_url']
     filter_horizontal = ['work_styles', 'industries', 'crm_tools']
     list_editable = ['status', 'ranking_score']
+    readonly_fields = ['resume_link']
     ordering = ['-created_at']
     inlines = [MatchInline]
+
+    @admin.display(description='resume')
+    def resume_link(self, obj):
+        # The FileField widget's own link points at MEDIA_URL, which nothing
+        # serves -- link to the staff-only download view instead.
+        if not obj.resume:
+            return '—'
+        return format_html(
+            '<a href="{}" target="_blank" rel="noopener">Open</a>',
+            reverse('candidate-resume', args=[obj.pk]),
+        )
 
 
 @admin.register(Company)
