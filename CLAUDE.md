@@ -12,7 +12,7 @@ The team deliberately wants to own a proprietary ATS rather than buy one (Greenh
 
 Two parts today:
 - A static public landing page + candidate intake form (repo root), deployed via GitHub Pages (`CNAME` → `thesalesfloor.biz`). This is what's actually live, and it does not change as part of the backend work below — the address people go to never moves.
-- A Django backend (`backend/`), deployed on Render (`salesfloor-api.onrender.com`) with a managed Postgres database. `script.js` posts here for both local dev (`localhost`/`127.0.0.1` → local Django) and production (`thesalesfloor.biz` → the Render URL). **Just cut over — pending a real end-to-end test on the live site before Apps Script/`google-apps-script.js` can be considered safe to eventually retire.**
+- A Django backend (`backend/`), deployed on Render (`salesfloor-api.onrender.com`) with a managed Postgres database. `script.js` posts here for both local dev (`localhost`/`127.0.0.1` → local Django) and production (`thesalesfloor.biz` → the Render URL). **Confirmed working end-to-end on the live site** — a real submission through `thesalesfloor.biz` was tested and landed correctly in the Django admin.
 
 ## Running / testing locally
 
@@ -50,7 +50,9 @@ Single app, `candidates`, in project `salesfloor`:
 - `Industry` / `CrmTool` / `WorkStyle` — small lookup tables (not hardcoded choices) so recruiters can add new values from the admin without a code change; seeded via a data migration (`candidates/migrations/0002_seed_lookups.py`) with the same values the current static form offers.
 - `candidates/admin.py` — all of the above registered with `list_display`/`list_filter`/`search_fields` tuned for triage (filter candidates by industry/CRM/relocation, sort by ranking, inline-edit status), and `Match` inlined on both `Candidate` and `Requisition` admin pages so recruiters can work the matching workflow from either side.
 
-**Current status / next action**: deployed on Render (`salesfloor-api.onrender.com`) and `script.js` has been cut over to post there in production. **Not yet done**: an actual real-world submission through the live `thesalesfloor.biz` site hasn't been confirmed end-to-end (only local + direct API checks so far) — do that before treating Apps Script as safe to delete. No company-facing portal yet either (internal-only by design for now). No data has been migrated from the old Google Sheet into Postgres yet, if there's anything worth carrying over from before this cutover.
+**Current status / next action**: deployed on Render (`salesfloor-api.onrender.com`) and confirmed working end-to-end through the real live site (`thesalesfloor.biz` → Django admin). Phase 2 (cutover) is done. **Not yet done**: no data has been migrated from the old Google Sheet into Postgres (Phase 3 — worth doing if there's anything from before this cutover worth keeping); `google-apps-script.js` is still kept as an untouched rollback reference rather than deleted, pending more real-world confidence in the new path; no company-facing portal yet either (internal-only by design for now).
+
+**Known gotcha from this deploy** (fixed, but worth knowing): Django's `STORAGES` setting is all-or-nothing — adding a custom `'staticfiles'` entry (for whitenoise) without also specifying `'default'` silently breaks `FileField`/resume uploads (`InvalidStorageError`), since it replaces rather than merges with Django's built-in defaults. Also, Django's default logging swallows request-error tracebacks to nowhere useful when `DEBUG=False` unless a `LOGGING` config with a console handler is set (now is, in `settings.py`) — without it, Render's logs only show the access-log line, not the actual Python error.
 
 ## Git workflow
 
