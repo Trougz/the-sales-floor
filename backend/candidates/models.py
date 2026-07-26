@@ -1,5 +1,16 @@
 from django.db import models
 
+# Shared by Candidate.current_title and Requisition.role_type so both sides of
+# a match speak the same vocabulary -- changing one without the other would
+# silently break filtering candidates against an open req.
+TITLE_CHOICES = [
+    ('SDR', 'SDR'),
+    ('BDR', 'BDR'),
+    ('AE', 'AE'),
+    ('Sales Manager', 'Sales Manager'),
+    ('Other', 'Other'),
+]
+
 
 class Industry(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -36,14 +47,6 @@ class WorkStyle(models.Model):
 
 
 class Candidate(models.Model):
-    TITLE_CHOICES = [
-        ('SDR', 'SDR'),
-        ('BDR', 'BDR'),
-        ('AE', 'AE'),
-        ('Sales Manager', 'Sales Manager'),
-        ('Other', 'Other'),
-    ]
-
     STATUS_CHOICES = [
         ('new', 'New'),
         ('screening', 'Screening'),
@@ -102,6 +105,7 @@ class Company(models.Model):
     name = models.CharField(max_length=200, unique=True)
     contact_name = models.CharField(max_length=200, blank=True)
     contact_email = models.EmailField(blank=True)
+    contact_phone = models.CharField(max_length=30, blank=True)
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -120,8 +124,20 @@ class Requisition(models.Model):
         ('closed', 'Closed'),
     ]
 
+    TIMELINE_CHOICES = [
+        ('ASAP', 'ASAP'),
+        ('Within 30 days', 'Within 30 days'),
+        ('This quarter', 'This quarter'),
+        ('Just exploring', 'Just exploring'),
+    ]
+
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='requisitions')
     title = models.CharField(max_length=200, help_text='Role being hired for, e.g. "Senior AE"')
+    role_type = models.CharField(
+        max_length=20, choices=TITLE_CHOICES, blank=True,
+        help_text='Normalised role, matched against a candidate\'s current title',
+    )
+    timeline = models.CharField(max_length=20, choices=TIMELINE_CHOICES, blank=True)
     industry = models.ForeignKey(
         Industry, on_delete=models.SET_NULL, null=True, blank=True, related_name='requisitions'
     )

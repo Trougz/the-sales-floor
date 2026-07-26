@@ -1,17 +1,11 @@
 const API_URL = ['localhost', '127.0.0.1'].includes(window.location.hostname)
-  ? 'http://127.0.0.1:8000/api/candidates/'
-  : 'https://salesfloor-api.onrender.com/api/candidates/';
+  ? 'http://127.0.0.1:8000/api/employers/'
+  : 'https://salesfloor-api.onrender.com/api/employers/';
 
-const form = document.getElementById('intake-form');
-const success = document.getElementById('success');
+const form = document.getElementById('employer-intake-form');
+const success = document.getElementById('employer-success');
 const formHeader = document.querySelector('.form-header');
-const fileInput = document.getElementById('resume');
-const fileName = document.getElementById('file-name');
 const submitBtn = form.querySelector('.btn-submit');
-
-fileInput.addEventListener('change', () => {
-  fileName.textContent = fileInput.files[0]?.name || 'Upload PDF, DOC, or DOCX';
-});
 
 form.addEventListener('submit', async e => {
   e.preventDefault();
@@ -25,23 +19,23 @@ form.addEventListener('submit', async e => {
   submitBtn.disabled = true;
 
   try {
-    // Field names on the <form> already match what the API expects, file
-    // included, so the raw multipart form can be sent as-is.
+    // Field names on the <form> already match what the API expects, so the
+    // raw form can be sent as-is.
     const res = await fetch(API_URL, { method: 'POST', body: new FormData(form) });
     const result = await res.json();
     if (result.result !== 'success') {
       throw new Error(result.message || 'Submission failed');
     }
 
-    // Hide the pitch copy too -- leaving "Free to join. Takes 2 minutes."
+    // Hide the pitch copy too -- leaving "Free to post. Takes 2 minutes."
     // sitting above a confirmation message reads as if nothing happened.
     formHeader.hidden = true;
     form.hidden = true;
     success.hidden = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {
-    submitBtn.textContent = 'Submit';
+    submitBtn.textContent = 'Submit Hiring Request';
     submitBtn.disabled = false;
-    alert("Something went wrong submitting your application. Please try again — if it keeps failing, email us directly so we don't lose your info.");
+    alert("Something went wrong submitting your request. Please try again — if it keeps failing, email us directly so we don't lose your details.");
   }
 });

@@ -27,16 +27,20 @@ class CandidateAdmin(admin.ModelAdmin):
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ['name', 'contact_name', 'contact_email', 'created_at']
+    list_display = ['name', 'contact_name', 'contact_email', 'contact_phone', 'created_at']
     search_fields = ['name', 'contact_name', 'contact_email']
 
 
 @admin.register(Requisition)
 class RequisitionAdmin(admin.ModelAdmin):
-    list_display = ['title', 'company', 'industry', 'status', 'comp_min', 'comp_max', 'created_at']
-    list_filter = ['status', 'industry']
+    list_display = [
+        'title', 'company', 'role_type', 'timeline', 'industry',
+        'status', 'comp_min', 'comp_max', 'created_at',
+    ]
+    list_filter = ['status', 'role_type', 'timeline', 'industry']
     search_fields = ['title', 'company__name']
     autocomplete_fields = ['company']
+    list_editable = ['status']
     inlines = [MatchInline]
 
 
