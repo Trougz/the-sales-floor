@@ -71,7 +71,7 @@ Single app, `candidates`, in project `salesfloor`:
 - Submitting the live `candidates.html` form with LinkedIn/Title/% to Quota left blank still hasn't been explicitly re-tested on the live URL (it passes locally).
 - On phones under ~400px the nav bar is tight — the logo and both nav labels are stepped down via a `@media (max-width: 400px)` block to fit. If a nav item is ever added, that bar will overflow and the labels likely need shortening instead.
 - `candidates.html` keeps the full long-form intake; only the employer side was simplified.
-- Any resume uploaded to the live site *before* the `/var/data` disk was mounted went to ephemeral storage and is gone from disk even though the `Candidate` row still references it. Those now show a 404 ("Resume file is missing from storage") rather than a 500. Worth spot-checking the earliest candidates and re-requesting resumes if any are missing.
+- Resume opening was broken on the live site until the `serve_media` fix (see "Resume access" above) and is now confirmed working for all existing candidates — so the `/var/data` disk is genuinely mounted and no pre-cutover uploads were lost to ephemeral storage.
 
 **Not yet done**: no data migrated from the old Google Sheet into Postgres (Phase 3 — worth doing if anything pre-cutover is worth keeping); `google-apps-script.js` kept as an untouched rollback reference; no company-facing portal (internal-only by design for now); no rate limiting or spam protection on either public endpoint, which is worth considering now that both are live and unauthenticated.
 
