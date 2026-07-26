@@ -56,13 +56,15 @@ class Candidate(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField()
     phone = models.CharField(max_length=30)
-    linkedin_url = models.URLField()
+    linkedin_url = models.URLField(blank=True)
 
     # Current role
     current_company_name = models.CharField(max_length=200)
-    current_title = models.CharField(max_length=20, choices=TITLE_CHOICES)
+    current_title = models.CharField(max_length=20, choices=TITLE_CHOICES, blank=True)
     years_experience = models.PositiveIntegerField()
-    quota_attainment_pct = models.PositiveIntegerField(help_text='% to quota, last period')
+    quota_attainment_pct = models.PositiveIntegerField(
+        null=True, blank=True, help_text='% to quota, last period'
+    )
 
     # Compensation
     base_salary = models.PositiveIntegerField(null=True, blank=True)

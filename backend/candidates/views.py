@@ -5,8 +5,8 @@ from django.views.decorators.http import require_POST
 from .models import Candidate, CrmTool, Industry, WorkStyle
 
 REQUIRED_FIELDS = [
-    'name', 'email', 'phone', 'linkedin', 'company', 'title',
-    'years', 'quota', 'desired_ote', 'relocation',
+    'name', 'email', 'phone', 'company',
+    'years', 'desired_ote', 'relocation',
 ]
 
 
@@ -30,11 +30,11 @@ def submit_candidate(request):
             name=data['name'].strip(),
             email=data['email'].strip(),
             phone=data['phone'].strip(),
-            linkedin_url=data['linkedin'].strip(),
+            linkedin_url=data.get('linkedin', '').strip(),
             current_company_name=data['company'].strip(),
-            current_title=data['title'],
+            current_title=data.get('title', ''),
             years_experience=int(data['years']),
-            quota_attainment_pct=int(data['quota']),
+            quota_attainment_pct=int(data['quota']) if data.get('quota') else None,
             base_salary=int(data['base']) if data.get('base') else None,
             ote=int(data['ote']) if data.get('ote') else None,
             desired_ote=int(data['desired_ote']),

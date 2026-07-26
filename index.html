@@ -20,8 +20,11 @@
   <main>
     <div class="form-page">
       <div class="form-header">
-        <h1>Get in front of companies actually hiring reps.</h1>
-        <p>Drop your info below and you're in the pool. When a role comes up that fits what you do and what you want, we reach out. No spam, no "we'll keep your resume on file" and then silence. Real roles, real humans, and I've done the job myself.</p>
+        <h1>A private list of SaaS and fintech sales talent, SDRs, AEs, and Sales Managers — connected directly to companies actually hiring.</h1>
+        <p>Here's how it works: you drop your info once. When a role opens up that actually fits what you do and what you're looking for, I reach out directly. That's it.</p>
+        <p>No spam. No "we'll keep your resume on file" and then radio silence. No recruiter blasting you a job that's nothing like what you want. Just real roles, from real companies, sent to you by someone who's actually carried a bag and made the calls himself.</p>
+        <p>This has been the goal all along. Real jobs, real people, real results.</p>
+        <p>Free to join. Takes 2 minutes.</p>
       </div>
 
       <form id="intake-form" novalidate>
@@ -43,8 +46,8 @@
               <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" required />
             </div>
             <div class="field">
-              <label for="linkedin">LinkedIn URL <span class="req">*</span></label>
-              <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourname" required />
+              <label for="linkedin">LinkedIn URL <span class="optional">(optional)</span></label>
+              <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourname" />
             </div>
           </div>
         </fieldset>
@@ -58,8 +61,8 @@
               <input type="text" id="company" name="company" placeholder="Acme Corp" required />
             </div>
             <div class="field">
-              <label for="title">Current Title <span class="req">*</span></label>
-              <select id="title" name="title" required>
+              <label for="title">Current Title <span class="optional">(optional)</span></label>
+              <select id="title" name="title">
                 <option value="" disabled selected>Select your title</option>
                 <option value="SDR">SDR</option>
                 <option value="BDR">BDR</option>
@@ -73,8 +76,8 @@
               <input type="number" id="years" name="years" placeholder="e.g. 3" min="0" max="50" required />
             </div>
             <div class="field">
-              <label for="quota">% to Quota — Last Period <span class="req">*</span></label>
-              <input type="number" id="quota" name="quota" placeholder="e.g. 112" min="0" max="999" required />
+              <label for="quota">% to Quota — Last Period <span class="optional">(optional)</span></label>
+              <input type="number" id="quota" name="quota" placeholder="e.g. 112" min="0" max="999" />
             </div>
           </div>
         </fieldset>
@@ -227,14 +230,14 @@
           </div>
         </fieldset>
 
-        <button type="submit" class="btn-submit">Submit Application</button>
+        <button type="submit" class="btn-submit">Submit</button>
       </form>
 
       <!-- Success state -->
       <div id="success" class="success" hidden>
         <div class="success-icon">✓</div>
-        <h2>Application Received</h2>
-        <p>Thanks for applying to The Sales Floor. We'll review your profile and be in touch soon.</p>
+        <h2>Thank You for Your Submission</h2>
+        <p>We'll review your profile and be in touch soon.</p>
       </div>
     </div>
   </main>
