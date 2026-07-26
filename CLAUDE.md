@@ -11,8 +11,8 @@ The team deliberately wants to own a proprietary ATS rather than buy one (Greenh
 ## What this is
 
 Two parts today:
-- A static public landing page + candidate intake form (repo root), deployed via GitHub Pages (`CNAME` → `thesalesfloor.biz`). This is what's actually live, and it does not change as part of the backend work below — the address people go to never moves.
-- A Django backend (`backend/`), deployed on Render (`salesfloor-api.onrender.com`) with a managed Postgres database. `script.js` posts here for both local dev (`localhost`/`127.0.0.1` → local Django) and production (`thesalesfloor.biz` → the Render URL). **Confirmed working end-to-end on the live site** — a real submission through `thesalesfloor.biz` was tested and landed correctly in the Django admin.
+- A static public site (repo root), deployed via GitHub Pages (`CNAME` → `thesalesfloor.biz`), now **three pages**: `index.html` (a neutral "chooser" landing page — no form, just routes to one of the other two), `candidates.html` (the candidate intake form — this used to be `index.html`'s content), and `employers.html` (a placeholder page for hiring companies — pitch + a `mailto:` link, no form yet). Header/nav markup is duplicated across all three files by hand (no templating engine in this stack).
+- A Django backend (`backend/`), deployed on Render (`salesfloor-api.onrender.com`) with a managed Postgres database. `script.js` (loaded only on `candidates.html`) posts here for both local dev (`localhost`/`127.0.0.1` → local Django) and production (`thesalesfloor.biz` → the Render URL). **Confirmed working end-to-end on the live site** — a real submission through `thesalesfloor.biz` was tested and landed correctly in the Django admin.
 
 ## Running / testing locally
 
@@ -34,12 +34,16 @@ Config is read from environment variables so the same `salesfloor/settings.py` w
 ## Architecture
 
 ### Static site (root)
-- `index.html` — single page: a nav header, one long form (`#intake-form`) broken into `<fieldset>` sections (Contact Info, Current Role, Compensation, Location, Industries, CRM Tools, Additional/Resume), and a hidden `#success` state shown after submit.
-- `style.css` — all styling, driven by CSS custom properties defined once in `:root` (colors, fonts). Responsive breakpoint at 640px collapses the grid layouts to a single column.
-- `script.js` — client-side only. On submit: validates via native `checkValidity()`, POSTs the form directly as `multipart/form-data` (via `new FormData(form)`, resume file included — no manual encoding needed) to `API_URL`, which is the local Django API on `localhost`/`127.0.0.1` and the Render-hosted API in production. Reads the real JSON response and only shows the success state if the backend actually reports success — otherwise it re-enables the form and alerts the user so a failed submission is never silently lost.
+- `index.html` — the landing/chooser page. One job: route to `candidates.html` ("I'm looking for my next role") or `employers.html` ("I'm hiring sales talent") via the two-card `.chooser` section. No form here.
+- `candidates.html` — the candidate intake page: hero copy, one long form (`#intake-form`) broken into `<fieldset>` sections (Contact Info, Current Role, Compensation, Location, Industries, CRM Tools, Additional/Resume), and a hidden `#success` state shown after submit. This is the only page that loads `script.js`.
+- `employers.html` — placeholder page for hiring companies: pitch copy + a `mailto:hello@thesalesfloor.biz` CTA styled like `.btn-submit`. No form, no backend wiring yet — deliberately deferred.
+- `style.css` — all styling, driven by CSS custom properties defined once in `:root` (colors, fonts). Responsive breakpoint at 640px collapses the grid/chooser layouts to a single column.
+- `script.js` — client-side only, loaded on `candidates.html` only (it assumes `#intake-form`/`#success` exist). On submit: validates via native `checkValidity()`, POSTs the form directly as `multipart/form-data` (via `new FormData(form)`, resume file included — no manual encoding needed) to `API_URL`, which is the local Django API on `localhost`/`127.0.0.1` and the Render-hosted API in production. Reads the real JSON response and only shows the success state if the backend actually reports success — otherwise it re-enables the form and alerts the user so a failed submission is never silently lost.
 - `google-apps-script.js` — **retired but not deleted.** No longer wired to the live form (kept only as a rollback reference — the code + its Google Sheet/Drive setup still exist and could be repointed to quickly if Django/Render has a problem). Previously: appended form submissions as sheet rows and uploaded resumes to a "Sales Floor Resumes" Google Drive folder; sheet writes were wrapped in `LockService` to prevent concurrent-write collisions.
 
-**Key coupling to watch**: `script.js`'s `FormData` field names must stay in sync with what `candidates/views.py`'s `submit_candidate` expects (`REQUIRED_FIELDS` list + the `Candidate.objects.create(...)` call) — since the HTML form's `name=` attributes are used as-is, adding/removing/renaming a form field means updating `index.html`, the view, and likely the `Candidate` model together.
+**Key coupling to watch**:
+- `script.js`'s `FormData` field names must stay in sync with what `candidates/views.py`'s `submit_candidate` expects (`REQUIRED_FIELDS` list + the `Candidate.objects.create(...)` call) — since the HTML form's `name=` attributes are used as-is, adding/removing/renaming a form field means updating `candidates.html`, the view, and likely the `Candidate` model together.
+- Header/nav markup (logo + the two nav buttons, with an `active` class on whichever page you're on) is duplicated across all three HTML files by hand — there's no shared include/template. A nav change (new link, copy tweak, styling) means editing `index.html`, `candidates.html`, and `employers.html` together, not just one.
 
 ### Django backend (`backend/`)
 Single app, `candidates`, in project `salesfloor`:

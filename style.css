@@ -40,6 +40,7 @@ nav {
   height: 80px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .logo {
@@ -48,6 +49,109 @@ nav {
   font-weight: 400;
   color: var(--black);
   line-height: 1;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-btn {
+  font-family: var(--font-nav-btn);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--black);
+  text-decoration: none;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.nav-btn:hover {
+  color: var(--red);
+}
+
+.nav-btn.active {
+  border-bottom-color: var(--red);
+}
+
+/* Home / chooser page */
+.home-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 100px 24px 120px;
+  text-align: center;
+}
+
+.home-hero h1 {
+  max-width: 720px;
+  margin: 0 auto 16px;
+  font-size: 44px;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+.home-hero p {
+  font-size: 18px;
+  color: rgba(0,0,0,0.55);
+  margin-bottom: 56px;
+}
+
+.chooser {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  text-align: left;
+}
+
+.chooser-card {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 40px 32px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  color: var(--black);
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+
+.chooser-card:hover {
+  border-color: var(--red);
+}
+
+.chooser-card--dark {
+  background: var(--dark);
+  border-color: var(--dark);
+  color: var(--white);
+}
+
+.chooser-card--dark:hover {
+  border-color: var(--red);
+}
+
+.chooser-eyebrow {
+  font-family: var(--font-nav-btn);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.chooser-title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.chooser-arrow {
+  font-size: 20px;
+  margin-top: auto;
 }
 
 /* Form page */
@@ -65,13 +169,28 @@ nav {
   font-size: 40px;
   font-weight: 700;
   letter-spacing: -1px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .form-header p {
   font-size: 17px;
   color: rgba(0,0,0,0.55);
   font-weight: 400;
+  margin-bottom: 16px;
+}
+
+.form-header p:last-child {
+  margin-bottom: 0;
+}
+
+.form-header p.lead {
+  font-size: 19px;
+  color: rgba(0,0,0,0.75);
+}
+
+.form-header p.cta-line {
+  font-weight: 600;
+  color: var(--dark);
 }
 
 /* Fieldsets */
@@ -370,6 +489,10 @@ textarea {
   border: none;
   cursor: pointer;
   transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 
 .btn-submit:hover {
@@ -428,6 +551,14 @@ footer {
     font-size: 24px;
   }
 
+  .nav-links {
+    gap: 16px;
+  }
+
+  .nav-btn {
+    font-size: 10px;
+  }
+
   .form-page {
     padding: 40px 20px 80px;
   }
@@ -438,6 +569,22 @@ footer {
 
   .grid-2,
   .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .home-page {
+    padding: 60px 20px 80px;
+  }
+
+  .home-hero h1 {
+    font-size: 28px;
+  }
+
+  .home-hero p {
+    margin-bottom: 36px;
+  }
+
+  .chooser {
     grid-template-columns: 1fr;
   }
 }

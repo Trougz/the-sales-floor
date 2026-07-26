@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Join the Talent Pool | The Sales Floor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sree+Krushnadevaraya&family=Syncopate:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="index.html" class="logo">The Sales Floor</a>
+      <div class="nav-links">
+        <a href="candidates.html" class="nav-btn active">For Candidates</a>
+        <a href="employers.html" class="nav-btn">For Employers</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="form-page">
+      <div class="form-header">
+        <h1>A private list of SaaS and fintech sales talent, SDRs, AEs, and Sales Managers — connected directly to companies actually hiring.</h1>
+        <p class="lead">Here's how it works: you drop your info once. When a role opens up that actually fits what you do and what you're looking for, I reach out directly. That's it.</p>
+        <p>No spam. No "we'll keep your resume on file" and then radio silence. No recruiter blasting you a job that's nothing like what you want. Just real roles, from real companies, sent to you by someone who's actually carried a bag and made the calls himself.</p>
+        <p>This has been the goal all along. Real jobs, real people, real results.</p>
+        <p class="cta-line">Free to join. Takes 2 minutes.</p>
+      </div>
+
+      <form id="intake-form" novalidate>
+
+        <!-- Section 1: Contact Info -->
+        <fieldset>
+          <legend>Contact Info</legend>
+          <div class="grid-2">
+            <div class="field">
+              <label for="name">Full Name <span class="req">*</span></label>
+              <input type="text" id="name" name="name" placeholder="Jane Smith" required />
+            </div>
+            <div class="field">
+              <label for="email">Email <span class="req">*</span></label>
+              <input type="email" id="email" name="email" placeholder="jane@company.com" required />
+            </div>
+            <div class="field">
+              <label for="phone">Phone <span class="req">*</span></label>
+              <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" required />
+            </div>
+            <div class="field">
+              <label for="linkedin">LinkedIn URL <span class="optional">(optional)</span></label>
+              <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourname" />
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Section 2: Current Role -->
+        <fieldset>
+          <legend>Current Role</legend>
+          <div class="grid-2">
+            <div class="field">
+              <label for="company">Current Company <span class="req">*</span></label>
+              <input type="text" id="company" name="company" placeholder="Acme Corp" required />
+            </div>
+            <div class="field">
+              <label for="title">Current Title <span class="optional">(optional)</span></label>
+              <select id="title" name="title">
+                <option value="" disabled selected>Select your title</option>
+                <option value="SDR">SDR</option>
+                <option value="BDR">BDR</option>
+                <option value="AE">AE</option>
+                <option value="Sales Manager">Sales Manager</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="years">Years in B2B Sales <span class="req">*</span></label>
+              <input type="number" id="years" name="years" placeholder="e.g. 3" min="0" max="50" required />
+            </div>
+            <div class="field">
+              <label for="quota">% to Quota — Last Period <span class="optional">(optional)</span></label>
+              <input type="number" id="quota" name="quota" placeholder="e.g. 112" min="0" max="999" />
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Section 3: Compensation -->
+        <fieldset>
+          <legend>Compensation</legend>
+          <div class="grid-3">
+            <div class="field">
+              <label for="base">Current Base Salary [USD]</label>
+              <div class="input-prefix">
+                <span>$</span>
+                <input type="number" id="base" name="base" placeholder="75,000" min="0" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="ote">Current OTE (Base + Commission)</label>
+              <div class="input-prefix">
+                <span>$</span>
+                <input type="number" id="ote" name="ote" placeholder="120,000" min="0" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="desired-ote">Desired OTE <span class="req">*</span></label>
+              <div class="input-prefix">
+                <span>$</span>
+                <input type="number" id="desired-ote" name="desired_ote" placeholder="150,000" min="0" required />
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Section 4: Location -->
+        <fieldset>
+          <legend>Location Preferences</legend>
+          <div class="field">
+            <label>Open to Relocation? <span class="req">*</span></label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="relocation" value="yes" required />
+                <span>Yes</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="relocation" value="no" />
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+          <div class="field" style="margin-top: 20px;">
+            <label>Preferred Work Style</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" name="location" value="Remote" />
+                <span>Remote</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="location" value="Hybrid" />
+                <span>Hybrid</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="location" value="In-office" />
+                <span>In-office</span>
+              </label>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Section 5: Industries -->
+        <fieldset>
+          <legend>Industries Interested In</legend>
+          <div class="checkbox-group checkbox-wrap">
+            <label class="checkbox-label">
+              <input type="checkbox" name="industry" value="SaaS" />
+              <span>SaaS</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="industry" value="Fintech" />
+              <span>Fintech</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="industry" value="Martech" />
+              <span>Martech</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="industry" value="Healthtech" />
+              <span>Healthtech</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="industry" value="Cybersecurity" />
+              <span>Cybersecurity</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="industry" value="HR Tech" />
+              <span>HR Tech</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="industry" value="Open to All" />
+              <span>Open to All</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- Section 6: CRM Tools -->
+        <fieldset>
+          <legend>CRM / Tool Experience</legend>
+          <div class="checkbox-group checkbox-wrap">
+            <label class="checkbox-label">
+              <input type="checkbox" name="crm" value="Salesforce" />
+              <span>Salesforce</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="crm" value="HubSpot" />
+              <span>HubSpot</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="crm" value="Apollo" />
+              <span>Apollo</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="crm" value="Outreach" />
+              <span>Outreach</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="crm" value="Gong" />
+              <span>Gong</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="crm" value="ZoomInfo" />
+              <span>ZoomInfo</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- Section 7: Additional -->
+        <fieldset>
+          <legend>Additional</legend>
+          <div class="field">
+            <label for="awards">President's Club / Awards <span class="optional">(optional)</span></label>
+            <textarea id="awards" name="awards" rows="3" placeholder="e.g. President's Club 2024, Top SDR Q3 2023…"></textarea>
+          </div>
+          <div class="field" style="margin-top: 20px;">
+            <label for="resume">Resume <span class="req">*</span></label>
+            <div class="file-upload">
+              <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required />
+              <label for="resume" class="file-label">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span id="file-name">Upload PDF, DOC, or DOCX</span>
+              </label>
+            </div>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="btn-submit">Submit</button>
+      </form>
+
+      <!-- Success state -->
+      <div id="success" class="success" hidden>
+        <div class="success-icon">✓</div>
+        <h2>Thank You for Your Submission</h2>
+        <p>We'll review your profile and be in touch soon.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 The Sales Floor. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
