@@ -6,14 +6,19 @@
   <title>The Sales Floor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sree+Krushnadevaraya&family=Syncopate:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,900;1,700;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <header>
     <nav>
-      <a href="index.html" class="logo">The Sales Floor</a>
+      <a href="index.html" class="logo">
+        <svg class="flame" viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M20 2C20 12 7 15 7 28C7 38 13 46 21 50C17 44 15 37 19 30C21 34 25 36 27 32C29 39 34 41 34 32C34 24 27 20 27 12C27 19 23 19 23 14C23 7 20 6 20 2Z" />
+        </svg>
+        The Sales Floor
+      </a>
       <div class="nav-links">
         <a href="candidates.html" class="nav-btn">For Candidates</a>
         <a href="employers.html" class="nav-btn">For Employers</a>
@@ -24,19 +29,27 @@
   <main>
     <div class="home-page">
       <div class="home-hero">
-        <h1>The private floor connecting proven sales talent to companies actually hiring.</h1>
-        <p>Real candidates. Real roles. No noise in between.</p>
+        <span class="home-eyebrow">
+          <svg class="flame" viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M20 2C20 12 7 15 7 28C7 38 13 46 21 50C17 44 15 37 19 30C21 34 25 36 27 32C29 39 34 41 34 32C34 24 27 20 27 12C27 19 23 19 23 14C23 7 20 6 20 2Z" />
+          </svg>
+          Built by reps, for reps
+        </span>
+        <h1>The private floor where proven sales reps meet companies <em>actually hiring</em>.</h1>
+        <p>Real reps. Real roles. No recruiter noise in between.</p>
       </div>
 
       <div class="chooser">
         <a href="candidates.html" class="chooser-card">
           <span class="chooser-eyebrow">Talent</span>
           <span class="chooser-title">I'm looking for my next role</span>
+          <span class="chooser-desc">Drop your info once. When a role actually fits, we reach out directly — not the other way around.</span>
           <span class="chooser-arrow">&rarr;</span>
         </a>
         <a href="employers.html" class="chooser-card chooser-card--dark">
           <span class="chooser-eyebrow">Hiring</span>
           <span class="chooser-title">I'm hiring sales talent</span>
+          <span class="chooser-desc">Tell us the seat you need filled. We bring you reps who've actually carried a bag and hit number.</span>
           <span class="chooser-arrow">&rarr;</span>
         </a>
       </div>

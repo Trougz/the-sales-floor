@@ -6,14 +6,19 @@
   <title>Hire Sales Talent | The Sales Floor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sree+Krushnadevaraya&family=Syncopate:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,900;1,700;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <header>
     <nav>
-      <a href="index.html" class="logo">The Sales Floor</a>
+      <a href="index.html" class="logo">
+        <svg class="flame" viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M20 2C20 12 7 15 7 28C7 38 13 46 21 50C17 44 15 37 19 30C21 34 25 36 27 32C29 39 34 41 34 32C34 24 27 20 27 12C27 19 23 19 23 14C23 7 20 6 20 2Z" />
+        </svg>
+        The Sales Floor
+      </a>
       <div class="nav-links">
         <a href="candidates.html" class="nav-btn">For Candidates</a>
         <a href="employers.html" class="nav-btn active">For Employers</a>
@@ -24,12 +29,121 @@
   <main>
     <div class="form-page">
       <div class="form-header">
-        <h1>Tell us what you need. We'll bring you the talent.</h1>
-        <p class="lead">The Sales Floor keeps a private, vetted pool of SaaS and fintech sales talent — SDRs, AEs, and Sales Managers who've actually carried a bag. When you need to fill a seat, we match you directly with candidates who fit.</p>
-        <p class="cta-line">Get in touch and tell us what you're hiring for.</p>
+        <h1>Tell us who you need. We'll send reps who've actually hit number.</h1>
+        <p class="lead">The Sales Floor keeps a private, vetted pool of SaaS and fintech sales talent — SDRs, AEs, and Sales Managers who've carried a bag and hit their numbers. Tell us what seat you're filling, and we match you directly with candidates who actually fit.</p>
+        <p>No resume blasts. No unqualified pipeline. Just reps who fit the role, sent to you by someone who's actually made the calls himself.</p>
+        <p class="cta-line">Free to post. Takes 2 minutes.</p>
       </div>
 
-      <a href="mailto:hello@thesalesfloor.biz" class="btn-submit">Get in Touch</a>
+      <form id="employer-intake-form" novalidate>
+
+        <!-- Section 1: Company Info -->
+        <fieldset>
+          <legend>Company Info</legend>
+          <div class="grid-2">
+            <div class="field">
+              <label for="company-name">Company Name <span class="req">*</span></label>
+              <input type="text" id="company-name" name="company_name" placeholder="Acme Corp" required />
+            </div>
+            <div class="field">
+              <label for="contact-name">Your Name <span class="req">*</span></label>
+              <input type="text" id="contact-name" name="contact_name" placeholder="Jane Smith" required />
+            </div>
+            <div class="field">
+              <label for="contact-email">Work Email <span class="req">*</span></label>
+              <input type="email" id="contact-email" name="contact_email" placeholder="jane@company.com" required />
+            </div>
+            <div class="field">
+              <label for="contact-phone">Phone <span class="optional">(optional)</span></label>
+              <input type="tel" id="contact-phone" name="contact_phone" placeholder="+1 (555) 000-0000" />
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Section 2: The Role -->
+        <fieldset>
+          <legend>The Role</legend>
+          <div class="grid-2">
+            <div class="field">
+              <label for="role-title">Role Title <span class="req">*</span></label>
+              <input type="text" id="role-title" name="role_title" placeholder="e.g. Senior AE, SDR Team Lead" required />
+            </div>
+            <div class="field">
+              <label for="role-type">Role Type <span class="req">*</span></label>
+              <select id="role-type" name="role_type" required>
+                <option value="" disabled selected>Select role type</option>
+                <option value="SDR">SDR</option>
+                <option value="BDR">BDR</option>
+                <option value="AE">AE</option>
+                <option value="Sales Manager">Sales Manager</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="industry">Industry <span class="optional">(optional)</span></label>
+              <select id="industry" name="industry">
+                <option value="" disabled selected>Select an industry</option>
+                <option value="SaaS">SaaS</option>
+                <option value="Fintech">Fintech</option>
+                <option value="Martech">Martech</option>
+                <option value="Healthtech">Healthtech</option>
+                <option value="Cybersecurity">Cybersecurity</option>
+                <option value="HR Tech">HR Tech</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="timeline">Hiring Timeline <span class="req">*</span></label>
+              <select id="timeline" name="timeline" required>
+                <option value="" disabled selected>Select a timeline</option>
+                <option value="ASAP">ASAP</option>
+                <option value="Within 30 days">Within 30 days</option>
+                <option value="This quarter">This quarter</option>
+                <option value="Just exploring">Just exploring</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Section 3: Compensation -->
+        <fieldset>
+          <legend>Compensation</legend>
+          <div class="grid-2">
+            <div class="field">
+              <label for="comp-min">OTE Range — Min <span class="optional">(optional)</span></label>
+              <div class="input-prefix">
+                <span>$</span>
+                <input type="number" id="comp-min" name="comp_min" placeholder="100,000" min="0" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="comp-max">OTE Range — Max <span class="optional">(optional)</span></label>
+              <div class="input-prefix">
+                <span>$</span>
+                <input type="number" id="comp-max" name="comp_max" placeholder="160,000" min="0" />
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Section 4: Additional -->
+        <fieldset>
+          <legend>Additional</legend>
+          <div class="field">
+            <label for="notes">What are you looking for? <span class="optional">(optional)</span></label>
+            <textarea id="notes" name="notes" rows="4" placeholder="Team size, must-have experience, deal-breakers — anything that helps us send you the right fit."></textarea>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="btn-submit">Submit Hiring Request</button>
+      </form>
+
+      <!-- Success state -->
+      <div id="employer-success" class="success" hidden>
+        <div class="success-icon">✓</div>
+        <h2>Got It — We're On It</h2>
+        <p>We'll review the role and reach out with matches soon.</p>
+      </div>
     </div>
   </main>
 
