@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hire Sales Talent | The Sales Floor</title>
+  <title>Connect | The Sales Floor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,900;1,700;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -27,122 +27,34 @@
   </header>
 
   <main>
-    <div class="form-page">
+    <div class="form-page form-page--narrow">
       <div class="form-header">
-        <h1>Tell us who you need. We'll send reps who've actually hit number.</h1>
-        <p class="lead">The Sales Floor keeps a private, vetted pool of SaaS and fintech sales talent — SDRs, AEs, and Sales Managers who've carried a bag and hit their numbers. Tell us what seat you're filling, and we match you directly with candidates who actually fit.</p>
-        <p>No resume blasts. No unqualified pipeline. Just reps who fit the role, sent to you by someone who's actually made the calls himself.</p>
-        <p class="cta-line">Free to post. Takes 2 minutes.</p>
+        <h1>Connect with me</h1>
+        <p class="lead">The Sales Floor is building the best network of B2B sales talent in the world. Let's get connected as we build our talent pool.</p>
       </div>
 
       <form id="employer-intake-form" novalidate>
+        <div class="field">
+          <label for="company-name">Business Name <span class="req">*</span></label>
+          <input type="text" id="company-name" name="company_name" placeholder="Acme Corp" required />
+        </div>
+        <div class="field">
+          <label for="contact-email">Email <span class="req">*</span></label>
+          <input type="email" id="contact-email" name="contact_email" placeholder="you@company.com" required />
+        </div>
+        <div class="field">
+          <label for="contact-phone">Phone <span class="optional">(optional)</span></label>
+          <input type="tel" id="contact-phone" name="contact_phone" placeholder="+1 (555) 000-0000" />
+        </div>
 
-        <!-- Section 1: Company Info -->
-        <fieldset>
-          <legend>Company Info</legend>
-          <div class="grid-2">
-            <div class="field">
-              <label for="company-name">Company Name <span class="req">*</span></label>
-              <input type="text" id="company-name" name="company_name" placeholder="Acme Corp" required />
-            </div>
-            <div class="field">
-              <label for="contact-name">Your Name <span class="req">*</span></label>
-              <input type="text" id="contact-name" name="contact_name" placeholder="Jane Smith" required />
-            </div>
-            <div class="field">
-              <label for="contact-email">Work Email <span class="req">*</span></label>
-              <input type="email" id="contact-email" name="contact_email" placeholder="jane@company.com" required />
-            </div>
-            <div class="field">
-              <label for="contact-phone">Phone <span class="optional">(optional)</span></label>
-              <input type="tel" id="contact-phone" name="contact_phone" placeholder="+1 (555) 000-0000" />
-            </div>
-          </div>
-        </fieldset>
-
-        <!-- Section 2: The Role -->
-        <fieldset>
-          <legend>The Role</legend>
-          <div class="grid-2">
-            <div class="field">
-              <label for="role-title">Role Title <span class="req">*</span></label>
-              <input type="text" id="role-title" name="role_title" placeholder="e.g. Senior AE, SDR Team Lead" required />
-            </div>
-            <div class="field">
-              <label for="role-type">Role Type <span class="req">*</span></label>
-              <select id="role-type" name="role_type" required>
-                <option value="" disabled selected>Select role type</option>
-                <option value="SDR">SDR</option>
-                <option value="BDR">BDR</option>
-                <option value="AE">AE</option>
-                <option value="Sales Manager">Sales Manager</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="industry">Industry <span class="optional">(optional)</span></label>
-              <select id="industry" name="industry">
-                <option value="" disabled selected>Select an industry</option>
-                <option value="SaaS">SaaS</option>
-                <option value="Fintech">Fintech</option>
-                <option value="Martech">Martech</option>
-                <option value="Healthtech">Healthtech</option>
-                <option value="Cybersecurity">Cybersecurity</option>
-                <option value="HR Tech">HR Tech</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="timeline">Hiring Timeline <span class="req">*</span></label>
-              <select id="timeline" name="timeline" required>
-                <option value="" disabled selected>Select a timeline</option>
-                <option value="ASAP">ASAP</option>
-                <option value="Within 30 days">Within 30 days</option>
-                <option value="This quarter">This quarter</option>
-                <option value="Just exploring">Just exploring</option>
-              </select>
-            </div>
-          </div>
-        </fieldset>
-
-        <!-- Section 3: Compensation -->
-        <fieldset>
-          <legend>Compensation</legend>
-          <div class="grid-2">
-            <div class="field">
-              <label for="comp-min">OTE Range — Min <span class="optional">(optional)</span></label>
-              <div class="input-prefix">
-                <span>$</span>
-                <input type="number" id="comp-min" name="comp_min" placeholder="100,000" min="0" />
-              </div>
-            </div>
-            <div class="field">
-              <label for="comp-max">OTE Range — Max <span class="optional">(optional)</span></label>
-              <div class="input-prefix">
-                <span>$</span>
-                <input type="number" id="comp-max" name="comp_max" placeholder="160,000" min="0" />
-              </div>
-            </div>
-          </div>
-        </fieldset>
-
-        <!-- Section 4: Additional -->
-        <fieldset>
-          <legend>Additional</legend>
-          <div class="field">
-            <label for="notes">What are you looking for? <span class="optional">(optional)</span></label>
-            <textarea id="notes" name="notes" rows="4" placeholder="Team size, must-have experience, deal-breakers — anything that helps us send you the right fit."></textarea>
-          </div>
-        </fieldset>
-
-        <button type="submit" class="btn-submit">Submit Hiring Request</button>
+        <button type="submit" class="btn-submit">Let's Connect</button>
       </form>
 
       <!-- Success state -->
       <div id="employer-success" class="success" hidden>
         <div class="success-icon">✓</div>
-        <h2>Got It — We're On It</h2>
-        <p>We'll review the role and reach out with matches soon.</p>
+        <h2>We're Connected</h2>
+        <p>I'll be in touch personally. Talk soon.</p>
       </div>
     </div>
   </main>

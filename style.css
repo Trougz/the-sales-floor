@@ -1,17 +1,23 @@
 /* Design tokens */
 :root {
-  --bg: #17181C;
-  --surface: #212229;
-  --surface-2: #2A2C34;
-  --ink: #F4F1E9;
-  --ink-dim: rgba(244, 241, 233, 0.62);
-  --ink-faint: rgba(244, 241, 233, 0.52);
-  --red: #E8432E;
-  --red-dim: rgba(232, 67, 46, 0.16);
-  --gold: #E7B24F;
-  --gold-dim: rgba(231, 178, 79, 0.16);
-  --border: rgba(244, 241, 233, 0.12);
-  --border-strong: rgba(244, 241, 233, 0.26);
+  --bg: #F4F3F1;
+  --surface: #FFFFFF;
+  --surface-2: #ECEAE7;
+  --ink: #16171A;
+  --ink-dim: rgba(22, 23, 26, 0.75);
+  /* 0.62 is the floor that still clears 4.5:1 on --bg -- don't lighten it. */
+  --ink-faint: rgba(22, 23, 26, 0.62);
+  /* Placeholders only. Deliberately lighter than --ink-faint so a placeholder
+     never reads as a filled value; every field has a real visible <label>. */
+  --placeholder: rgba(22, 23, 26, 0.45);
+  --red: #D93A26;
+  /* Small red text needs the deeper tone -- --red alone is 4.1:1 on --bg. */
+  --red-deep: #B8321F;
+  --red-dim: rgba(217, 58, 38, 0.10);
+  --gold: #D9A441;
+  --gold-ink: #7D560D;
+  --border: rgba(22, 23, 26, 0.14);
+  --border-strong: rgba(22, 23, 26, 0.30);
   --font-display: 'Barlow Condensed', sans-serif;
   --font-body: 'Inter', sans-serif;
 }
@@ -34,7 +40,7 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--red);
   outline-offset: 2px;
 }
 
@@ -61,7 +67,7 @@ header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(23, 24, 28, 0.9);
+  background: rgba(244, 243, 241, 0.88);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
 }
@@ -88,6 +94,7 @@ nav {
   color: var(--ink);
   line-height: 1;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .logo .flame {
@@ -111,6 +118,7 @@ nav {
   padding: 8px 16px;
   border-radius: 999px;
   border: 1px solid transparent;
+  white-space: nowrap;
   transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
 
@@ -120,7 +128,7 @@ nav {
 }
 
 .nav-btn.active {
-  color: var(--bg);
+  color: var(--surface);
   background: var(--ink);
   border-color: var(--ink);
 }
@@ -143,10 +151,13 @@ nav {
   position: absolute;
   top: -140px;
   left: 50%;
-  width: 560px;
+  /* Must not exceed the content column -- at a fixed 560px this pseudo-element
+     hangs ~100px past each edge on a 360px phone and forces a horizontal
+     scrollbar (it's invisible to element-based overflow checks). */
+  width: min(560px, 100%);
   height: 560px;
   transform: translateX(-50%);
-  background: radial-gradient(circle, var(--red-dim) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(217, 58, 38, 0.07) 0%, transparent 70%);
   pointer-events: none;
   z-index: -1;
   animation: ember 6s ease-in-out infinite;
@@ -166,17 +177,13 @@ nav {
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--red-deep);
   margin-bottom: 24px;
 }
 
 .home-eyebrow .flame {
   width: 11px;
   height: 14px;
-}
-
-.home-eyebrow .flame path {
-  fill: var(--gold);
 }
 
 .home-hero h1 {
@@ -196,9 +203,10 @@ nav {
 }
 
 .home-hero p {
+  max-width: 620px;
+  margin: 0 auto 64px;
   font-size: 18px;
   color: var(--ink-dim);
-  margin-bottom: 64px;
 }
 
 .chooser {
@@ -218,21 +226,21 @@ nav {
   border-top: 3px solid var(--red);
   color: var(--ink);
   text-decoration: none;
-  transition: border-color 0.15s, transform 0.15s, background 0.15s;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
 }
 
 .chooser-card:hover {
   border-color: var(--border-strong);
   border-top-color: var(--red);
-  background: var(--surface-2);
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(22, 23, 26, 0.08);
 }
 
-.chooser-card--dark {
+.chooser-card--hiring {
   border-top-color: var(--gold);
 }
 
-.chooser-card--dark:hover {
+.chooser-card--hiring:hover {
   border-top-color: var(--gold);
 }
 
@@ -263,7 +271,7 @@ nav {
 .chooser-arrow {
   font-size: 22px;
   margin-top: auto;
-  color: var(--ink-dim);
+  color: var(--ink-faint);
   transition: transform 0.15s, color 0.15s;
 }
 
@@ -272,8 +280,8 @@ nav {
   color: var(--red);
 }
 
-.chooser-card--dark:hover .chooser-arrow {
-  color: var(--gold);
+.chooser-card--hiring:hover .chooser-arrow {
+  color: var(--gold-ink);
 }
 
 /* Form page */
@@ -281,6 +289,12 @@ nav {
   max-width: 760px;
   margin: 0 auto;
   padding: 72px 24px 100px;
+}
+
+/* Short single-purpose pages (the employer connect form) shouldn't stretch
+   a handful of fields across the full form width. */
+.form-page--narrow {
+  max-width: 560px;
 }
 
 .form-header {
@@ -315,7 +329,7 @@ nav {
 
 .form-header p.cta-line {
   font-weight: 600;
-  color: var(--gold);
+  color: var(--red-deep);
 }
 
 /* Fieldsets */
@@ -331,7 +345,7 @@ legend {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--red-deep);
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border);
@@ -359,6 +373,10 @@ legend {
   gap: 6px;
 }
 
+.field + .field {
+  margin-top: 16px;
+}
+
 label {
   font-size: 13px;
   font-weight: 500;
@@ -366,7 +384,7 @@ label {
 }
 
 .req {
-  color: var(--red);
+  color: var(--red-deep);
 }
 
 .optional {
@@ -406,20 +424,15 @@ textarea:focus {
 
 input::placeholder,
 textarea::placeholder {
-  color: var(--ink-faint);
+  color: var(--placeholder);
 }
 
 select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23F4F1E9' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2316171A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
   padding-right: 36px;
   cursor: pointer;
-}
-
-select option {
-  background: var(--surface);
-  color: var(--ink);
 }
 
 textarea {
@@ -493,6 +506,7 @@ textarea {
   cursor: pointer;
   transition: border-color 0.15s;
   position: relative;
+  background: var(--surface);
 }
 
 .radio-label input[type="radio"]:checked {
@@ -555,6 +569,7 @@ textarea {
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
   position: relative;
+  background: var(--surface);
 }
 
 .checkbox-label input[type="checkbox"]:checked {
@@ -569,7 +584,7 @@ textarea {
   left: 4px;
   width: 4px;
   height: 8px;
-  border: 2px solid var(--bg);
+  border: 2px solid var(--surface);
   border-top: none;
   border-left: none;
   transform: rotate(45deg);
@@ -618,7 +633,7 @@ textarea {
   height: 54px;
   margin-top: 8px;
   background: var(--red);
-  color: var(--ink);
+  color: #FFFFFF;
   font-family: var(--font-body);
   font-size: 15px;
   font-weight: 600;
@@ -634,7 +649,7 @@ textarea {
 }
 
 .btn-submit:hover {
-  background: #ff5138;
+  background: var(--red-deep);
   transform: translateY(-1px);
 }
 
@@ -648,7 +663,7 @@ textarea {
   width: 64px;
   height: 64px;
   background: var(--red);
-  color: var(--ink);
+  color: #FFFFFF;
   font-size: 28px;
   display: flex;
   align-items: center;
@@ -692,13 +707,36 @@ footer {
     font-size: 20px;
   }
 
+  .logo .flame {
+    width: 16px;
+    height: 21px;
+  }
+
   .nav-links {
     gap: 6px;
   }
 
   .nav-btn {
     font-size: 11px;
-    padding: 6px 10px;
+    padding: 6px 9px;
+  }
+}
+
+/* Narrow phones (~360px): the logo plus both nav labels need ~348px against
+   320px of usable width, so everything in the bar steps down once more. */
+@media (max-width: 400px) {
+  .logo {
+    font-size: 18px;
+    gap: 7px;
+  }
+
+  .nav-links {
+    gap: 4px;
+  }
+
+  .nav-btn {
+    font-size: 10px;
+    padding: 5px 8px;
   }
 
   .form-page {
@@ -714,19 +752,41 @@ footer {
     grid-template-columns: 1fr;
   }
 
+  /* Tightened so both chooser cards land above the fold on a typical phone
+     rather than the second one peeking off the bottom edge. */
   .home-page {
-    padding: 72px 20px 80px;
+    padding: 44px 20px 64px;
+  }
+
+  .home-eyebrow {
+    margin-bottom: 16px;
   }
 
   .home-hero h1 {
-    font-size: 34px;
+    font-size: 32px;
   }
 
   .home-hero p {
-    margin-bottom: 40px;
+    font-size: 16px;
+    margin-bottom: 32px;
   }
 
   .chooser {
     grid-template-columns: 1fr;
+  }
+
+  /* Both choices must be visible without scrolling on a phone, so the cards
+     reduce to just their titles -- the descriptions are desktop-only. */
+  .chooser-card {
+    gap: 20px;
+    padding: 24px 22px;
+  }
+
+  .chooser-desc {
+    display: none;
+  }
+
+  .chooser-title {
+    font-size: 26px;
   }
 }

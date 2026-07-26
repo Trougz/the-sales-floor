@@ -1,19 +1,19 @@
-from django.db import transaction
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from .models import Candidate, Company, CrmTool, Industry, Requisition, WorkStyle
+from .models import Candidate, Company, CrmTool, Industry, WorkStyle
 
 REQUIRED_FIELDS = [
     'name', 'email', 'phone', 'company',
     'years', 'desired_ote', 'relocation',
 ]
 
-EMPLOYER_REQUIRED_FIELDS = [
-    'company_name', 'contact_name', 'contact_email',
-    'role_title', 'role_type', 'timeline',
-]
+# The public employer form is a networking capture, not a job post -- it only
+# collects who the company is and how to reach them. Requisitions (role,
+# comp, timeline) are entered by a recruiter in the admin after a real
+# conversation, so nothing here creates one.
+EMPLOYER_REQUIRED_FIELDS = ['company_name', 'contact_email']
 
 
 @csrf_exempt
@@ -71,48 +71,30 @@ def submit_employer_request(request):
         )
 
     try:
-        # Atomic so a bad requisition value can't leave behind an orphan
-        # Company row from the get_or_create above.
-        with transaction.atomic():
-            # Company.name is unique, so a company posting a second role must
-            # reuse its existing row rather than blowing up on the constraint.
-            company, created = Company.objects.get_or_create(
-                name=data['company_name'].strip(),
-                defaults={
-                    'contact_name': data['contact_name'].strip(),
-                    'contact_email': data['contact_email'].strip(),
-                    'contact_phone': data.get('contact_phone', '').strip(),
-                },
-            )
-            if not created:
-                # Refresh contact details from the latest submission, but only
-                # where a value was actually supplied -- omitting an optional
-                # field must not wipe what we already have on file.
-                updated = []
-                for field, value in (
-                    ('contact_name', data['contact_name'].strip()),
-                    ('contact_email', data['contact_email'].strip()),
-                    ('contact_phone', data.get('contact_phone', '').strip()),
-                ):
-                    if value and getattr(company, field) != value:
-                        setattr(company, field, value)
-                        updated.append(field)
-                if updated:
-                    company.save(update_fields=updated)
-
-            requisition = Requisition.objects.create(
-                company=company,
-                title=data['role_title'].strip(),
-                role_type=data['role_type'],
-                timeline=data['timeline'],
-                # 'Other' (and anything unseeded) has no Industry row -- leave
-                # null rather than rejecting an otherwise valid submission.
-                industry=Industry.objects.filter(name=data.get('industry', '')).first(),
-                comp_min=int(data['comp_min']) if data.get('comp_min') else None,
-                comp_max=int(data['comp_max']) if data.get('comp_max') else None,
-                notes=data.get('notes', '').strip(),
-            )
+        # Company.name is unique, so someone submitting twice reuses their
+        # existing row rather than blowing up on the constraint.
+        company, created = Company.objects.get_or_create(
+            name=data['company_name'].strip(),
+            defaults={
+                'contact_email': data['contact_email'].strip(),
+                'contact_phone': data.get('contact_phone', '').strip(),
+            },
+        )
+        if not created:
+            # Refresh contact details from the latest submission, but only
+            # where a value was actually supplied -- omitting an optional
+            # field must not wipe what we already have on file.
+            updated = []
+            for field, value in (
+                ('contact_email', data['contact_email'].strip()),
+                ('contact_phone', data.get('contact_phone', '').strip()),
+            ):
+                if value and getattr(company, field) != value:
+                    setattr(company, field, value)
+                    updated.append(field)
+            if updated:
+                company.save(update_fields=updated)
     except (ValueError, KeyError) as err:
         return JsonResponse({'result': 'error', 'message': f'Invalid field value: {err}'}, status=400)
 
-    return JsonResponse({'result': 'success', 'id': requisition.id})
+    return JsonResponse({'result': 'success', 'id': company.id})

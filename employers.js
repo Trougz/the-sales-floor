@@ -34,8 +34,8 @@ form.addEventListener('submit', async e => {
     success.hidden = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {
-    submitBtn.textContent = 'Submit Hiring Request';
+    submitBtn.textContent = "Let's Connect";
     submitBtn.disabled = false;
-    alert("Something went wrong submitting your request. Please try again — if it keeps failing, email us directly so we don't lose your details.");
+    alert("Something went wrong sending your details. Please try again — if it keeps failing, email us directly so we don't lose them.");
   }
 });
