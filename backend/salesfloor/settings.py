@@ -148,3 +148,17 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = os.environ.get('MEDIA_ROOT', str(BASE_DIR / 'media'))
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Django's default logging only prints request tracebacks to console when
+# DEBUG=True (otherwise it tries to email an unconfigured admin and the
+# error goes nowhere visible) -- send them to console/Render logs instead.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {'class': 'logging.StreamHandler'},
+    },
+    'loggers': {
+        'django': {'handlers': ['console'], 'level': 'INFO'},
+    },
+}
