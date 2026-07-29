@@ -41,8 +41,6 @@ RANKING_SCHEMA = {
     'properties': {
         'ranking_score': {
             'type': 'integer',
-            'minimum': 0,
-            'maximum': 100,
             'description': 'Overall hireability score, 0-100, higher is better.',
         },
         'summary': {
