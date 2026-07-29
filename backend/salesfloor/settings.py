@@ -154,6 +154,13 @@ MEDIA_ROOT = os.environ.get('MEDIA_ROOT', str(BASE_DIR / 'media'))
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# AI resume ranking (candidates.ai). No local-dev default for the key --
+# extract_structured() raises AIConfigurationError if it's unset, which
+# callers (management commands, admin actions) catch and skip/report rather
+# than crash. AI_MODEL is swappable via env var alone, no deploy needed.
+ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
+AI_MODEL = os.environ.get('AI_MODEL', 'claude-opus-5')
+
 # Django's default logging only prints request tracebacks to console when
 # DEBUG=True (otherwise it tries to email an unconfigured admin and the
 # error goes nowhere visible) -- send them to console/Render logs instead.
