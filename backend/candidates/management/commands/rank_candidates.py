@@ -1,3 +1,5 @@
+import sys
+
 from django.core.management.base import BaseCommand
 
 from candidates.ai.client import AIConfigurationError
@@ -23,6 +25,10 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        # Ensure UTF-8 output on Windows (handles non-ASCII in resume text / Claude summaries)
+        if sys.stdout.encoding != 'utf-8':
+            sys.stdout.reconfigure(encoding='utf-8')
+
         candidates = Candidate.objects.select_related('resume_extraction')
         if options['candidate_id'] is not None:
             candidates = candidates.filter(pk=options['candidate_id'])

@@ -1,3 +1,5 @@
+import sys
+
 import pdfplumber
 from django.core.management.base import BaseCommand
 from docx import Document
@@ -34,6 +36,12 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        # Ensure UTF-8 output on Windows (handles non-ASCII in candidate names / resume text)
+        if sys.stdout.encoding != 'utf-8':
+            sys.stdout.reconfigure(encoding='utf-8')
+        if sys.stderr.encoding != 'utf-8':
+            sys.stderr.reconfigure(encoding='utf-8')
+
         candidates = Candidate.objects.exclude(resume='').select_related('resume_extraction')
         if options['candidate_id'] is not None:
             candidates = candidates.filter(pk=options['candidate_id'])
