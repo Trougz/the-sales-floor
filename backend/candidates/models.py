@@ -89,6 +89,11 @@ class Candidate(models.Model):
     ranking_score = models.PositiveSmallIntegerField(
         null=True, blank=True, help_text='0-100, higher is better'
     )
+    # Set by the AI ranking pipeline (candidates.ai.ranking) whenever it writes
+    # ranking_score, so recruiters/admin can tell a fresh score from a stale
+    # one, or from a value someone hand-typed (which leaves these blank).
+    ranking_computed_at = models.DateTimeField(null=True, blank=True)
+    ranking_model_version = models.CharField(max_length=100, blank=True)
     internal_notes = models.TextField(blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -181,3 +186,27 @@ class Match(models.Model):
 
     def __str__(self):
         return f'{self.candidate} -> {self.requisition} ({self.stage})'
+
+
+class ResumeExtraction(models.Model):
+    """Cached plain-text extraction of a Candidate's resume file.
+
+    Kept separate from Candidate rather than a field on it, since it's a
+    derived artifact (re-computed by the extract_resumes management command)
+    with its own error state, not part of the candidate's submitted data.
+    source_filename is the cache-invalidation key: extract_resumes only
+    re-parses when it no longer matches candidate.resume.name, i.e. the
+    resume file was replaced.
+    """
+    candidate = models.OneToOneField(
+        Candidate, on_delete=models.CASCADE, related_name='resume_extraction'
+    )
+    source_filename = models.CharField(max_length=255)
+    raw_text = models.TextField(blank=True)
+    # Non-empty means extraction failed for this file (e.g. unsupported
+    # legacy .doc, corrupt PDF); raw_text will be empty in that case.
+    extraction_error = models.TextField(blank=True)
+    extracted_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'Resume extraction for {self.candidate}'
