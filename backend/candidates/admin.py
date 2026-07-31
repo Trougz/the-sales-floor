@@ -32,7 +32,9 @@ class CandidateAdmin(admin.ModelAdmin):
     search_fields = ['name', 'email', 'phone', 'current_company_name', 'linkedin_url']
     filter_horizontal = ['work_styles', 'industries', 'crm_tools']
     list_editable = ['status', 'ranking_score']
-    readonly_fields = ['resume_link']
+    # ranking_notes is read-only because it's overwritten wholesale on every
+    # re-rank -- hand edits would just be lost on the next run.
+    readonly_fields = ['resume_link', 'ranking_notes']
     ordering = ['-created_at']
     inlines = [MatchInline]
     actions = ['re_rank_selected_candidates']

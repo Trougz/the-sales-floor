@@ -10,7 +10,7 @@ from candidates.models import Candidate
 class Command(BaseCommand):
     help = (
         'Score candidates with the AI ranking pipeline, writing '
-        'Candidate.ranking_score/ranking_computed_at/ranking_model_version. '
+        'Candidate.ranking_score/ranking_computed_at/ranking_model_version/ranking_notes. '
         'Run extract_resumes first so resume text is available to rank against.'
     )
 
@@ -38,7 +38,7 @@ class Command(BaseCommand):
         ranked = failed = 0
         for candidate in candidates:
             try:
-                result = rank_candidate(candidate)
+                rank_candidate(candidate)
             except AIConfigurationError as exc:
                 self.stderr.write(self.style.ERROR(str(exc)))
                 return
@@ -48,8 +48,8 @@ class Command(BaseCommand):
                 continue
 
             ranked += 1
-            self.stdout.write(f'{candidate}: {result["ranking_score"]} -- {result["summary"]}')
-            if result['flags']:
-                self.stdout.write(self.style.WARNING(f'  flags: {", ".join(result["flags"])}'))
 
-        self.stdout.write(self.style.SUCCESS(f'Ranked {ranked} candidate(s) ({failed} failed).'))
+        self.stdout.write(self.style.SUCCESS(
+            f'Ranked {ranked} candidate(s) ({failed} failed). '
+            'Scores and notes are saved on each Candidate -- view them in /admin/.'
+        ))

@@ -94,6 +94,11 @@ class Candidate(models.Model):
     # one, or from a value someone hand-typed (which leaves these blank).
     ranking_computed_at = models.DateTimeField(null=True, blank=True)
     ranking_model_version = models.CharField(max_length=100, blank=True)
+    # Overwritten wholesale on every re-rank -- separate from internal_notes,
+    # which is recruiter-authored and must never be clobbered by the AI.
+    ranking_notes = models.TextField(
+        blank=True, help_text="AI-generated summary/flags from the last ranking run."
+    )
     internal_notes = models.TextField(blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
