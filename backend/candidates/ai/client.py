@@ -10,7 +10,7 @@ import os
 import anthropic
 from django.conf import settings
 
-MAX_TOKENS = 1536
+MAX_TOKENS = 2048
 
 
 class AIConfigurationError(RuntimeError):

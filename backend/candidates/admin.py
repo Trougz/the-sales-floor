@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
 
 from .ai.client import AIConfigurationError
 from .ai.ranking import rank_candidate
@@ -24,17 +24,19 @@ class CandidateAdmin(admin.ModelAdmin):
     list_display = [
         'name', 'current_title', 'current_company_name', 'years_experience',
         'quota_attainment_pct', 'desired_ote', 'resume_link', 'status',
-        'ranking_score', 'created_at',
+        'ranking_score', 'promotion_readiness', 'created_at',
     ]
     list_filter = [
-        'status', 'current_title', 'open_to_relocation', 'work_styles', 'industries', 'crm_tools',
+        'status', 'current_title', 'promotion_readiness',
+        'open_to_relocation', 'work_styles', 'industries', 'crm_tools',
     ]
     search_fields = ['name', 'email', 'phone', 'current_company_name', 'linkedin_url']
     filter_horizontal = ['work_styles', 'industries', 'crm_tools']
     list_editable = ['status', 'ranking_score']
-    # ranking_notes is read-only because it's overwritten wholesale on every
-    # re-rank -- hand edits would just be lost on the next run.
-    readonly_fields = ['resume_link', 'ranking_notes']
+    # ranking_notes/ranking_criteria/promotion_notes are read-only because
+    # they're overwritten wholesale on every re-rank -- hand edits would just
+    # be lost on the next run.
+    readonly_fields = ['resume_link', 'ranking_notes', 'ranking_criteria_display', 'promotion_notes']
     ordering = ['-created_at']
     inlines = [MatchInline]
     actions = ['re_rank_selected_candidates']
@@ -48,6 +50,20 @@ class CandidateAdmin(admin.ModelAdmin):
         return format_html(
             '<a href="{}" target="_blank" rel="noopener">Open</a>', obj.resume.url
         )
+
+    @admin.display(description='ranking criteria')
+    def ranking_criteria_display(self, obj):
+        if not obj.ranking_criteria:
+            return '—'
+        rows = format_html_join(
+            '',
+            '<tr><td style="padding-right:1em">{}</td><td style="padding-right:1em">{}</td><td>{}</td></tr>',
+            (
+                (item.get('name', ''), item.get('score', ''), item.get('rationale', ''))
+                for item in obj.ranking_criteria
+            ),
+        )
+        return format_html('<table>{}</table>', rows)
 
     @admin.action(description='Re-rank selected candidates (AI)')
     def re_rank_selected_candidates(self, request, queryset):
