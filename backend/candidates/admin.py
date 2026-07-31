@@ -6,9 +6,11 @@ from .ai.ranking import rank_candidate
 from .models import Candidate, Company, CrmTool, Industry, Match, Requisition, WorkStyle
 
 # re_rank_selected_candidates runs synchronously inside the admin request, one
-# Claude call per candidate -- fine for a handful, but a large selection would
-# risk a request timeout. Point recruiters at the management command instead.
-MAX_CANDIDATES_PER_ADMIN_RERANK = 20
+# Claude call per candidate -- gunicorn kills the worker if the request runs
+# longer than its --timeout (see render.yaml), so this must stay low enough
+# that a full selection reliably finishes first. Point recruiters at the
+# management command for anything larger.
+MAX_CANDIDATES_PER_ADMIN_RERANK = 5
 
 
 class MatchInline(admin.TabularInline):
