@@ -23,8 +23,9 @@ class MatchInline(admin.TabularInline):
 class CandidateAdmin(admin.ModelAdmin):
     list_display = [
         'name', 'current_title', 'current_company_name', 'years_experience',
-        'quota_attainment_pct', 'desired_ote', 'resume_link', 'status',
-        'ranking_score', 'promotion_readiness', 'created_at',
+        'quota_attainment_pct', 'desired_ote', 'resume_link',
+        'resume_extraction_status', 'status', 'ranking_score',
+        'promotion_readiness', 'created_at',
     ]
     list_filter = [
         'status', 'current_title', 'promotion_readiness',
@@ -36,10 +37,18 @@ class CandidateAdmin(admin.ModelAdmin):
     # ranking_notes/ranking_criteria/promotion_notes are read-only because
     # they're overwritten wholesale on every re-rank -- hand edits would just
     # be lost on the next run.
-    readonly_fields = ['resume_link', 'ranking_notes', 'ranking_criteria_display', 'promotion_notes']
+    readonly_fields = [
+        'resume_link', 'resume_extraction_status', 'ranking_notes',
+        'ranking_criteria_display', 'promotion_notes',
+    ]
     ordering = ['-created_at']
     inlines = [MatchInline]
     actions = ['re_rank_selected_candidates']
+
+    def get_queryset(self, request):
+        # resume_extraction_status is shown on every changelist row; avoid
+        # one extra query per candidate to fetch it.
+        return super().get_queryset(request).select_related('resume_extraction')
 
     @admin.display(description='resume')
     def resume_link(self, obj):
@@ -50,6 +59,22 @@ class CandidateAdmin(admin.ModelAdmin):
         return format_html(
             '<a href="{}" target="_blank" rel="noopener">Open</a>', obj.resume.url
         )
+
+    @admin.display(description='resume text')
+    def resume_extraction_status(self, obj):
+        # Surfaces whether the AI ranking pipeline actually had resume text
+        # to work with -- rank_candidate() extracts on demand now, but a
+        # failed extraction (unsupported .doc, scanned PDF, etc.) still means
+        # ranking ran on form fields alone, so make that visible rather than
+        # silent.
+        if not obj.resume:
+            return '—'
+        extraction = getattr(obj, 'resume_extraction', None)
+        if not extraction:
+            return 'Not yet extracted'
+        if extraction.extraction_error:
+            return format_html('<span style="color:#b00">Error: {}</span>', extraction.extraction_error)
+        return f'OK ({len(extraction.raw_text)} chars)'
 
     @admin.display(description='ranking criteria')
     def ranking_criteria_display(self, obj):

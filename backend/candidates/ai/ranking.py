@@ -3,6 +3,7 @@ from django.utils import timezone
 
 from . import rubric
 from .client import extract_structured
+from ..resume_text import ensure_resume_extraction
 
 
 def rank_candidate(candidate) -> dict:
@@ -11,8 +12,12 @@ def rank_candidate(candidate) -> dict:
     promotion_notes back onto it. Returns the full model response (including
     `summary`/`flags`) for callers that also want to surface it immediately
     (e.g. the admin action's message_user calls).
+
+    Parses the resume on demand (via ensure_resume_extraction) if it hasn't
+    been extracted yet, so ranking never silently runs on form fields alone
+    just because extract_resumes wasn't run first.
     """
-    extraction = getattr(candidate, 'resume_extraction', None)
+    extraction = ensure_resume_extraction(candidate)
     resume_text = extraction.raw_text if extraction and not extraction.extraction_error else ''
 
     result = extract_structured(
