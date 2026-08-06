@@ -68,8 +68,11 @@ Weigh signals according to the candidate's current/target role:
   Quota attainment is a weaker signal for these roles than for AE, since \
   SDRs/BDRs are typically measured on activity rather than closed revenue.
 - AE: quota attainment percentage is a strong signal. Deal-closing and \
-  negotiation language in the resume matters. Comp trajectory (current OTE \
-  vs desired OTE) is a soft signal of seniority.
+  negotiation language in the resume matters. Comp trajectory is a soft \
+  signal of seniority -- current OTE is a specific figure, but desired OTE \
+  is a band the candidate selected (e.g. "$140k-$250k"), not an exact \
+  number, so compare whether current OTE falls within, below, or above \
+  that band rather than computing a precise delta.
 - Sales Manager: management, coaching, and team-building language; tenure \
   managing or leading others; title progression toward management.
 - If current_title is "Other" or blank, score based on resume content and \
