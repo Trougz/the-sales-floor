@@ -175,7 +175,6 @@ def build_user_content(candidate, resume_text: str) -> str:
         f'Years of experience: {candidate.years_experience}',
         f'Quota attainment last period: '
         f'{candidate.quota_attainment_pct if candidate.quota_attainment_pct is not None else "(not provided)"}%',
-        f'Current base salary: {candidate.base_salary if candidate.base_salary is not None else "(not provided)"}',
         f'Current OTE: {candidate.ote if candidate.ote is not None else "(not provided)"}',
         f'Desired OTE: {candidate.desired_ote}',
         f'Industries: {", ".join(i.name for i in candidate.industries.all()) or "(none listed)"}',

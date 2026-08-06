@@ -91,15 +91,8 @@
 
         <!-- Section 3: Compensation -->
         <fieldset>
-          <legend>Compensation</legend>
-          <div class="grid-3">
-            <div class="field">
-              <label for="base">Current Base Salary [USD]</label>
-              <div class="input-prefix">
-                <span>$</span>
-                <input type="number" id="base" name="base" placeholder="75,000" min="0" />
-              </div>
-            </div>
+          <legend>Compensation [USD]</legend>
+          <div class="grid-2">
             <div class="field">
               <label for="ote">Current OTE (Base + Commission)</label>
               <div class="input-prefix">
@@ -109,10 +102,14 @@
             </div>
             <div class="field">
               <label for="desired-ote">Desired OTE <span class="req">*</span></label>
-              <div class="input-prefix">
-                <span>$</span>
-                <input type="number" id="desired-ote" name="desired_ote" placeholder="150,000" min="0" required />
-              </div>
+              <select id="desired-ote" name="desired_ote" required>
+                <option value="" disabled selected>Select a range</option>
+                <option value="$50k-$80k">$50k – $80k</option>
+                <option value="$80k-$110k">$80k – $110k</option>
+                <option value="$110k-$140k">$110k – $140k</option>
+                <option value="$140k-$250k">$140k – $250k</option>
+                <option value="$250k+">$250k+</option>
+              </select>
             </div>
           </div>
         </fieldset>

@@ -11,6 +11,17 @@ TITLE_CHOICES = [
     ('Other', 'Other'),
 ]
 
+# OTE bands rather than a raw number -- coarser, but candidates give more
+# honest answers to a range than a specific figure, and it's what this
+# pool's recruiting conversations actually work off of.
+DESIRED_OTE_RANGE_CHOICES = [
+    ('$50k-$80k', '$50k – $80k'),
+    ('$80k-$110k', '$80k – $110k'),
+    ('$110k-$140k', '$110k – $140k'),
+    ('$140k-$250k', '$140k – $250k'),
+    ('$250k+', '$250k+'),
+]
+
 
 class Industry(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -70,9 +81,8 @@ class Candidate(models.Model):
     )
 
     # Compensation
-    base_salary = models.PositiveIntegerField(null=True, blank=True)
     ote = models.PositiveIntegerField(null=True, blank=True, verbose_name='current OTE')
-    desired_ote = models.PositiveIntegerField()
+    desired_ote = models.CharField(max_length=20, choices=DESIRED_OTE_RANGE_CHOICES)
 
     # Preferences
     open_to_relocation = models.BooleanField()

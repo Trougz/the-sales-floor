@@ -22,7 +22,7 @@ class ResumeDownloadTests(TestCase):
             phone='555-0100',
             current_company_name='Acme',
             years_experience=5,
-            desired_ote=150000,
+            desired_ote='$140k-$250k',
             open_to_relocation=True,
             resume=SimpleUploadedFile('resume.pdf', b'%PDF-1.4 fake', content_type='application/pdf'),
         )
@@ -140,7 +140,7 @@ class RecruitersGroupTests(TestCase):
             phone='555-0100',
             current_company_name='Acme',
             years_experience=5,
-            desired_ote=150000,
+            desired_ote='$140k-$250k',
             open_to_relocation=True,
             resume=SimpleUploadedFile('resume.pdf', b'%PDF-1.4 fake'),
         )
