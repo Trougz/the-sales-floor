@@ -637,6 +637,12 @@ textarea {
   border-color: var(--red);
 }
 
+.file-hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--red-deep);
+}
+
 /* Submit */
 .btn-submit {
   width: 100%;
