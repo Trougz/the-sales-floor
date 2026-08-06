@@ -377,6 +377,16 @@ legend {
   margin-top: 16px;
 }
 
+/* Grid children handle vertical spacing via the grid's own `gap`, not this
+   margin -- `.field + .field` matches DOM adjacency regardless of grid
+   column, so without this reset every 2nd/3rd field in a row (which is
+   still a ".field" following another ".field" in markup) gets pushed 16px
+   below its row-mate, throwing every row out of alignment. */
+.grid-2 > .field,
+.grid-3 > .field {
+  margin-top: 0;
+}
+
 label {
   font-size: 13px;
   font-weight: 500;
@@ -696,7 +706,13 @@ footer {
   border-top: 1px solid var(--border);
 }
 
-/* Responsive */
+/* Responsive
+   Everything below 640px is "mobile": nav shrinks, page padding/hero
+   sizing tightens, and any 2-column grid (chooser cards, form-field grids)
+   collapses to a single column. This all needs to live in the same
+   max-width:640px query -- most phones (390-428px, e.g. iPhone 12-15,
+   Pixel) are wider than 400px, so a query gated at max-width:400px misses
+   them entirely and they render at full desktop spacing/columns instead. */
 @media (max-width: 640px) {
   nav {
     padding: 0 20px;
@@ -720,31 +736,13 @@ footer {
     font-size: 11px;
     padding: 6px 9px;
   }
-}
-
-/* Narrow phones (~360px): the logo plus both nav labels need ~348px against
-   320px of usable width, so everything in the bar steps down once more. */
-@media (max-width: 400px) {
-  .logo {
-    font-size: 18px;
-    gap: 7px;
-  }
-
-  .nav-links {
-    gap: 4px;
-  }
-
-  .nav-btn {
-    font-size: 10px;
-    padding: 5px 8px;
-  }
 
   .form-page {
     padding: 40px 20px 80px;
   }
 
   .form-header h1 {
-    font-size: 30px;
+    font-size: 32px;
   }
 
   .grid-2,
@@ -776,7 +774,9 @@ footer {
   }
 
   /* Both choices must be visible without scrolling on a phone, so the cards
-     reduce to just their titles -- the descriptions are desktop-only. */
+     reduce to just their titles -- the descriptions are desktop-only. Also
+     avoids two side-by-side cards wrapping their titles to a different
+     number of lines and throwing the rows out of alignment with each other. */
   .chooser-card {
     gap: 20px;
     padding: 24px 22px;
@@ -788,5 +788,23 @@ footer {
 
   .chooser-title {
     font-size: 26px;
+  }
+}
+
+/* Narrow phones (~360px): the logo plus both nav labels need ~348px against
+   320px of usable width, so everything in the bar steps down once more. */
+@media (max-width: 400px) {
+  .logo {
+    font-size: 18px;
+    gap: 7px;
+  }
+
+  .nav-links {
+    gap: 4px;
+  }
+
+  .nav-btn {
+    font-size: 10px;
+    padding: 5px 8px;
   }
 }
