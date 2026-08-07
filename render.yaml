@@ -5,7 +5,13 @@ services:
     rootDir: backend
     plan: starter
     buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
-    startCommand: "gunicorn salesfloor.wsgi:application --timeout 90"
+    # --workers 3: gunicorn defaults to a single worker, which meant one slow
+    # request (an AI ranking call blocking on Claude for many seconds) made
+    # the whole site -- public forms, admin, everything -- unresponsive until
+    # it finished. With multiple workers, a ranking call only ties up one of
+    # them. Watch memory in Render's metrics after this deploys (starter plan
+    # is 512MB) and lower this if it's tight.
+    startCommand: "gunicorn salesfloor.wsgi:application --timeout 90 --workers 3"
     disk:
       name: resumes
       mountPath: /var/data
