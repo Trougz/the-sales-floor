@@ -10,7 +10,14 @@ from ..resume_text import ensure_resume_extraction
 # request runs longer than its --timeout (see render.yaml), so any caller
 # doing this inline must cap its batch to this size. The `rank_candidates`
 # management command isn't bound by this since it runs outside gunicorn.
-MAX_CANDIDATES_PER_BATCH = 5
+#
+# Confirmed in production (2026-08-07): 5 sequential live calls to the Opus
+# model, each carrying resume text in the prompt, blew past the 90s gunicorn
+# timeout and got the worker killed mid-batch (CRITICAL WORKER TIMEOUT) --
+# harmless (each candidate saves individually, so nothing corrupts), but the
+# in-flight request 500s. Keep this low enough that a full batch reliably
+# finishes with room to spare, even if an individual call runs slow.
+MAX_CANDIDATES_PER_BATCH = 2
 
 
 def rank_candidate(candidate) -> dict:

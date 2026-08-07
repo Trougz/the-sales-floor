@@ -5,6 +5,7 @@ from unittest.mock import patch
 from django.test import TestCase, override_settings
 from django.utils import timezone
 
+from .ai.ranking import MAX_CANDIDATES_PER_BATCH
 from .models import Candidate
 
 MEDIA_TMP = tempfile.mkdtemp()
@@ -61,8 +62,8 @@ class RankUnrankedTests(TestCase):
 
     @patch('candidates.automation_views.rank_candidate')
     def test_respects_batch_cap_and_reports_remaining(self, mock_rank):
-        # 7 unranked candidates, batch cap is 5 -- one call should only rank 5
-        # and report 2 remaining.
+        # MAX_CANDIDATES_PER_BATCH + 2 unranked candidates -- one call should
+        # only rank a full batch and report the other 2 as remaining.
         def fake_rank(candidate):
             candidate.ranking_score = 80
             candidate.ranking_computed_at = timezone.now()
@@ -70,17 +71,17 @@ class RankUnrankedTests(TestCase):
             candidate.save(update_fields=['ranking_score', 'ranking_computed_at', 'pass_fail'])
         mock_rank.side_effect = fake_rank
 
-        for i in range(7):
+        for i in range(MAX_CANDIDATES_PER_BATCH + 2):
             _make_candidate(email=f'c{i}@example.com')
 
         response = self._auth_post('/api/automation/rank-unranked/')
 
         self.assertEqual(response.status_code, 200)
         body = response.json()
-        self.assertEqual(body['ranked'], 5)
+        self.assertEqual(body['ranked'], MAX_CANDIDATES_PER_BATCH)
         self.assertEqual(body['failed'], 0)
         self.assertEqual(body['remaining'], 2)
-        self.assertEqual(mock_rank.call_count, 5)
+        self.assertEqual(mock_rank.call_count, MAX_CANDIDATES_PER_BATCH)
 
     @patch('candidates.automation_views.rank_candidate')
     def test_one_failure_does_not_stop_the_batch(self, mock_rank):
