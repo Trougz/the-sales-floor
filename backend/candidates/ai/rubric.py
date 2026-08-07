@@ -1,9 +1,9 @@
 """Ranking prompt + JSON schema for candidates.ai.ranking.
 
 Produces an overall ranking_score (0-100) plus a fixed 4-dimension,
-role-specific criteria breakdown, and a separate promotion-readiness call.
-The criteria dimensions are fixed per role (not model-chosen) so recruiters
-can compare candidates on the same axis in the admin -- see ROLE_CRITERIA.
+role-specific criteria breakdown. The criteria dimensions are fixed per
+role (not model-chosen) so recruiters can compare candidates on the same
+axis in the admin -- see ROLE_CRITERIA.
 """
 
 # Fixed, ordered dimension names per current_title. Keys mirror
@@ -48,17 +48,6 @@ ROLE_CRITERIA[''] = ROLE_CRITERIA['Other']
 # Applied uniformly across roles -- see candidates.ai.ranking.rank_candidate().
 PASS_THRESHOLD = 60
 
-# Next rung on the ladder, for the promotion-readiness call. SDR and BDR both
-# feed into AE; Sales Manager and Other/blank have no further rung tracked.
-NEXT_ROLE = {
-    'SDR': 'AE',
-    'BDR': 'AE',
-    'AE': 'Sales Manager',
-    'Sales Manager': None,
-    'Other': None,
-    '': None,
-}
-
 SYSTEM_PROMPT = """\
 You are helping a B2B sales recruiting firm rank a candidate's overall \
 strength as a hire, on a 0-100 scale where 100 is an outstanding candidate \
@@ -87,20 +76,6 @@ candidate's role (see "Criteria to score" in the user message). Score each \
 one 0-100 with a one-line, evidence-based rationale. Use the criteria names \
 exactly as given, in the order given -- do not rename, reorder, add, or \
 drop any.
-
-Separately, assess promotion readiness: whether this candidate's \
-experience suggests they're ready to move up to the next role on the \
-ladder (SDR/BDR -> AE, AE -> Sales Manager). This is independent of the \
-overall ranking_score -- a strong SDR can be "not_yet" ready for AE, and a \
-middling AE can still show "developing" management signal. You will be \
-told the next role name (or that there isn't one) in the user message:
-- If a next role is given, choose one of: "ready" (clear evidence they \
-  could handle it now), "developing" (some signal but not there yet), or \
-  "not_yet" (little to no evidence). Write 2-3 sentences of reasoning that \
-  cites concrete resume/field evidence and names the next role explicitly.
-- If no next role is given (Sales Manager, or Other/blank title), use \
-  "not_applicable" and say briefly why (e.g. no further rung tracked, or \
-  title unknown).
 
 Flag (in `flags`) anything that looks like a red flag or is worth a \
 recruiter's attention: unusually short tenure at multiple companies, \
@@ -152,20 +127,8 @@ RANKING_SCHEMA = {
             'required': [f'dimension_{i}' for i in range(1, 5)],
             'additionalProperties': False,
         },
-        'promotion_readiness': {
-            'type': 'string',
-            'enum': ['not_yet', 'developing', 'ready', 'not_applicable'],
-            'description': 'Readiness to move up to the next role on the ladder.',
-        },
-        'promotion_notes': {
-            'type': 'string',
-            'description': '2-3 sentences of evidence-based reasoning for promotion_readiness.',
-        },
     },
-    'required': [
-        'ranking_score', 'summary', 'flags', 'criteria',
-        'promotion_readiness', 'promotion_notes',
-    ],
+    'required': ['ranking_score', 'summary', 'flags', 'criteria'],
     'additionalProperties': False,
 }
 
@@ -174,7 +137,6 @@ def build_user_content(candidate, resume_text: str) -> str:
     """Assemble the structured-fields + resume/awards text sent to the model."""
     title = candidate.current_title
     criteria_names = ROLE_CRITERIA.get(title, ROLE_CRITERIA['Other'])
-    next_role = NEXT_ROLE.get(title)
 
     lines = [
         f'Current title: {title or "(not specified)"}',
@@ -189,8 +151,6 @@ def build_user_content(candidate, resume_text: str) -> str:
         '',
         'Criteria to score (use these exact names, in this order):',
         *(f'- {name}' for name in criteria_names),
-        '',
-        f'Next role for promotion assessment: {next_role or "(none -- use not_applicable)"}',
         '',
         'Awards / notable achievements (as submitted by the candidate):',
         candidate.awards.strip() or '(none provided)',

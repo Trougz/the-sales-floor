@@ -113,20 +113,6 @@ class Candidate(models.Model):
     # behind ranking_score: list of {name, score, rationale}. Also overwritten
     # wholesale on every re-rank.
     ranking_criteria = models.JSONField(default=list, blank=True)
-    PROMOTION_READINESS_CHOICES = [
-        ('not_yet', 'Not Yet'),
-        ('developing', 'Developing'),
-        ('ready', 'Ready'),
-        ('not_applicable', 'N/A'),
-    ]
-    promotion_readiness = models.CharField(
-        max_length=20, choices=PROMOTION_READINESS_CHOICES, blank=True
-    )
-    # AI's read on whether this candidate's experience supports moving up to
-    # the next role (SDR/BDR->AE, AE->Sales Manager). Separate from
-    # ranking_notes and internal_notes -- never conflate hire-worthiness with
-    # promotion potential.
-    promotion_notes = models.TextField(blank=True)
     internal_notes = models.TextField(blank=True)
 
     PASS_FAIL_CHOICES = [
@@ -134,7 +120,7 @@ class Candidate(models.Model):
         ('fail', 'Fail'),
     ]
     # Set by rank_candidate() alongside ranking_score (see candidates.ai.rubric.
-    # PASS_THRESHOLD) -- blank until ranked, same convention as promotion_readiness.
+    # PASS_THRESHOLD) -- blank until ranked.
     pass_fail = models.CharField(max_length=4, choices=PASS_FAIL_CHOICES, blank=True)
     # Idempotency guards for the n8n outreach automation: set once the
     # corresponding message has actually been sent, so a re-run of the

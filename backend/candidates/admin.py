@@ -18,21 +18,21 @@ class CandidateAdmin(admin.ModelAdmin):
         'name', 'current_title', 'current_company_name', 'years_experience',
         'quota_attainment_pct', 'desired_ote', 'resume_link',
         'resume_extraction_status', 'status', 'ranking_score', 'pass_fail',
-        'promotion_readiness', 'created_at',
+        'created_at',
     ]
     list_filter = [
-        'status', 'current_title', 'pass_fail', 'promotion_readiness',
+        'status', 'current_title', 'pass_fail',
         'open_to_relocation', 'work_styles', 'industries', 'crm_tools',
     ]
     search_fields = ['name', 'email', 'phone', 'current_company_name', 'linkedin_url']
     filter_horizontal = ['work_styles', 'industries', 'crm_tools']
     list_editable = ['status', 'ranking_score']
-    # ranking_notes/ranking_criteria/promotion_notes are read-only because
-    # they're overwritten wholesale on every re-rank -- hand edits would just
-    # be lost on the next run.
+    # ranking_notes/ranking_criteria are read-only because they're
+    # overwritten wholesale on every re-rank -- hand edits would just be
+    # lost on the next run.
     readonly_fields = [
         'resume_link', 'resume_extraction_status', 'ranking_notes',
-        'ranking_criteria_display', 'promotion_notes',
+        'ranking_criteria_display',
     ]
     ordering = ['-created_at']
     inlines = [MatchInline]
