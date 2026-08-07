@@ -163,7 +163,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # callers (management commands, admin actions) catch and skip/report rather
 # than crash. AI_MODEL is swappable via env var alone, no deploy needed.
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
-AI_MODEL = os.environ.get('AI_MODEL', 'claude-opus-5')
+AI_MODEL = os.environ.get('AI_MODEL', 'claude-sonnet-5')
 
 # Shared secret the n8n automation workflow sends as X-Automation-Key (see
 # candidates/automation_views.py). No local-dev default -- blank means every
