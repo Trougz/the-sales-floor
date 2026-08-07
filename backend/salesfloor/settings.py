@@ -182,5 +182,10 @@ LOGGING = {
     },
     'loggers': {
         'django': {'handlers': ['console'], 'level': 'INFO'},
+        # candidates.automation_views logs the real exception on a per-candidate
+        # ranking failure, since the JSON response only reports a count -- n8n
+        # has no UI to surface it, so Render's console log is the only place
+        # to see why a batch reported failures.
+        'candidates': {'handlers': ['console'], 'level': 'INFO'},
     },
 }

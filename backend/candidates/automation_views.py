@@ -9,6 +9,7 @@ phone) and can trigger paid Claude calls, so they're not public like
 submit_candidate/submit_employer_request.
 """
 import json
+import logging
 from functools import wraps
 
 from django.conf import settings
@@ -21,6 +22,8 @@ from django.views.decorators.http import require_GET, require_POST
 from .ai.client import AIConfigurationError
 from .ai.ranking import MAX_CANDIDATES_PER_BATCH, rank_candidate
 from .models import Candidate
+
+logger = logging.getLogger(__name__)
 
 
 def automation_auth_required(view):
@@ -53,8 +56,12 @@ def rank_unranked(request):
             ranked += 1
         except AIConfigurationError as exc:
             return JsonResponse({'result': 'error', 'message': str(exc)}, status=500)
-        except Exception as exc:  # noqa: BLE001 - one bad candidate must not stop the rest
+        except Exception:  # noqa: BLE001 - one bad candidate must not stop the rest
             failed += 1
+            # Unlike the admin action (which surfaces this via message_user),
+            # there's no UI here for n8n to display -- without this, a failed
+            # batch reports "5 failed" with zero way to find out why.
+            logger.exception('rank-unranked: ranking failed for candidate %s (%s)', candidate.id, candidate.email)
 
     remaining = Candidate.objects.filter(ranking_computed_at__isnull=True).count()
     return JsonResponse({'result': 'success', 'ranked': ranked, 'failed': failed, 'remaining': remaining})
