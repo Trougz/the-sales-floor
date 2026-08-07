@@ -2,15 +2,8 @@ from django.contrib import admin
 from django.utils.html import format_html, format_html_join
 
 from .ai.client import AIConfigurationError
-from .ai.ranking import rank_candidate
+from .ai.ranking import MAX_CANDIDATES_PER_BATCH, rank_candidate
 from .models import Candidate, Company, CrmTool, Industry, Match, Requisition, WorkStyle
-
-# re_rank_selected_candidates runs synchronously inside the admin request, one
-# Claude call per candidate -- gunicorn kills the worker if the request runs
-# longer than its --timeout (see render.yaml), so this must stay low enough
-# that a full selection reliably finishes first. Point recruiters at the
-# management command for anything larger.
-MAX_CANDIDATES_PER_ADMIN_RERANK = 5
 
 
 class MatchInline(admin.TabularInline):
@@ -24,11 +17,11 @@ class CandidateAdmin(admin.ModelAdmin):
     list_display = [
         'name', 'current_title', 'current_company_name', 'years_experience',
         'quota_attainment_pct', 'desired_ote', 'resume_link',
-        'resume_extraction_status', 'status', 'ranking_score',
+        'resume_extraction_status', 'status', 'ranking_score', 'pass_fail',
         'promotion_readiness', 'created_at',
     ]
     list_filter = [
-        'status', 'current_title', 'promotion_readiness',
+        'status', 'current_title', 'pass_fail', 'promotion_readiness',
         'open_to_relocation', 'work_styles', 'industries', 'crm_tools',
     ]
     search_fields = ['name', 'email', 'phone', 'current_company_name', 'linkedin_url']
@@ -92,10 +85,10 @@ class CandidateAdmin(admin.ModelAdmin):
 
     @admin.action(description='Re-rank selected candidates (AI)')
     def re_rank_selected_candidates(self, request, queryset):
-        if queryset.count() > MAX_CANDIDATES_PER_ADMIN_RERANK:
+        if queryset.count() > MAX_CANDIDATES_PER_BATCH:
             self.message_user(
                 request,
-                f'Select {MAX_CANDIDATES_PER_ADMIN_RERANK} or fewer at a time -- for a '
+                f'Select {MAX_CANDIDATES_PER_BATCH} or fewer at a time -- for a '
                 'larger batch, run `manage.py rank_candidates` instead.',
                 level='warning',
             )

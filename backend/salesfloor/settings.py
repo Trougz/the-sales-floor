@@ -165,6 +165,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 AI_MODEL = os.environ.get('AI_MODEL', 'claude-opus-5')
 
+# Shared secret the n8n automation workflow sends as X-Automation-Key (see
+# candidates/automation_views.py). No local-dev default -- blank means every
+# automation request is rejected, same failure-closed pattern as
+# ANTHROPIC_API_KEY.
+AUTOMATION_API_KEY = os.environ.get('AUTOMATION_API_KEY', '')
+
 # Django's default logging only prints request tracebacks to console when
 # DEBUG=True (otherwise it tries to email an unconfigured admin and the
 # error goes nowhere visible) -- send them to console/Render logs instead.

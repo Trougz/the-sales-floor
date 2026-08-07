@@ -44,6 +44,10 @@ ROLE_CRITERIA = {
 }
 ROLE_CRITERIA[''] = ROLE_CRITERIA['Other']
 
+# Minimum ranking_score (inclusive) for Candidate.pass_fail to be 'pass'.
+# Applied uniformly across roles -- see candidates.ai.ranking.rank_candidate().
+PASS_THRESHOLD = 60
+
 # Next rung on the ladder, for the promotion-readiness call. SDR and BDR both
 # feed into AE; Sales Manager and Other/blank have no further rung tracked.
 NEXT_ROLE = {

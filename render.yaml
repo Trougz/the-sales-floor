@@ -27,6 +27,8 @@ services:
           property: connectionString
       - key: ANTHROPIC_API_KEY
         sync: false
+      - key: AUTOMATION_API_KEY
+        sync: false
 
 databases:
   - name: salesfloor-db

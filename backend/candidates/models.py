@@ -129,6 +129,19 @@ class Candidate(models.Model):
     promotion_notes = models.TextField(blank=True)
     internal_notes = models.TextField(blank=True)
 
+    PASS_FAIL_CHOICES = [
+        ('pass', 'Pass'),
+        ('fail', 'Fail'),
+    ]
+    # Set by rank_candidate() alongside ranking_score (see candidates.ai.rubric.
+    # PASS_THRESHOLD) -- blank until ranked, same convention as promotion_readiness.
+    pass_fail = models.CharField(max_length=4, choices=PASS_FAIL_CHOICES, blank=True)
+    # Idempotency guards for the n8n outreach automation: set once the
+    # corresponding message has actually been sent, so a re-run of the
+    # twice-daily workflow doesn't nurture/invite the same candidate twice.
+    nurture_started_at = models.DateTimeField(null=True, blank=True)
+    booking_invite_sent_at = models.DateTimeField(null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
