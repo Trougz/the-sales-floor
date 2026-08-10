@@ -46,6 +46,12 @@ class QaReviewAccessTests(TestCase):
         response = self.client.get('/qa/candidates/')
         self.assertEqual(response.status_code, 403)
 
+    def test_superuser_gets_in_without_group_membership(self):
+        owner = User.objects.create_superuser('owner', password='pw')
+        self.client.force_login(owner)
+        response = self.client.get('/qa/candidates/')
+        self.assertEqual(response.status_code, 200)
+
     def test_reviewer_sees_pending_candidate(self):
         self.client.force_login(self.reviewer)
         response = self.client.get('/qa/candidates/')

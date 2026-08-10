@@ -39,7 +39,11 @@ def qa_reviewer_required(view):
     @login_required
     @staff_member_required
     def wrapper(request, *args, **kwargs):
-        if not request.user.groups.filter(name=QA_GROUP_NAME).exists():
+        # Superusers already have unrestricted access to everything these
+        # pages show (and far more, via /admin/) -- the group requirement
+        # exists to let a non-superuser reviewer in without granting them
+        # that, not to gate the superusers themselves.
+        if not (request.user.is_superuser or request.user.groups.filter(name=QA_GROUP_NAME).exists()):
             raise PermissionDenied('Not a QA Reviewer.')
         return view(request, *args, **kwargs)
     return wrapper
