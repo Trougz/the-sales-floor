@@ -22,6 +22,10 @@ from candidates import views as candidate_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('candidates.urls')),
+    # Staff-session-gated QA review pages (candidates/qa_views.py). Kept out
+    # of api/ -- that prefix is the n8n shared-secret surface, not a place a
+    # human should be following an emailed link into.
+    path('qa/', include('candidates.qa_urls')),
     # Backs MEDIA_URL, so FileField.url (what the admin's file widget links to)
     # resolves. Staff-only, and deliberately not a plain static() route over
     # MEDIA_ROOT -- see serve_media's docstring.

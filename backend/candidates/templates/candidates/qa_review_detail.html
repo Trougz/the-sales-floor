@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>QA Review — {{ candidate.name }}</title>
+<style>
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; background: #f4f3f1; }
+  a.back-link { color: #555; text-decoration: none; font-size: 0.9rem; }
+  a.back-link:hover { text-decoration: underline; }
+  h1 { font-size: 1.6rem; margin: 0.5rem 0 0.1rem; }
+  .subtitle { color: #555; margin-bottom: 1.5rem; }
+  .messages { list-style: none; padding: 0; margin: 0 0 1rem; }
+  .messages li { padding: 0.6rem 0.9rem; border-radius: 6px; margin-bottom: 0.5rem; }
+  .messages .success { background: #e3f5e6; color: #1b6b2e; }
+  .messages .error { background: #fbe4e4; color: #a11212; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: #fff; border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
+  .card h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.03em; color: #555; margin: 0 0 0.75rem; }
+  .contact dt { color: #777; font-size: 0.8rem; }
+  .contact dd { margin: 0 0 0.6rem; }
+  .score-badge { display: inline-block; font-size: 2rem; font-weight: 800; color: #b3261e; }
+  .score-label { color: #777; font-size: 0.85rem; }
+  .notes { white-space: pre-wrap; line-height: 1.5; }
+  table.criteria { width: 100%; border-collapse: collapse; }
+  table.criteria td, table.criteria th { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid #eee; vertical-align: top; }
+  table.criteria th { color: #777; font-weight: 600; font-size: 0.8rem; }
+  iframe.resume { width: 100%; height: 700px; border: 1px solid #ddd; border-radius: 6px; }
+  .resume-fallback { margin-top: 0.5rem; font-size: 0.9rem; }
+  button.invite-btn { background: #b3261e; color: #fff; border: none; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 700; border-radius: 6px; cursor: pointer; }
+  button.invite-btn:hover { background: #931f18; }
+  .invite-sent { color: #1b6b2e; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="{% url 'qa-review-queue' %}">← Back to queue</a>
+<h1>{{ candidate.name }}</h1>
+<p class="subtitle">{{ candidate.get_current_title_display|default:"—" }} @ {{ candidate.current_company_name }}</p>
+
+{% if messages %}
+<ul class="messages">
+  {% for message in messages %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<div class="grid">
+  <div>
+    <div class="card contact">
+      <h2>Contact</h2>
+      <dl>
+        <dt>Email</dt><dd><a href="mailto:{{ candidate.email }}">{{ candidate.email }}</a></dd>
+        <dt>Phone</dt><dd>{{ candidate.phone }}</dd>
+        {% if candidate.linkedin_url %}
+        <dt>LinkedIn</dt><dd><a href="{{ candidate.linkedin_url }}" target="_blank" rel="noopener">{{ candidate.linkedin_url }}</a></dd>
+        {% endif %}
+        <dt>Years experience</dt><dd>{{ candidate.years_experience }}</dd>
+      </dl>
+    </div>
+
+    <div class="card">
+      <h2>AI Score</h2>
+      <div class="score-badge">{{ candidate.ranking_score }}</div>
+      <div class="score-label">/ 100 — {{ candidate.get_pass_fail_display }}</div>
+      <div class="notes" style="margin-top:1rem">{{ candidate.ranking_notes }}</div>
+    </div>
+
+    <div class="card">
+      <h2>Score breakdown</h2>
+      {% if candidate.ranking_criteria %}
+      <table class="criteria">
+        <thead><tr><th>Dimension</th><th>Score</th><th>Why</th></tr></thead>
+        <tbody>
+          {% for item in candidate.ranking_criteria %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.score }}</td>
+            <td>{{ item.rationale }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>No breakdown available.</p>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2>Next step</h2>
+      {% if candidate.booking_invite_sent_at %}
+        <p class="invite-sent">Invite sent {{ candidate.booking_invite_sent_at }}</p>
+      {% else %}
+        <form method="post" action="{% url 'qa-send-invite' candidate.id %}">
+          {% csrf_token %}
+          <button type="submit" class="invite-btn">Send Calendly Invite</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <h2>Resume</h2>
+      {% if candidate.resume %}
+        <iframe class="resume" src="{{ candidate.resume.url }}"></iframe>
+        <div class="resume-fallback"><a href="{{ candidate.resume.url }}" target="_blank" rel="noopener">Open in new tab</a></div>
+      {% else %}
+        <p>No resume on file.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

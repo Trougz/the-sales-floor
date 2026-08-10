@@ -171,6 +171,31 @@ AI_MODEL = os.environ.get('AI_MODEL', 'claude-sonnet-5')
 # ANTHROPIC_API_KEY.
 AUTOMATION_API_KEY = os.environ.get('AUTOMATION_API_KEY', '')
 
+# Public base URL of this site, used to build links (e.g. the QA review page
+# link in daily_report) that go into outbound emails. Deliberately not
+# request.build_absolute_uri() -- that would reflect whatever host called the
+# automation endpoint (n8n's own network path), not the URL a human should
+# actually click.
+SITE_BASE_URL = os.environ.get('SITE_BASE_URL', 'http://localhost:8000')
+
+# Static Calendly scheduling page candidates are invited to book on (see
+# candidates/qa_views.send_invite). No Calendly API/OAuth is used here --
+# Calendly's own hosted page shows the candidate available times.
+CALENDLY_SCHEDULING_URL = os.environ.get('CALENDLY_SCHEDULING_URL', '')
+
+# n8n webhook Django calls (from candidates/qa_views.send_invite) to trigger
+# the candidate's Calendly invite email. Authenticated with the same
+# AUTOMATION_API_KEY used for the inbound n8n -> Django direction, since
+# whoever holds that key can already read/write every /api/automation/
+# endpoint -- a second secret here wouldn't buy any real isolation.
+N8N_INVITE_WEBHOOK_URL = os.environ.get('N8N_INVITE_WEBHOOK_URL', '')
+
+# The only login form this project has is the admin's. qa_views' pages use
+# @login_required (stacked ahead of @staff_member_required, see
+# qa_reviewer_required), which without this would send anonymous users to
+# Django's default /accounts/login/ -- a URL nothing serves here.
+LOGIN_URL = '/admin/login/'
+
 # Django's default logging only prints request tracebacks to console when
 # DEBUG=True (otherwise it tries to email an unconfigured admin and the
 # error goes nowhere visible) -- send them to console/Render logs instead.

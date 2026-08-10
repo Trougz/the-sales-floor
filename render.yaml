@@ -35,6 +35,12 @@ services:
         sync: false
       - key: AUTOMATION_API_KEY
         sync: false
+      - key: SITE_BASE_URL
+        value: https://salesfloor-api.onrender.com
+      - key: CALENDLY_SCHEDULING_URL
+        sync: false
+      - key: N8N_INVITE_WEBHOOK_URL
+        sync: false
 
 databases:
   - name: salesfloor-db

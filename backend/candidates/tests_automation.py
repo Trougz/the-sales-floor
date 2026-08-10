@@ -138,6 +138,24 @@ class DailyReportTests(TestCase):
 
         self.assertEqual(response.json()['candidates'], [])
 
+    def test_includes_ranking_criteria_and_review_url(self):
+        candidate = _make_candidate(email='criteria@example.com')
+        candidate.ranking_score = 88
+        candidate.pass_fail = 'pass'
+        candidate.ranking_computed_at = timezone.now()
+        candidate.ranking_criteria = [{'name': 'Discovery', 'score': 90, 'rationale': 'Strong'}]
+        candidate.save(
+            update_fields=['ranking_score', 'pass_fail', 'ranking_computed_at', 'ranking_criteria']
+        )
+
+        response = self.client.get(
+            '/api/automation/daily-report/', HTTP_X_AUTOMATION_KEY='test-secret'
+        )
+
+        body = response.json()['candidates'][0]
+        self.assertEqual(body['ranking_criteria'], candidate.ranking_criteria)
+        self.assertEqual(body['review_url'], f'http://localhost:8000/qa/candidates/{candidate.id}/')
+
 
 @override_settings(MEDIA_ROOT=MEDIA_TMP, AUTOMATION_API_KEY='test-secret')
 class OutreachFeedTests(TestCase):

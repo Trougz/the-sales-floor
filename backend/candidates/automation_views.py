@@ -103,7 +103,12 @@ def daily_report(request):
                 'ranking_score': c.ranking_score,
                 'pass_fail': c.pass_fail,
                 'ranking_notes': c.ranking_notes,
+                'ranking_criteria': c.ranking_criteria,
                 'linkedin_url': c.linkedin_url,
+                # For the QA digest email -- lets n8n link straight to the
+                # staff review page (candidates/qa_views.py) instead of
+                # needing to know how to construct that URL itself.
+                'review_url': f'{settings.SITE_BASE_URL}/qa/candidates/{c.id}/',
             }
             for c in candidates
         ],

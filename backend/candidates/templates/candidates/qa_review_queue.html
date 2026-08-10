@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>QA Review Queue</title>
+<style>
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; background: #f4f3f1; }
+  h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+  .subtitle { color: #555; margin-bottom: 1.5rem; }
+  .messages { list-style: none; padding: 0; margin: 0 0 1rem; }
+  .messages li { padding: 0.6rem 0.9rem; border-radius: 6px; margin-bottom: 0.5rem; }
+  .messages .success { background: #e3f5e6; color: #1b6b2e; }
+  .messages .error { background: #fbe4e4; color: #a11212; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  th, td { text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid #eee; vertical-align: top; }
+  th { background: #ece9e5; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; color: #555; }
+  .score { font-weight: 700; }
+  .notes { color: #444; font-size: 0.9rem; max-width: 420px; }
+  a.review-link { color: #b3261e; font-weight: 600; text-decoration: none; }
+  a.review-link:hover { text-decoration: underline; }
+  .empty { padding: 2rem; text-align: center; color: #777; background: #fff; border-radius: 8px; }
+</style>
+</head>
+<body>
+
+<h1>QA Review Queue</h1>
+<p class="subtitle">Passing candidates waiting on a Calendly invite ({{ candidates|length }})</p>
+
+{% if messages %}
+<ul class="messages">
+  {% for message in messages %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if candidates %}
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Role</th>
+      <th>Score</th>
+      <th>Why</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for candidate in candidates %}
+    <tr>
+      <td>{{ candidate.name }}</td>
+      <td>{{ candidate.get_current_title_display|default:"—" }} @ {{ candidate.current_company_name }}</td>
+      <td class="score">{{ candidate.ranking_score }}</td>
+      <td class="notes">{{ candidate.ranking_notes|truncatewords:25 }}</td>
+      <td><a class="review-link" href="{% url 'qa-review-detail' candidate.id %}">Review →</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty">Nothing waiting on review right now.</div>
+{% endif %}
+
+</body>
+</html>
