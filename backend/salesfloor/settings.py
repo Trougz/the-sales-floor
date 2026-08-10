@@ -75,7 +75,12 @@ ROOT_URLCONF = 'salesfloor.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # Project-level overrides (e.g. templates/admin/index.html, which adds
+        # the QA Review Queue link) -- DIRS is checked before each app's own
+        # templates/, which is what lets {% extends "admin/index.html" %} in
+        # our override reach django.contrib.admin's original version instead
+        # of recursing into itself.
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
