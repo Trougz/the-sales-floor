@@ -2,11 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Candidate Review — {{ candidate.name }}</title>
+<title>Review — {{ candidate.name }}</title>
 <style>
   body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; background: #f4f3f1; }
   a.back-link { color: #555; text-decoration: none; font-size: 0.9rem; }
   a.back-link:hover { text-decoration: underline; }
+  .top-nav { display: flex; justify-content: space-between; align-items: baseline; }
+  .prev-next a { color: #b3261e; text-decoration: none; font-weight: 600; margin-left: 1rem; }
+  .prev-next a:hover { text-decoration: underline; }
   h1 { font-size: 1.6rem; margin: 0.5rem 0 0.1rem; }
   .subtitle { color: #555; margin-bottom: 1.5rem; }
   .messages { list-style: none; padding: 0; margin: 0 0 1rem; }
@@ -27,24 +30,29 @@
   table.criteria th { color: #777; font-weight: 600; font-size: 0.8rem; }
   iframe.resume { width: 100%; height: 700px; border: 1px solid #ddd; border-radius: 6px; }
   .resume-fallback { margin-top: 0.5rem; font-size: 0.9rem; }
-  .field { margin-bottom: 0.6rem; }
-  .field dt { color: #777; font-size: 0.8rem; display: inline; }
-  .form-row { margin-bottom: 1rem; }
-  .form-row label { display: block; font-weight: 600; margin-bottom: 0.3rem; }
-  .form-row input, .form-row textarea { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px; font: inherit; box-sizing: border-box; }
-  .form-row .errorlist { color: #a11212; list-style: none; padding: 0; margin: 0.3rem 0 0; font-size: 0.85rem; }
-  .actions { display: flex; gap: 0.75rem; }
-  button.save-btn { background: #b3261e; color: #fff; border: none; padding: 0.75rem 1.25rem; font-size: 0.95rem; font-weight: 700; border-radius: 6px; cursor: pointer; }
-  button.save-btn:hover { background: #931f18; }
-  button.save-btn.secondary { background: #555; }
-  button.save-btn.secondary:hover { background: #333; }
+  .score-form label { display: block; font-weight: 600; margin-bottom: 0.3rem; }
+  .score-form input[type=number] { width: 6rem; padding: 0.5rem; font-size: 1.1rem; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 1rem; }
+  .score-form textarea { width: 100%; min-height: 6rem; padding: 0.6rem; font-size: 0.95rem; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; box-sizing: border-box; margin-bottom: 1rem; }
+  .score-form .errorlist { color: #a11212; list-style: none; padding: 0; margin: 0 0 0.5rem; font-size: 0.85rem; }
+  .btn-row button { border: none; padding: 0.75rem 1.25rem; font-size: 1rem; font-weight: 700; border-radius: 6px; cursor: pointer; margin-right: 0.5rem; }
+  .btn-primary { background: #b3261e; color: #fff; }
+  .btn-primary:hover { background: #931f18; }
+  .btn-secondary { background: #ece9e5; color: #333; }
+  .btn-secondary:hover { background: #ddd; }
+  .already-scored { color: #1b6b2e; font-size: 0.85rem; margin-bottom: 1rem; }
 </style>
 </head>
 <body>
 
-<a class="back-link" href="{% url 'review-queue' %}">← Back to queue</a>
+<div class="top-nav">
+  <a class="back-link" href="{% url 'review-queue' %}">← Back to queue</a>
+  <div class="prev-next">
+    {% if prev_id %}<a href="{% url 'review-detail' prev_id %}">← Prev</a>{% endif %}
+    {% if next_id %}<a href="{% url 'review-detail' next_id %}">Next →</a>{% endif %}
+  </div>
+</div>
 <h1>{{ candidate.name }}</h1>
-<p class="subtitle">{{ candidate.get_current_title_display|default:"—" }} @ {{ candidate.current_company_name }}</p>
+<p class="subtitle">{{ candidate.get_current_title_display|default:"—" }} @ {{ candidate.current_company_name }} — {{ candidate.years_experience }} yrs experience</p>
 
 {% if messages %}
 <ul class="messages">
@@ -57,20 +65,18 @@
 <div class="grid">
   <div>
     <div class="card contact">
-      <h2>Contact & background</h2>
+      <h2>Contact</h2>
       <dl>
         <dt>Email</dt><dd><a href="mailto:{{ candidate.email }}">{{ candidate.email }}</a></dd>
         <dt>Phone</dt><dd>{{ candidate.phone }}</dd>
         {% if candidate.linkedin_url %}
         <dt>LinkedIn</dt><dd><a href="{{ candidate.linkedin_url }}" target="_blank" rel="noopener">{{ candidate.linkedin_url }}</a></dd>
         {% endif %}
-        <dt>Years experience</dt><dd>{{ candidate.years_experience }}</dd>
-        <dt>Quota attainment (last period)</dt><dd>{{ candidate.quota_attainment_pct|default:"—" }}{% if candidate.quota_attainment_pct is not None %}%{% endif %}</dd>
+        <dt>Quota attainment (last period)</dt><dd>{{ candidate.quota_attainment_pct|default:"—" }}{% if candidate.quota_attainment_pct %}%{% endif %}</dd>
         <dt>Current OTE</dt><dd>{{ candidate.ote|default:"—" }}</dd>
         <dt>Desired OTE</dt><dd>{{ candidate.get_desired_ote_display }}</dd>
         <dt>Industries</dt><dd>{% for i in candidate.industries.all %}{{ i.name }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</dd>
         <dt>CRM/tools</dt><dd>{% for t in candidate.crm_tools.all %}{{ t.name }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</dd>
-        <dt>Awards</dt><dd>{{ candidate.awards|default:"—" }}</dd>
       </dl>
     </div>
 
@@ -78,21 +84,42 @@
       <h2>AI score (for reference)</h2>
       <div class="score-badge">{{ candidate.ranking_score|default:"—" }}</div>
       <div class="score-label">/ 100 — {{ candidate.get_pass_fail_display|default:"not yet ranked" }}</div>
-      <div class="notes" style="margin-top:1rem">{{ candidate.ranking_notes }}</div>
+      <div class="notes" style="margin-top:1rem">{{ candidate.ranking_notes|default:"Not yet ranked by the AI." }}</div>
       {% if candidate.ranking_criteria %}
       <table class="criteria" style="margin-top:1rem">
         <thead><tr><th>Dimension</th><th>Score</th><th>Why</th></tr></thead>
         <tbody>
           {% for item in candidate.ranking_criteria %}
-          <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.score }}</td>
-            <td>{{ item.rationale }}</td>
-          </tr>
+          <tr><td>{{ item.name }}</td><td>{{ item.score }}</td><td>{{ item.rationale }}</td></tr>
           {% endfor %}
         </tbody>
       </table>
       {% endif %}
+    </div>
+
+    <div class="card">
+      <h2>Your score</h2>
+      {% if candidate.manual_score is not None %}
+      <p class="already-scored">
+        Currently {{ candidate.manual_score }}/100
+        {% if candidate.manual_ranked_by %}by {{ candidate.manual_ranked_by }}{% endif %}
+        {% if candidate.manual_ranked_at %}on {{ candidate.manual_ranked_at|date:"M j, Y" }}{% endif %}
+        — submitting below overwrites it.
+      </p>
+      {% endif %}
+      <form method="post" class="score-form">
+        {% csrf_token %}
+        {{ form.manual_score.errors }}
+        <label for="{{ form.manual_score.id_for_label }}">{{ form.manual_score.label }}</label>
+        {{ form.manual_score }}
+        {{ form.reasoning.errors }}
+        <label for="{{ form.reasoning.id_for_label }}">{{ form.reasoning.label }}</label>
+        {{ form.reasoning }}
+        <div class="btn-row">
+          <button type="submit" name="save_next" class="btn-primary">Save &amp; next unscored</button>
+          <button type="submit" class="btn-secondary">Save &amp; back to queue</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -105,30 +132,10 @@
       {% else %}
         <p>No resume on file.</p>
       {% endif %}
-    </div>
-
-    <div class="card">
-      <h2>Your score</h2>
-      {% if candidate.manual_ranked_at %}
-        <p class="score-label">Last scored {{ candidate.manual_ranked_at }} by {{ candidate.manual_ranked_by.username|default:"—" }}</p>
+      {% if candidate.awards %}
+      <h2 style="margin-top:1.25rem">Awards / achievements (as submitted)</h2>
+      <div class="notes">{{ candidate.awards }}</div>
       {% endif %}
-      <form method="post">
-        {% csrf_token %}
-        <div class="form-row">
-          <label for="{{ form.score.id_for_label }}">{{ form.score.label }}</label>
-          {{ form.score }}
-          {{ form.score.errors }}
-        </div>
-        <div class="form-row">
-          <label for="{{ form.notes.id_for_label }}">{{ form.notes.label }}</label>
-          {{ form.notes }}
-          {{ form.notes.errors }}
-        </div>
-        <div class="actions">
-          <button type="submit" name="action" value="next" class="save-btn">Save & next unscored</button>
-          <button type="submit" name="action" value="queue" class="save-btn secondary">Save & back to queue</button>
-        </div>
-      </form>
     </div>
   </div>
 </div>

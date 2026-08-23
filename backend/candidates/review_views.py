@@ -1,11 +1,14 @@
-"""Staff-facing pages for a recruiter to read a candidate by hand and record
-their own score, independent of the AI ranking. Compare the two via
-manage.py rank_agreement once enough manual scores exist.
+"""Staff-facing manual ranking pages: let a recruiter read a candidate's full
+file (resume, structured fields, AI score/criteria) and record their own
+0-100 score. This is the write path for Candidate.manual_score/
+manual_ranked_at/manual_ranked_by -- candidates.admin.CandidateAdmin makes
+those fields read-only so this stays the single source of truth, and
+candidates.management.commands.rank_agreement compares manual_score against
+ranking_score once both are set.
 
-Same trust-boundary shape as qa_views.py (staff session + group membership,
-not the n8n shared-secret surface), but gated on 'Recruiters' rather than
-'QA Reviewers' since scoring a candidate is a recruiting judgment call, not
-outreach QA -- and Recruiters already has change permission on Candidate.
+Same trust-boundary shape as qa_views.py (staff session + group membership),
+gated on 'Recruiters' rather than 'QA Reviewers' -- scoring a candidate is a
+core recruiting judgment call, not the QA/outreach step qa_views.py covers.
 """
 from functools import wraps
 
@@ -14,7 +17,7 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.db.models import Case, F, IntegerField, Value, When
+from django.db.models import F
 from django.db.models.functions import Abs
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -29,7 +32,10 @@ def recruiter_required(view):
     @login_required
     @staff_member_required
     def wrapper(request, *args, **kwargs):
-        # Same superuser carve-out as qa_views.qa_reviewer_required.
+        # Superusers already have unrestricted access via /admin/ -- the group
+        # check exists to let a non-superuser recruiter in without granting
+        # that, not to gate the superusers themselves. Same reasoning as
+        # qa_views.qa_reviewer_required.
         if not (request.user.is_superuser or request.user.groups.filter(name=RECRUITERS_GROUP_NAME).exists()):
             raise PermissionDenied('Not a Recruiter.')
         return view(request, *args, **kwargs)
@@ -37,40 +43,41 @@ def recruiter_required(view):
 
 
 class ManualScoreForm(forms.Form):
-    score = forms.IntegerField(
-        min_value=0, max_value=100, label='Your score (0-100)',
-        widget=forms.NumberInput(attrs={'autofocus': True}),
-    )
-    notes = forms.CharField(
-        label='Notes (why)', required=False,
-        widget=forms.Textarea(attrs={'rows': 6}),
+    manual_score = forms.IntegerField(min_value=0, max_value=100, label='Your score (0-100)')
+    reasoning = forms.CharField(
+        widget=forms.Textarea, required=False,
+        label='Why (appended to internal notes -- the reasoning is what makes this useful for tuning the AI rubric later)',
     )
 
 
 @recruiter_required
 def review_queue(request):
-    """Every candidate, not just pass/fail ones (unlike the QA queue) --
-    reading the whole pool by hand is the point. Unscored-by-you candidates
-    sort first by default; ?sort=gap instead surfaces the biggest AI-vs-human
-    disagreements, for spot-checking rather than reading start to finish.
-    """
-    candidates = Candidate.objects.select_related('manual_ranked_by').annotate(
-        gap=Abs(F('manual_score') - F('ranking_score')),
-        is_scored=Case(
-            When(manual_score__isnull=False, then=Value(1)),
-            default=Value(0), output_field=IntegerField(),
-        ),
-    )
-    sort = request.GET.get('sort')
-    if sort == 'gap':
-        candidates = candidates.order_by(F('gap').desc(nulls_last=True))
-    else:
-        candidates = candidates.order_by('is_scored', '-created_at')
+    """All candidates -- not just pass/fail ones, unlike the QA queue.
 
-    return render(request, 'candidates/review_queue.html', {
-        'candidates': candidates,
-        'sort': sort or 'default',
-    })
+    Default order puts candidates nobody has manually scored yet first, so
+    working top-down reads through the backlog. ?sort=gap instead orders by
+    |ranking_score - manual_score| descending, for jumping straight to the
+    candidates where the AI and a human disagreed most.
+    """
+    sort = request.GET.get('sort', '')
+
+    # gap is null whenever either score is missing -- shown as "—" in the
+    # template on every view, not just ?sort=gap.
+    candidates = (
+        Candidate.objects.select_related('manual_ranked_by')
+        .annotate(gap=Abs(F('ranking_score') - F('manual_score')))
+    )
+    if sort == 'gap':
+        candidates = candidates.filter(
+            ranking_score__isnull=False, manual_score__isnull=False,
+        ).order_by('-gap')
+    else:
+        # nulls_first is explicit because SQLite (local) and Postgres (prod)
+        # disagree on default NULL ordering -- SQLite sorts NULLs first on
+        # ASC, Postgres sorts them last.
+        candidates = candidates.order_by(F('manual_score').asc(nulls_first=True), '-created_at')
+
+    return render(request, 'candidates/review_queue.html', {'candidates': candidates, 'sort': sort})
 
 
 @recruiter_required
@@ -80,32 +87,46 @@ def review_detail(request, candidate_id):
     if request.method == 'POST':
         form = ManualScoreForm(request.POST)
         if form.is_valid():
-            candidate.manual_score = form.cleaned_data['score']
-            candidate.internal_notes = form.cleaned_data['notes']
+            candidate.manual_score = form.cleaned_data['manual_score']
             candidate.manual_ranked_at = timezone.now()
             candidate.manual_ranked_by = request.user
+            reasoning = form.cleaned_data['reasoning'].strip()
+            if reasoning:
+                candidate.internal_notes = (
+                    f'{candidate.internal_notes}\n\n{reasoning}' if candidate.internal_notes else reasoning
+                )
             candidate.save(update_fields=[
-                'manual_score', 'internal_notes', 'manual_ranked_at', 'manual_ranked_by',
+                'manual_score', 'manual_ranked_at', 'manual_ranked_by', 'internal_notes',
             ])
             messages.success(request, f'Saved your score for {candidate.name}.')
 
-            if request.POST.get('action') == 'next':
-                next_candidate = (
+            if 'save_next' in request.POST:
+                next_unscored = (
                     Candidate.objects.filter(manual_score__isnull=True)
                     .exclude(pk=candidate.pk)
                     .order_by('-created_at')
                     .first()
                 )
-                if next_candidate:
-                    return redirect('review-detail', candidate_id=next_candidate.id)
-                messages.success(request, "No more unscored candidates -- you're caught up.")
+                if next_unscored:
+                    return redirect('review-detail', candidate_id=next_unscored.id)
+                messages.success(request, "That's everyone -- no unscored candidates left.")
                 return redirect('review-queue')
+
             return redirect('review-queue')
     else:
-        form = ManualScoreForm(initial={
-            'score': candidate.manual_score, 'notes': candidate.internal_notes,
-        })
+        form = ManualScoreForm(initial={'manual_score': candidate.manual_score})
+
+    # Simple sequential prev/next through the whole pool (default ordering),
+    # independent of scored state, so a reviewer can page straight through
+    # everyone rather than only jumping via the queue.
+    ordered_ids = list(Candidate.objects.order_by('-created_at').values_list('id', flat=True))
+    idx = ordered_ids.index(candidate.id)
+    prev_id = ordered_ids[idx - 1] if idx > 0 else None
+    next_id = ordered_ids[idx + 1] if idx < len(ordered_ids) - 1 else None
 
     return render(request, 'candidates/review_detail.html', {
-        'candidate': candidate, 'form': form,
+        'candidate': candidate,
+        'form': form,
+        'prev_id': prev_id,
+        'next_id': next_id,
     })
