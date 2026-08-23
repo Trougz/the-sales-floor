@@ -55,6 +55,20 @@ and 0 is a very weak one. Base your judgment only on the information given \
 -- do not invent facts not present in the resume text or the structured \
 fields.
 
+Anchor the score to these bands so scores are comparable across different \
+candidates and different reviewers, not just relative to how the resume reads:
+- 90-100: exceptional -- clear, verifiable top-decile performance for the role \
+  (e.g. sustained over-quota attainment, strong tenure, no red flags).
+- 75-89: strong -- solid evidence of success in the role with at most a minor \
+  gap or unknown.
+- 60-74: passing (the hire bar -- 60 is the minimum passing score) -- meets \
+  the basic bar for the role but with a real, named weakness or an important \
+  unknown (e.g. missing quota data, short tenure, unclear ownership).
+- 40-59: below the bar -- meaningful gaps or inconsistencies that make this a \
+  weak fit, but not disqualifying red flags.
+- 0-39: weak -- little relevant evidence of success, or a genuine red flag \
+  (e.g. resume contradicts stated title, pattern of very short tenures).
+
 Weigh signals according to the candidate's current/target role:
 - SDR / BDR: outbound prospecting activity, pipeline generation, \
   resilience/tenacity language, and any rookie/activity-based awards. \

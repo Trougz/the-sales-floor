@@ -17,8 +17,8 @@ class CandidateAdmin(admin.ModelAdmin):
     list_display = [
         'name', 'current_title', 'current_company_name', 'years_experience',
         'quota_attainment_pct', 'desired_ote', 'resume_link',
-        'resume_extraction_status', 'status', 'ranking_score', 'pass_fail',
-        'created_at',
+        'resume_extraction_status', 'status', 'ranking_score', 'manual_score',
+        'score_gap', 'pass_fail', 'created_at',
     ]
     list_filter = [
         'status', 'current_title', 'pass_fail',
@@ -29,19 +29,23 @@ class CandidateAdmin(admin.ModelAdmin):
     list_editable = ['status', 'ranking_score']
     # ranking_notes/ranking_criteria are read-only because they're
     # overwritten wholesale on every re-rank -- hand edits would just be
-    # lost on the next run.
+    # lost on the next run. manual_score/manual_ranked_at/by are read-only
+    # here for a different reason: the /review/ pages (candidates.review_views)
+    # are the single write path, so manual_ranked_at/by stay trustworthy --
+    # editing the score straight in admin would leave them stale.
     readonly_fields = [
         'resume_link', 'resume_extraction_status', 'ranking_notes',
-        'ranking_criteria_display',
+        'ranking_criteria_display', 'manual_score', 'manual_ranked_at',
+        'manual_ranked_by',
     ]
     ordering = ['-created_at']
     inlines = [MatchInline]
     actions = ['re_rank_selected_candidates']
 
     def get_queryset(self, request):
-        # resume_extraction_status is shown on every changelist row; avoid
-        # one extra query per candidate to fetch it.
-        return super().get_queryset(request).select_related('resume_extraction')
+        # resume_extraction_status/manual_ranked_by are shown on every
+        # changelist row; avoid an extra query per candidate to fetch them.
+        return super().get_queryset(request).select_related('resume_extraction', 'manual_ranked_by')
 
     @admin.display(description='resume')
     def resume_link(self, obj):
@@ -82,6 +86,12 @@ class CandidateAdmin(admin.ModelAdmin):
             ),
         )
         return format_html('<table>{}</table>', rows)
+
+    @admin.display(description='AI/human gap')
+    def score_gap(self, obj):
+        if obj.ranking_score is None or obj.manual_score is None:
+            return '—'
+        return abs(obj.ranking_score - obj.manual_score)
 
     @admin.action(description='Re-rank selected candidates (AI)')
     def re_rank_selected_candidates(self, request, queryset):

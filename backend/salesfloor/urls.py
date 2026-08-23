@@ -26,6 +26,9 @@ urlpatterns = [
     # of api/ -- that prefix is the n8n shared-secret surface, not a place a
     # human should be following an emailed link into.
     path('qa/', include('candidates.qa_urls')),
+    # Staff-session-gated manual ranking pages (candidates/review_views.py) --
+    # same shape as qa/, gated on the Recruiters group instead of QA Reviewers.
+    path('review/', include('candidates.review_urls')),
     # Backs MEDIA_URL, so FileField.url (what the admin's file widget links to)
     # resolves. Staff-only, and deliberately not a plain static() route over
     # MEDIA_ROOT -- see serve_media's docstring.

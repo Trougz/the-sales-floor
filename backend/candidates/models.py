@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 # Shared by Candidate.current_title and Requisition.role_type so both sides of
@@ -114,6 +115,20 @@ class Candidate(models.Model):
     # wholesale on every re-rank.
     ranking_criteria = models.JSONField(default=list, blank=True)
     internal_notes = models.TextField(blank=True)
+
+    # A recruiter's own 0-100 score from actually reading the file, kept
+    # separate from the AI's ranking_score so the two can be compared (see
+    # candidates.management.commands.rank_agreement). Written only by the
+    # /review/ pages (candidates.review_views), not the admin, so
+    # manual_ranked_at/by stay accurate -- see CandidateAdmin.
+    manual_score = models.PositiveSmallIntegerField(
+        null=True, blank=True, help_text="Recruiter's own 0-100 score, independent of the AI ranking."
+    )
+    manual_ranked_at = models.DateTimeField(null=True, blank=True)
+    manual_ranked_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='manually_ranked_candidates',
+    )
 
     PASS_FAIL_CHOICES = [
         ('pass', 'Pass'),

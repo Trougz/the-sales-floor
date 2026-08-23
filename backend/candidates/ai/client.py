@@ -72,10 +72,14 @@ def extract_structured(*, system: str, user_content: str, schema: dict) -> dict:
     if not api_key:
         raise AIConfigurationError(_missing_key_message())
 
-    client = anthropic.Anthropic(api_key=api_key)
+    # max_retries: a transient network/rate-limit error otherwise fails the
+    # candidate outright (see rank_candidate callers' per-candidate catch).
+    client = anthropic.Anthropic(api_key=api_key, max_retries=2)
     response = client.messages.create(
         model=settings.AI_MODEL,
         max_tokens=MAX_TOKENS,
+        # Ranking should be reproducible, not creative -- unset defaults to 1.0.
+        temperature=0,
         system=system,
         messages=[{'role': 'user', 'content': user_content}],
         output_config={'format': {'type': 'json_schema', 'schema': schema}},
