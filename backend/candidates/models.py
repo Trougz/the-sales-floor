@@ -255,7 +255,7 @@ class Requisition(models.Model):
 
 class Match(models.Model):
     STAGE_CHOICES = [
-        ('submitted', 'Submitted'),
+        ('screening', 'Screening'),
         ('interviewing', 'Interviewing'),
         ('offer', 'Offer'),
         ('placed', 'Placed'),
@@ -264,7 +264,9 @@ class Match(models.Model):
 
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, related_name='matches')
     requisition = models.ForeignKey(Requisition, on_delete=models.CASCADE, related_name='matches')
-    stage = models.CharField(max_length=20, choices=STAGE_CHOICES, default='submitted')
+    # 'screening' (was 'submitted') doubles as the trigger for bumping
+    # Candidate.status from 'new' -- see pipeline_views.create_match.
+    stage = models.CharField(max_length=20, choices=STAGE_CHOICES, default='screening')
     fit_score = models.PositiveSmallIntegerField(
         null=True, blank=True, help_text='0-100, higher is a better fit for this requisition'
     )

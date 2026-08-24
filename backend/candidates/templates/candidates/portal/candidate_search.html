@@ -26,12 +26,6 @@
         <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>
       {% endfor %}
     </select>
-    <select name="pass_fail" class="border border-neutral-300 rounded-md px-2 py-1.5 text-sm">
-      <option value="">Pass/fail: any</option>
-      {% for value, label in pass_fail_choices %}
-        <option value="{{ value }}" {% if request.GET.pass_fail == value %}selected{% endif %}>{{ label }}</option>
-      {% endfor %}
-    </select>
     <select name="relocation" class="border border-neutral-300 rounded-md px-2 py-1.5 text-sm">
       <option value="">Relocation: any</option>
       <option value="yes" {% if request.GET.relocation == "yes" %}selected{% endif %}>Open to relocate</option>

@@ -9,8 +9,7 @@
         <th class="text-left px-4 py-2">Title / company</th>
         <th class="text-left px-4 py-2">Status</th>
         <th class="text-left px-4 py-2">AI score</th>
-        <th class="text-left px-4 py-2">Pass/fail</th>
-        <th class="text-left px-4 py-2">Add to requisition</th>
+        <th class="text-left px-4 py-2">Add to project</th>
       </tr>
     </thead>
     <tbody>
@@ -22,7 +21,6 @@
         <td class="px-4 py-2">{{ candidate.get_current_title_display|default:"—" }} @ {{ candidate.current_company_name }}</td>
         <td class="px-4 py-2">{{ candidate.get_status_display }}</td>
         <td class="px-4 py-2">{{ candidate.ranking_score|default:"—" }}</td>
-        <td class="px-4 py-2">{{ candidate.get_pass_fail_display|default:"—" }}</td>
         <td class="px-4 py-2">
           {% if open_requisitions %}
           <form hx-post="{% url 'portal-create-match' %}" hx-target="#add-status-{{ candidate.id }}" hx-swap="innerHTML"
@@ -37,7 +35,7 @@
           </form>
           <div id="add-status-{{ candidate.id }}" class="text-xs mt-1"></div>
           {% else %}
-          <span class="text-xs text-neutral-400">No open requisitions</span>
+          <span class="text-xs text-neutral-400">No open projects</span>
           {% endif %}
         </td>
       </tr>

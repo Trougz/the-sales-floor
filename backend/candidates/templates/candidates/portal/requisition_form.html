@@ -1,11 +1,11 @@
 {% extends "candidates/portal/base.html" %}
-{% block title %}{% if requisition %}Edit requisition{% else %}New requisition{% endif %}{% endblock %}
+{% block title %}{% if requisition %}Edit project{% else %}New project{% endif %}{% endblock %}
 {% block breadcrumbs %}
-<a href="{% url 'portal-requisition-list' %}" class="text-sm text-neutral-500 hover:underline">← Back to requisitions</a>
+<a href="{% url 'portal-requisition-list' %}" class="text-sm text-neutral-500 hover:underline">← Back to projects</a>
 {% endblock %}
 {% block content %}
 
-<h1 class="text-2xl font-bold mt-2 mb-6">{% if requisition %}Edit {{ requisition.title }}{% else %}New requisition{% endif %}</h1>
+<h1 class="text-2xl font-bold mt-2 mb-6">{% if requisition %}Edit {{ requisition.title }}{% else %}New project{% endif %}</h1>
 
 <form method="post" class="bg-white rounded-lg shadow-sm p-6 max-w-xl space-y-4">
   {% csrf_token %}
@@ -19,7 +19,7 @@
   {% endfor %}
   <div class="pt-2">
     <button type="submit" class="text-sm font-semibold bg-brand text-white px-4 py-2 rounded hover:bg-brand-dark">
-      {% if requisition %}Save changes{% else %}Create requisition{% endif %}
+      {% if requisition %}Save changes{% else %}Create project{% endif %}
     </button>
   </div>
 </form>

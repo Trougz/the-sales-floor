@@ -24,7 +24,7 @@
 <body class="bg-cream text-neutral-900 min-h-screen" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 <div class="flex min-h-screen">
   <aside class="w-56 shrink-0 bg-neutral-900 text-neutral-100 flex flex-col p-4">
-    <div class="font-bold text-lg mb-8 tracking-tight">Sales Floor<br>Recruiting</div>
+    <div class="font-bold text-lg mb-8 tracking-tight">The Sales Floor</div>
     <nav class="space-y-1 text-sm flex-1">
       <a href="{% url 'portal-candidate-search' %}"
          class="block px-3 py-2 rounded {% if active_nav == 'candidates' %}bg-brand text-white{% else %}hover:bg-neutral-800{% endif %}">
@@ -32,7 +32,7 @@
       </a>
       <a href="{% url 'portal-requisition-list' %}"
          class="block px-3 py-2 rounded {% if active_nav == 'requisitions' %}bg-brand text-white{% else %}hover:bg-neutral-800{% endif %}">
-        Requisitions
+        Projects
       </a>
     </nav>
     <div class="text-xs text-neutral-400 pt-6 border-t border-neutral-800">

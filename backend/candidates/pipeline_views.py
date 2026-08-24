@@ -24,6 +24,12 @@ def create_match(request):
     requisition = get_object_or_404(Requisition, pk=request.POST.get('requisition_id'))
     match, created = Match.objects.get_or_create(candidate=candidate, requisition=requisition)
 
+    if created and candidate.status == 'new':
+        # Being put into a pipeline is what actually starts screening --
+        # a candidate just sitting in the pool untouched stays 'new'.
+        candidate.status = 'screening'
+        candidate.save(update_fields=['status'])
+
     status_html = render_to_string('candidates/portal/_add_status.html', {
         'created': created, 'requisition': requisition, 'candidate': candidate,
     }, request=request)
@@ -32,12 +38,12 @@ def create_match(request):
         return HttpResponse(status_html)
 
     # Out-of-band swap: when this fires from the requisition board's own
-    # picker, "#stage-submitted" exists on the page and htmx appends the new
+    # picker, "#stage-screening" exists on the page and htmx appends the new
     # card live. When it fires from candidate search/detail (a different
     # page, no such id present), htmx just ignores this fragment -- harmless
     # either way, so create_match doesn't need to know which caller it is.
     board_card = render_to_string('candidates/portal/_match_card.html', {'match': match}, request=request)
-    oob = f'<div id="stage-submitted" hx-swap-oob="beforeend">{board_card}</div>'
+    oob = f'<div id="stage-screening" hx-swap-oob="beforeend">{board_card}</div>'
     return HttpResponse(status_html + oob)
 
 

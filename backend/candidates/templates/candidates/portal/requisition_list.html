@@ -1,14 +1,14 @@
 {% extends "candidates/portal/base.html" %}
-{% block title %}Requisitions{% endblock %}
+{% block title %}Projects{% endblock %}
 {% block content %}
 
 <div class="flex items-center justify-between mb-6">
   <div>
-    <h1 class="text-2xl font-bold mb-1">Requisitions</h1>
+    <h1 class="text-2xl font-bold mb-1">Projects</h1>
     <p class="text-neutral-500">Open roles clients want filled.</p>
   </div>
   <a href="{% url 'portal-requisition-create' %}"
-     class="text-sm font-semibold bg-brand text-white px-4 py-2 rounded hover:bg-brand-dark">+ New requisition</a>
+     class="text-sm font-semibold bg-brand text-white px-4 py-2 rounded hover:bg-brand-dark">+ New project</a>
 </div>
 
 <div class="flex gap-2 mb-4 text-sm">
@@ -50,6 +50,6 @@
   </table>
 </div>
 {% else %}
-<div class="bg-white rounded-lg shadow-sm p-8 text-center text-neutral-500">No requisitions here yet.</div>
+<div class="bg-white rounded-lg shadow-sm p-8 text-center text-neutral-500">No projects here yet.</div>
 {% endif %}
 {% endblock %}

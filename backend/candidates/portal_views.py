@@ -24,7 +24,11 @@ def index(request):
 
 @recruiter_required
 def candidate_search(request):
-    qs = Candidate.objects.all()
+    # pass_fail is just the AI ranking's first-pass cutoff, not something
+    # recruiters filter on -- failed candidates never show up here at all,
+    # and the search results surface ranking_score itself instead of a
+    # pass/fail label.
+    qs = Candidate.objects.exclude(pass_fail='fail')
 
     q = request.GET.get('q', '').strip()
     if q:
@@ -40,10 +44,6 @@ def candidate_search(request):
     status = request.GET.get('status', '')
     if status:
         qs = qs.filter(status=status)
-
-    pass_fail = request.GET.get('pass_fail', '')
-    if pass_fail:
-        qs = qs.filter(pass_fail=pass_fail)
 
     relocation = request.GET.get('relocation', '')
     if relocation:
@@ -69,7 +69,6 @@ def candidate_search(request):
         'page_obj': page_obj,
         'title_choices': TITLE_CHOICES,
         'status_choices': Candidate.STATUS_CHOICES,
-        'pass_fail_choices': Candidate.PASS_FAIL_CHOICES,
         'industries': Industry.objects.all(),
         'crm_tools': CrmTool.objects.all(),
         'selected_industries': {int(i) for i in industry_ids},
