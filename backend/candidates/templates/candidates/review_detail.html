@@ -32,6 +32,8 @@
   .resume-fallback { margin-top: 0.5rem; font-size: 0.9rem; }
   .score-form label { display: block; font-weight: 600; margin-bottom: 0.3rem; }
   .score-form input[type=number] { width: 6rem; padding: 0.5rem; font-size: 1.1rem; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 1rem; }
+  .score-form select { padding: 0.5rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 1rem; }
+  .ai-recommendation { background: #fbeee9; border-radius: 6px; padding: 0.75rem 1rem; margin-top: 0.75rem; font-size: 0.9rem; }
   .score-form textarea { width: 100%; min-height: 6rem; padding: 0.6rem; font-size: 0.95rem; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; box-sizing: border-box; margin-bottom: 1rem; }
   .score-form .errorlist { color: #a11212; list-style: none; padding: 0; margin: 0 0 0.5rem; font-size: 0.85rem; }
   .btn-row button { border: none; padding: 0.75rem 1.25rem; font-size: 1rem; font-weight: 700; border-radius: 6px; cursor: pointer; margin-right: 0.5rem; }
@@ -84,6 +86,13 @@
       <h2>AI score (for reference)</h2>
       <div class="score-badge">{{ candidate.ranking_score|default:"—" }}</div>
       <div class="score-label">/ 100 — {{ candidate.get_pass_fail_display|default:"not yet ranked" }}</div>
+      {% if candidate.ranking_recommended_title %}
+      <div class="ai-recommendation">
+        AI recommends screening as <strong>{{ candidate.get_ranking_recommended_title_display }}</strong>
+        {% if candidate.ranking_recommended_title != candidate.current_title %}(stepped down from {{ candidate.get_current_title_display }}){% endif %}
+        — see reasoning in the notes below.
+      </div>
+      {% endif %}
       <div class="notes" style="margin-top:1rem">{{ candidate.ranking_notes|default:"Not yet ranked by the AI." }}</div>
       {% if candidate.ranking_criteria %}
       <table class="criteria" style="margin-top:1rem">
@@ -101,7 +110,7 @@
       <h2>Your score</h2>
       {% if candidate.manual_score is not None %}
       <p class="already-scored">
-        Currently {{ candidate.manual_score }}/100
+        Currently {{ candidate.manual_score }}/100, screened as {{ candidate.get_screening_title_display|default:"—" }}
         {% if candidate.manual_ranked_by %}by {{ candidate.manual_ranked_by }}{% endif %}
         {% if candidate.manual_ranked_at %}on {{ candidate.manual_ranked_at|date:"M j, Y" }}{% endif %}
         — submitting below overwrites it.
@@ -112,6 +121,9 @@
         {{ form.manual_score.errors }}
         <label for="{{ form.manual_score.id_for_label }}">{{ form.manual_score.label }}</label>
         {{ form.manual_score }}
+        {{ form.screening_title.errors }}
+        <label for="{{ form.screening_title.id_for_label }}">{{ form.screening_title.label }}</label>
+        {{ form.screening_title }}
         {{ form.reasoning.errors }}
         <label for="{{ form.reasoning.id_for_label }}">{{ form.reasoning.label }}</label>
         {{ form.reasoning }}

@@ -15,7 +15,7 @@ class MatchInline(admin.TabularInline):
 @admin.register(Candidate)
 class CandidateAdmin(admin.ModelAdmin):
     list_display = [
-        'name', 'current_title', 'current_company_name', 'years_experience',
+        'name', 'current_title', 'screening_title', 'current_company_name', 'years_experience',
         'quota_attainment_pct', 'desired_ote', 'resume_link',
         'resume_extraction_status', 'status', 'ranking_score', 'manual_score',
         'score_gap', 'pass_fail', 'created_at',
@@ -27,16 +27,17 @@ class CandidateAdmin(admin.ModelAdmin):
     search_fields = ['name', 'email', 'phone', 'current_company_name', 'linkedin_url']
     filter_horizontal = ['work_styles', 'industries', 'crm_tools']
     list_editable = ['status', 'ranking_score']
-    # ranking_notes/ranking_criteria are read-only because they're
-    # overwritten wholesale on every re-rank -- hand edits would just be
-    # lost on the next run. manual_score/manual_ranked_at/by are read-only
-    # here for a different reason: the /review/ pages (candidates.review_views)
-    # are the single write path, so manual_ranked_at/by stay trustworthy --
-    # editing the score straight in admin would leave them stale.
+    # ranking_notes/ranking_criteria/ranking_recommended_title are read-only
+    # because they're overwritten wholesale on every re-rank -- hand edits
+    # would just be lost on the next run. manual_score/manual_ranked_at/by/
+    # screening_title are read-only here for a different reason: the /review/
+    # pages (candidates.review_views) are the single write path, so
+    # manual_ranked_at/by stay trustworthy -- editing straight in admin would
+    # leave them stale.
     readonly_fields = [
         'resume_link', 'resume_extraction_status', 'ranking_notes',
-        'ranking_criteria_display', 'manual_score', 'manual_ranked_at',
-        'manual_ranked_by',
+        'ranking_criteria_display', 'ranking_recommended_title', 'manual_score',
+        'manual_ranked_at', 'manual_ranked_by', 'screening_title',
     ]
     ordering = ['-created_at']
     inlines = [MatchInline]

@@ -22,7 +22,7 @@ from django.db.models.functions import Abs
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .models import Candidate
+from .models import Candidate, TITLE_CHOICES
 
 RECRUITERS_GROUP_NAME = 'Recruiters'
 
@@ -44,6 +44,10 @@ def recruiter_required(view):
 
 class ManualScoreForm(forms.Form):
     manual_score = forms.IntegerField(min_value=0, max_value=100, label='Your score (0-100)')
+    screening_title = forms.ChoiceField(
+        choices=TITLE_CHOICES,
+        label="Screen as (the role you'd actually place them for -- may be a rung below their stated title)",
+    )
     reasoning = forms.CharField(
         widget=forms.Textarea, required=False,
         label='Why (appended to internal notes -- the reasoning is what makes this useful for tuning the AI rubric later)',
@@ -88,6 +92,7 @@ def review_detail(request, candidate_id):
         form = ManualScoreForm(request.POST)
         if form.is_valid():
             candidate.manual_score = form.cleaned_data['manual_score']
+            candidate.screening_title = form.cleaned_data['screening_title']
             candidate.manual_ranked_at = timezone.now()
             candidate.manual_ranked_by = request.user
             reasoning = form.cleaned_data['reasoning'].strip()
@@ -96,7 +101,7 @@ def review_detail(request, candidate_id):
                     f'{candidate.internal_notes}\n\n{reasoning}' if candidate.internal_notes else reasoning
                 )
             candidate.save(update_fields=[
-                'manual_score', 'manual_ranked_at', 'manual_ranked_by', 'internal_notes',
+                'manual_score', 'screening_title', 'manual_ranked_at', 'manual_ranked_by', 'internal_notes',
             ])
             messages.success(request, f'Saved your score for {candidate.name}.')
 
@@ -114,7 +119,13 @@ def review_detail(request, candidate_id):
 
             return redirect('review-queue')
     else:
-        form = ManualScoreForm(initial={'manual_score': candidate.manual_score})
+        form = ManualScoreForm(initial={
+            'manual_score': candidate.manual_score,
+            'screening_title': (
+                candidate.screening_title or candidate.ranking_recommended_title
+                or candidate.current_title or 'Other'
+            ),
+        })
 
     # Simple sequential prev/next through the whole pool (default ordering),
     # independent of scored state, so a reviewer can page straight through

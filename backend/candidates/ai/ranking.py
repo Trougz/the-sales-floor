@@ -22,10 +22,11 @@ MAX_CANDIDATES_PER_BATCH = 2
 
 def rank_candidate(candidate) -> dict:
     """Score `candidate` and write ranking_score/ranking_computed_at/
-    ranking_model_version/ranking_notes/ranking_criteria/pass_fail back onto
-    it. Returns the full model response (including `summary`/`flags`) for
-    callers that also want to surface it immediately (e.g. the admin
-    action's message_user calls).
+    ranking_model_version/ranking_notes/ranking_criteria/ranking_recommended_title/
+    pass_fail back onto it (plus screening_title -- see below). Returns the
+    full model response (including `summary`/`flags`) for callers that also
+    want to surface it immediately (e.g. the admin action's message_user
+    calls).
 
     Parses the resume on demand (via ensure_resume_extraction) if it hasn't
     been extracted yet, so ranking never silently runs on form fields alone
@@ -43,16 +44,29 @@ def rank_candidate(candidate) -> dict:
     notes = result['summary']
     if result['flags']:
         notes += '\n\nFlags:\n' + '\n'.join(f'- {flag}' for flag in result['flags'])
+    # recommendation_reasoning has no dedicated column -- it's only ever
+    # useful alongside the score/notes it explains, same reasoning as flags.
+    notes += f"\n\nScreening title: {result['recommended_title']} -- {result['recommendation_reasoning']}"
 
     candidate.ranking_score = result['ranking_score']
     candidate.ranking_computed_at = timezone.now()
     candidate.ranking_model_version = settings.AI_MODEL
     candidate.ranking_notes = notes
     candidate.ranking_criteria = [result['criteria'][f'dimension_{i}'] for i in range(1, 5)]
+    candidate.ranking_recommended_title = result['recommended_title']
     candidate.pass_fail = 'pass' if candidate.ranking_score >= rubric.PASS_THRESHOLD else 'fail'
-    candidate.save(update_fields=[
+
+    update_fields = [
         'ranking_score', 'ranking_computed_at', 'ranking_model_version', 'ranking_notes',
-        'ranking_criteria', 'pass_fail',
-    ])
+        'ranking_criteria', 'ranking_recommended_title', 'pass_fail',
+    ]
+    # screening_title auto-follows the AI's recommendation only until a human
+    # has reviewed this candidate once (manual_ranked_at set) -- after that,
+    # re-ranking must never silently overwrite a recruiter's own call.
+    if candidate.manual_ranked_at is None:
+        candidate.screening_title = result['recommended_title']
+        update_fields.append('screening_title')
+
+    candidate.save(update_fields=update_fields)
 
     return result

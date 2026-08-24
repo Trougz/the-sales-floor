@@ -2,7 +2,7 @@ import statistics
 import sys
 
 from django.core.management.base import BaseCommand
-from django.db.models import Avg, Count, FloatField
+from django.db.models import Avg, Count, F, FloatField
 from django.db.models.functions import Abs, Cast
 
 from candidates.ai import rubric
@@ -65,6 +65,25 @@ class Command(BaseCommand):
             f'Pass/fail disagreement (threshold {rubric.PASS_THRESHOLD}): '
             f'{disagree_count}/{count} candidate(s)\n'
         )
+
+        # Screening-title agreement -- independent of the score gap above: a
+        # candidate can have a small score gap but a title disagreement (or
+        # vice versa). Scoped to candidates a human has actually reviewed
+        # (manual_ranked_at set), since screening_title otherwise just mirrors
+        # whatever the AI last recommended (see ranking.rank_candidate).
+        title_reviewed = qs.filter(
+            manual_ranked_at__isnull=False, ranking_recommended_title__gt='',
+        )
+        title_reviewed_count = title_reviewed.count()
+        if title_reviewed_count:
+            title_overrides = title_reviewed.exclude(screening_title=F('ranking_recommended_title')).count()
+            self.stdout.write(
+                f'Screening-title overrides: {title_overrides}/{title_reviewed_count} '
+                f"reviewed candidate(s) where your screening_title differs from the AI's "
+                f'ranking_recommended_title\n'
+            )
+        else:
+            self.stdout.write('Screening-title overrides: n/a (no reviewed candidates with an AI title recommendation yet)\n')
 
         self.stdout.write(self.style.SUCCESS('By current_title:'))
         # Computed via the ORM (not the Python lists above) so this stays

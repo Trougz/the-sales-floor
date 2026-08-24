@@ -114,7 +114,22 @@ class Candidate(models.Model):
     # behind ranking_score: list of {name, score, rationale}. Also overwritten
     # wholesale on every re-rank.
     ranking_criteria = models.JSONField(default=list, blank=True)
+    # The AI's recommendation for which title to actually screen this
+    # candidate against (same as current_title, or one rung down -- see
+    # candidates.ai.rubric.ONE_RUNG_DOWN). Overwritten wholesale on every
+    # re-rank, like ranking_notes -- screening_title below is the field that
+    # actually sticks once a human has weighed in.
+    ranking_recommended_title = models.CharField(max_length=20, choices=TITLE_CHOICES, blank=True)
     internal_notes = models.TextField(blank=True)
+
+    # The role this candidate is actually screened/matched against -- may
+    # differ from the self-reported current_title (see ranking_recommended_title
+    # above). rank_candidate() auto-syncs this to its own recommendation only
+    # while manual_ranked_at is still null; once a human has reviewed the
+    # candidate once, re-ranking never silently overwrites their call. Set
+    # via the /review/ pages alongside manual_score, reusing the same
+    # manual_ranked_at/by stamps -- see CandidateAdmin.
+    screening_title = models.CharField(max_length=20, choices=TITLE_CHOICES, blank=True)
 
     # A recruiter's own 0-100 score from actually reading the file, kept
     # separate from the AI's ranking_score so the two can be compared (see

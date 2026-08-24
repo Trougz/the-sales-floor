@@ -44,6 +44,24 @@ ROLE_CRITERIA = {
 }
 ROLE_CRITERIA[''] = ROLE_CRITERIA['Other']
 
+# Valid values for RANKING_SCHEMA's recommended_title enum -- mirrors
+# candidates.models.TITLE_CHOICES values (not imported, to keep this module
+# free of a models dependency; ROLE_CRITERIA's keys already duplicate the
+# same values the same way). No blank/'' option: a blank current_title is
+# treated as 'Other' for screening purposes, same as ROLE_CRITERIA[''].
+TITLE_VALUES = ['SDR', 'BDR', 'AE', 'Sales Manager', 'Other']
+
+# The one-rung-down screening target per title, when the candidate wouldn't
+# be competitively placed at their stated level -- see SYSTEM_PROMPT and
+# candidates.models.Candidate.screening_title. SDR/BDR/Other have no rung
+# below. AE steps down to BDR specifically only because SDR and BDR already
+# share an identical ROLE_CRITERIA list, so the choice is purely cosmetic for
+# scoring purposes.
+ONE_RUNG_DOWN = {
+    'Sales Manager': 'AE',
+    'AE': 'BDR',
+}
+
 # Minimum ranking_score (inclusive) for Candidate.pass_fail to be 'pass'.
 # Applied uniformly across roles -- see candidates.ai.ranking.rank_candidate().
 PASS_THRESHOLD = 60
@@ -85,18 +103,42 @@ Weigh signals according to the candidate's current/target role:
 - If current_title is "Other" or blank, score based on resume content and \
   the structured fields alone, without a title-match bonus.
 
-You will also be given a list of exactly 4 named criteria for this \
-candidate's role (see "Criteria to score" in the user message). Score each \
-one 0-100 with a one-line, evidence-based rationale. Use the criteria names \
-exactly as given, in the order given -- do not rename, reorder, add, or \
-drop any.
+Before scoring, decide which title to actually screen this candidate \
+against -- `recommended_title`. This is *not* about whether the resume \
+proves they held the stated title (that's a `flags` case below, and is \
+rare) -- it's about whether they'd be competitively placed at a client \
+company at that level. Step the title down exactly one rung -- Sales \
+Manager -> AE, or AE -> SDR/BDR (pick whichever of the two fits the resume \
+better; it doesn't change how they're scored) -- when the stated level \
+isn't realistic to place, e.g.:
+- Industry misalignment: their experience is in an industry the resume \
+  suggests wouldn't transfer to the industries this pool typically places \
+  into.
+- Company caliber: the stated title was at a small or low-caliber company \
+  -- limited scope, likely a small team or book of business -- not the \
+  scale a client would expect at that title.
+- Weak results: quota attainment or other performance signals are weak \
+  relative to what the stated title should show.
+Never step down more than one rung, and never step up. SDR/BDR/Other have \
+no rung below -- for those, and for any candidate who is realistically \
+placeable at their stated level, `recommended_title` is just their current \
+title. Explain your call in one or two sentences in \
+`recommendation_reasoning`.
+
+You will be given the 4 named criteria for the candidate's stated title, \
+and (when a rung exists) the 4 for the one-rung-down title too -- see \
+"Criteria to score" in the user message. Score the 4 criteria for whichever \
+title you land on in `recommended_title`, 0-100 each with a one-line, \
+evidence-based rationale. Use the criteria names exactly as given for that \
+title, in the order given -- do not rename, reorder, add, or drop any.
 
 Flag (in `flags`) anything that looks like a red flag or is worth a \
 recruiter's attention: unusually short tenure at multiple companies, \
 quota/comp figures that seem inconsistent with the stated experience level, \
 vague or unverifiable achievement claims, or a resume that doesn't support \
-the candidate's stated current title. An empty list is fine if nothing \
-stands out.
+the candidate's stated current title (title inflation/fabrication -- \
+distinct from the placement-level judgment above). An empty list is fine if \
+nothing stands out.
 
 Respond only with the requested JSON.
 """
@@ -104,6 +146,19 @@ Respond only with the requested JSON.
 RANKING_SCHEMA = {
     'type': 'object',
     'properties': {
+        'recommended_title': {
+            'type': 'string',
+            'enum': TITLE_VALUES,
+            'description': (
+                'The title to actually screen this candidate against -- their '
+                'stated current title, or one rung down (see the system prompt). '
+                'The criteria dimensions below must be scored against this title.'
+            ),
+        },
+        'recommendation_reasoning': {
+            'type': 'string',
+            'description': '1-2 sentences on why this title was kept or stepped down.',
+        },
         'ranking_score': {
             'type': 'integer',
             'description': 'Overall hireability score, 0-100, higher is better.',
@@ -142,18 +197,33 @@ RANKING_SCHEMA = {
             'additionalProperties': False,
         },
     },
-    'required': ['ranking_score', 'summary', 'flags', 'criteria'],
+    'required': [
+        'recommended_title', 'recommendation_reasoning', 'ranking_score', 'summary', 'flags', 'criteria',
+    ],
     'additionalProperties': False,
 }
 
 
 def build_user_content(candidate, resume_text: str) -> str:
     """Assemble the structured-fields + resume/awards text sent to the model."""
-    title = candidate.current_title
+    title = candidate.current_title or 'Other'
     criteria_names = ROLE_CRITERIA.get(title, ROLE_CRITERIA['Other'])
+    step_down_title = ONE_RUNG_DOWN.get(title)
+
+    criteria_lines = [
+        f'Criteria for {title} (use if recommended_title stays {title}):',
+        *(f'- {name}' for name in criteria_names),
+    ]
+    if step_down_title:
+        step_down_criteria = ROLE_CRITERIA[step_down_title]
+        criteria_lines += [
+            '',
+            f'Criteria for {step_down_title} (use if recommended_title steps down to {step_down_title}):',
+            *(f'- {name}' for name in step_down_criteria),
+        ]
 
     lines = [
-        f'Current title: {title or "(not specified)"}',
+        f'Current (self-reported) title: {candidate.current_title or "(not specified)"}',
         f'Current company: {candidate.current_company_name}',
         f'Years of experience: {candidate.years_experience}',
         f'Quota attainment last period: '
@@ -163,8 +233,7 @@ def build_user_content(candidate, resume_text: str) -> str:
         f'Industries: {", ".join(i.name for i in candidate.industries.all()) or "(none listed)"}',
         f'CRM/tools used: {", ".join(t.name for t in candidate.crm_tools.all()) or "(none listed)"}',
         '',
-        'Criteria to score (use these exact names, in this order):',
-        *(f'- {name}' for name in criteria_names),
+        *criteria_lines,
         '',
         'Awards / notable achievements (as submitted by the candidate):',
         candidate.awards.strip() or '(none provided)',
