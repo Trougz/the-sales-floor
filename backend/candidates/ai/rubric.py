@@ -91,15 +91,34 @@ Weigh signals according to the candidate's current/target role:
 - SDR / BDR: outbound prospecting activity, pipeline generation, \
   resilience/tenacity language, and any rookie/activity-based awards. \
   Quota attainment is a weaker signal for these roles than for AE, since \
-  SDRs/BDRs are typically measured on activity rather than closed revenue.
+  SDRs/BDRs are typically measured on activity rather than closed revenue. \
+  High call-volume numbers (60-100+ calls/day) are normal for this role, \
+  not a red flag or a sign of a low-quality job -- real postings for this \
+  role routinely ask for exactly that. Comfort with sales/prospecting AI \
+  tooling (not just a CRM) is an increasingly real differentiator for this \
+  role and a positive signal if evident, though its absence isn't a mark \
+  against a candidate.
 - AE: quota attainment percentage is a strong signal. Deal-closing and \
-  negotiation language in the resume matters. Comp trajectory is a soft \
+  negotiation language in the resume matters. A growing share of AE roles \
+  expect some self-sourced/outbound-generated pipeline alongside closing \
+  inbound leads, not pure inbound closing -- evidence of building their own \
+  pipeline is a positive signal for full-cycle ownership, not a sign they \
+  were doing SDR work beneath their title. Comp trajectory is a soft \
   signal of seniority -- current OTE is a specific figure, but desired OTE \
   is a band the candidate selected (e.g. "$140k-$250k"), not an exact \
   number, so compare whether current OTE falls within, below, or above \
   that band rather than computing a precise delta.
 - Sales Manager: management, coaching, and team-building language; tenure \
-  managing or leading others; title progression toward management.
+  managing or leading others; title progression toward management. \
+  "Sales Manager" in this candidate pool overwhelmingly means first-line/ \
+  frontline management -- leading a small team of reps, often still coaching \
+  hands-on or co-selling -- not senior/strategic sales leadership at a large \
+  org (owning C-suite relationships, a decade-plus of tenure, formal go-to- \
+  market strategy ownership). Score a candidate who has 1-3 years leading a \
+  small team as having a complete, legitimate Sales Manager background for \
+  this pool -- don't hold them to the more senior profile by default, and \
+  don't treat modest team size or a shorter management tenure alone as a \
+  weakness unless the resume gives a specific reason to.
 - If current_title is "Other" or blank, score based on resume content and \
   the structured fields alone, without a title-match bonus.
 
@@ -114,9 +133,14 @@ isn't realistic to place, e.g.:
 - Industry misalignment: their experience is in an industry the resume \
   suggests wouldn't transfer to the industries this pool typically places \
   into.
-- Company caliber: the stated title was at a small or low-caliber company \
-  -- limited scope, likely a small team or book of business -- not the \
-  scale a client would expect at that title.
+- Company caliber: for Sales Manager specifically, a small team size alone \
+  is *not* a reason to step down -- see the frontline-management guidance \
+  above, small teams are the norm for this pool. Step down only if the \
+  management scope looks nominal/token (e.g. no real direct reports, a lead \
+  title with individual-contributor-only responsibilities) or the company \
+  itself doesn't look like a real, ongoing business. For AE, a small or \
+  low-caliber company with a limited book of business is still a valid \
+  downgrade reason.
 - Weak results: quota attainment or other performance signals are weak \
   relative to what the stated title should show.
 Never step down more than one rung, and never step up. SDR/BDR/Other have \
