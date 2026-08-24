@@ -11,7 +11,8 @@ class Command(BaseCommand):
     help = (
         'Score candidates with the AI ranking pipeline, writing '
         'Candidate.ranking_score/ranking_computed_at/ranking_model_version/ranking_notes. '
-        'Run extract_resumes first so resume text is available to rank against.'
+        'Run extract_resumes first so resume text is available to rank against. '
+        'Default (no flags) only ranks the never-ranked backlog -- cheap, safe to run anytime.'
     )
 
     def add_arguments(self, parser):
@@ -23,6 +24,14 @@ class Command(BaseCommand):
             '--force', action='store_true',
             help='Re-rank even if ranking_computed_at is already set.',
         )
+        parser.add_argument(
+            '--manually-scored-only', action='store_true',
+            help=(
+                'Only rank candidates that have a manual_score set (implies --force for '
+                'those). For refreshing the AI side of a rank_agreement comparison without '
+                'paying to re-rank the whole pool.'
+            ),
+        )
 
     def handle(self, *args, **options):
         # Ensure UTF-8 output on Windows (handles non-ASCII in resume text / Claude summaries)
@@ -32,6 +41,8 @@ class Command(BaseCommand):
         candidates = Candidate.objects.select_related('resume_extraction')
         if options['candidate_id'] is not None:
             candidates = candidates.filter(pk=options['candidate_id'])
+        elif options['manually_scored_only']:
+            candidates = candidates.filter(manual_score__isnull=False)
         elif not options['force']:
             candidates = candidates.filter(ranking_computed_at__isnull=True)
 
