@@ -57,6 +57,12 @@ def ensure_resume_extraction(candidate, force=False):
     if not error and not raw_text:
         error = 'No text could be extracted from this file (it may be a scanned image).'
 
+    # PDF/docx extraction occasionally yields literal NUL bytes (malformed
+    # font/glyph mappings) -- harmless in SQLite locally, but Postgres (prod)
+    # rejects any text field containing one outright, which otherwise fails
+    # this save and everything downstream (ranking) that depends on it.
+    raw_text = raw_text.replace('\x00', '')
+
     extraction, _ = ResumeExtraction.objects.update_or_create(
         candidate=candidate,
         defaults={
