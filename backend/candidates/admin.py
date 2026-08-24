@@ -3,7 +3,10 @@ from django.utils.html import format_html, format_html_join
 
 from .ai.client import AIConfigurationError
 from .ai.ranking import MAX_CANDIDATES_PER_BATCH, rank_candidate
-from .models import Candidate, Company, CrmTool, Industry, Match, Requisition, WorkStyle
+from .models import (
+    Candidate, CandidateAE, CandidateRejected, CandidateSalesManager, CandidateSDRBDR,
+    Company, CrmTool, Industry, Match, Requisition, WorkStyle,
+)
 
 
 class MatchInline(admin.TabularInline):
@@ -118,6 +121,50 @@ class CandidateAdmin(admin.ModelAdmin):
                 self.message_user(request, f'{candidate}: {exc}', level='warning')
 
         self.message_user(request, f'Re-ranked {ranked} candidate(s) ({failed} failed).')
+
+
+class _ScreenedCandidateAdminMixin:
+    """Filtered read/triage views onto Candidate (see candidates/admin_site.py
+    for the sidebar ordering that surfaces these). Adding from here would
+    create a bare Candidate with no screening_title set, which wouldn't even
+    show up back in this same list until ranked -- so creation stays on the
+    main Candidates screen.
+    """
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(CandidateAE)
+class CandidateAEAdmin(_ScreenedCandidateAdminMixin, CandidateAdmin):
+    ordering = ['-ranking_score']
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(pass_fail='pass', screening_title='AE')
+
+
+@admin.register(CandidateSalesManager)
+class CandidateSalesManagerAdmin(_ScreenedCandidateAdminMixin, CandidateAdmin):
+    ordering = ['-ranking_score']
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(pass_fail='pass', screening_title='Sales Manager')
+
+
+@admin.register(CandidateSDRBDR)
+class CandidateSDRBDRAdmin(_ScreenedCandidateAdminMixin, CandidateAdmin):
+    ordering = ['-ranking_score']
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(pass_fail='pass', screening_title__in=['SDR', 'BDR'])
+
+
+@admin.register(CandidateRejected)
+class CandidateRejectedAdmin(_ScreenedCandidateAdminMixin, CandidateAdmin):
+    # Keeps the inherited -created_at ordering (most recently rejected
+    # first) rather than -ranking_score, which is a weaker signal once a
+    # candidate has already failed.
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(pass_fail='fail')
 
 
 @admin.register(Company)

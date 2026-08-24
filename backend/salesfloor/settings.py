@@ -37,7 +37,10 @@ ALLOWED_HOSTS = [h for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h]
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    # Points the default admin site at SalesFloorAdminSite (see
+    # candidates/admin_config.py, candidates/admin_site.py) so the sidebar
+    # can be reordered/filtered without touching any @admin.register(...) call.
+    'candidates.admin_config.CandidatesAdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

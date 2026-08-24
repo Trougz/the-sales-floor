@@ -168,6 +168,38 @@ class Candidate(models.Model):
         return f'{self.name} ({self.current_title})'
 
 
+# Proxy models below back the admin's role-filtered sidebar entries (AE's,
+# Sales Managers, SDR/BDRs, Rejected) -- same table as Candidate, filtered by
+# screening_title/pass_fail in each one's ModelAdmin.get_queryset(). See
+# candidates/admin.py and candidates/admin_site.py.
+class CandidateAE(Candidate):
+    class Meta:
+        proxy = True
+        verbose_name = 'AE'
+        verbose_name_plural = "AE's"
+
+
+class CandidateSalesManager(Candidate):
+    class Meta:
+        proxy = True
+        verbose_name = 'Sales Manager'
+        verbose_name_plural = 'Sales Managers'
+
+
+class CandidateSDRBDR(Candidate):
+    class Meta:
+        proxy = True
+        verbose_name = 'SDR/BDR'
+        verbose_name_plural = 'SDR/BDRs'
+
+
+class CandidateRejected(Candidate):
+    class Meta:
+        proxy = True
+        verbose_name = 'Rejected Candidate'
+        verbose_name_plural = 'Rejected'
+
+
 class Company(models.Model):
     name = models.CharField(max_length=200, unique=True)
     contact_name = models.CharField(max_length=200, blank=True)
