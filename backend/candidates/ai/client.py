@@ -10,13 +10,16 @@ import os
 import anthropic
 from django.conf import settings
 
-# Raised from 2048 after the recommended_title/recommendation_reasoning
-# schema fields (added for screening-title recommendations) pushed some
-# real responses past the old cap -- confirmed live via JSONDecodeError
-# ("Unterminated string...") on AE/Sales Manager candidates, whose longer
-# resumes/rationales use more output tokens. See the stop_reason check
-# below for how this fails now if it's ever too low again.
-MAX_TOKENS = 4096
+# Raised 2048 -> 4096 after the recommended_title/recommendation_reasoning
+# schema fields pushed some responses past the old cap (JSONDecodeError,
+# "Unterminated string..."), then 4096 -> 8192 after a blank-title ("Other")
+# candidate hit the same wall despite that role having the *shorter* prompt
+# (no one-rung-down criteria set) -- so this isn't tied to title/prompt
+# length, some candidates' resumes/flags just genuinely need more output.
+# max_tokens only caps the budget and doesn't cost anything unless actually
+# used, so there's no real downside to a generous number here. See the
+# stop_reason check below for how this fails now if it's ever too low again.
+MAX_TOKENS = 8192
 
 
 class AIConfigurationError(RuntimeError):
