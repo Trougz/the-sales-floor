@@ -78,8 +78,10 @@ def extract_structured(*, system: str, user_content: str, schema: dict) -> dict:
     response = client.messages.create(
         model=settings.AI_MODEL,
         max_tokens=MAX_TOKENS,
-        # Ranking should be reproducible, not creative -- unset defaults to 1.0.
-        temperature=0,
+        # No temperature param: this model rejects it outright (400
+        # "temperature is deprecated for this model") rather than ignoring
+        # it, so there's no way to request determinism here -- confirmed in
+        # production 2026-08-23.
         system=system,
         messages=[{'role': 'user', 'content': user_content}],
         output_config={'format': {'type': 'json_schema', 'schema': schema}},
