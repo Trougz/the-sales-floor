@@ -1,0 +1,21 @@
+<div id="match-card-{{ match.id }}" data-match-id="{{ match.id }}"
+     class="match-card bg-white rounded shadow p-3 mb-2 border-l-4 cursor-grab active:cursor-grabbing
+     {% if match.stage == 'rejected' %}border-neutral-300 opacity-60{% elif match.stage == 'placed' %}border-green-600{% else %}border-brand{% endif %}"
+     x-data="{ editingScore: false }">
+  <a href="{% url 'portal-candidate-detail' match.candidate_id %}" class="font-semibold text-sm text-neutral-900 hover:text-brand hover:underline">
+    {{ match.candidate.name }}
+  </a>
+  <div class="text-xs text-neutral-500 mt-0.5">{{ match.candidate.get_current_title_display|default:"—" }}</div>
+
+  <div class="text-xs mt-2" x-show="!editingScore" @click="editingScore = true">
+    Fit:
+    <span class="font-semibold {% if not match.fit_score %}text-neutral-400{% endif %}">{{ match.fit_score|default:"set score" }}</span>
+  </div>
+  <form x-show="editingScore" x-cloak
+        hx-post="{% url 'portal-update-match' match.id %}" hx-target="#match-card-{{ match.id }}" hx-swap="outerHTML"
+        class="mt-2 flex items-center gap-1">
+    <input type="number" name="fit_score" min="0" max="100" value="{{ match.fit_score|default:'' }}"
+           class="w-14 border border-neutral-300 rounded px-1 py-0.5 text-xs" autofocus>
+    <button type="submit" class="text-xs text-brand font-semibold">Save</button>
+  </form>
+</div>

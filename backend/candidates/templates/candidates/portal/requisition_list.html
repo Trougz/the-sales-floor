@@ -1,0 +1,55 @@
+{% extends "candidates/portal/base.html" %}
+{% block title %}Requisitions{% endblock %}
+{% block content %}
+
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-2xl font-bold mb-1">Requisitions</h1>
+    <p class="text-neutral-500">Open roles clients want filled.</p>
+  </div>
+  <a href="{% url 'portal-requisition-create' %}"
+     class="text-sm font-semibold bg-brand text-white px-4 py-2 rounded hover:bg-brand-dark">+ New requisition</a>
+</div>
+
+<div class="flex gap-2 mb-4 text-sm">
+  {% for value, label in status_choices %}
+    <a href="?status={{ value }}"
+       class="px-3 py-1.5 rounded {% if status == value %}bg-neutral-900 text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">
+      {{ label }}
+    </a>
+  {% endfor %}
+</div>
+
+{% if requisitions %}
+<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-neutral-100 text-xs uppercase tracking-wide text-neutral-500">
+      <tr>
+        <th class="text-left px-4 py-2">Role</th>
+        <th class="text-left px-4 py-2">Company</th>
+        <th class="text-left px-4 py-2">Timeline</th>
+        <th class="text-left px-4 py-2">Comp range</th>
+        <th class="text-left px-4 py-2">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in requisitions %}
+      <tr class="border-t border-neutral-100 hover:bg-neutral-50">
+        <td class="px-4 py-2">
+          <a href="{% url 'portal-requisition-detail' r.id %}" class="font-medium text-brand hover:underline">{{ r.title }}</a>
+        </td>
+        <td class="px-4 py-2">{{ r.company.name }}</td>
+        <td class="px-4 py-2">{{ r.get_timeline_display|default:"—" }}</td>
+        <td class="px-4 py-2">
+          {% if r.comp_min or r.comp_max %}${{ r.comp_min|default:"?" }} – ${{ r.comp_max|default:"?" }}{% else %}—{% endif %}
+        </td>
+        <td class="px-4 py-2">{{ r.get_status_display }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="bg-white rounded-lg shadow-sm p-8 text-center text-neutral-500">No requisitions here yet.</div>
+{% endif %}
+{% endblock %}

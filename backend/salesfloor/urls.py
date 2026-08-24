@@ -29,6 +29,11 @@ urlpatterns = [
     # Staff-session-gated manual ranking pages (candidates/review_views.py) --
     # same shape as qa/, gated on the Recruiters group instead of QA Reviewers.
     path('review/', include('candidates.review_urls')),
+    # The recruiting portal -- candidate search, requisition ("project")
+    # management, and the pipeline board. Same Recruiters-group trust
+    # boundary as review/, split across portal_views/requisition_views/
+    # pipeline_views.py since it's a bigger, multi-feature surface.
+    path('portal/', include('candidates.portal_urls')),
     # Backs MEDIA_URL, so FileField.url (what the admin's file widget links to)
     # resolves. Staff-only, and deliberately not a plain static() route over
     # MEDIA_ROOT -- see serve_media's docstring.

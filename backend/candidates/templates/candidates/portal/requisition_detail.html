@@ -1,0 +1,74 @@
+{% extends "candidates/portal/base.html" %}
+{% block title %}{{ requisition.title }}{% endblock %}
+{% block breadcrumbs %}
+<a href="{% url 'portal-requisition-list' %}" class="text-sm text-neutral-500 hover:underline">← Back to requisitions</a>
+{% endblock %}
+{% block extra_head %}
+<style>[x-cloak] { display: none !important; }</style>
+{% endblock %}
+{% block content %}
+
+<div class="flex items-start justify-between mt-2 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold mb-1">{{ requisition.title }}</h1>
+    <p class="text-neutral-500">
+      {{ requisition.company.name }}
+      {% if requisition.get_timeline_display %} · {{ requisition.get_timeline_display }}{% endif %}
+      · {{ requisition.get_status_display }}
+    </p>
+  </div>
+  <a href="{% url 'portal-requisition-edit' requisition.id %}" class="text-sm text-brand hover:underline">Edit</a>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+  <label class="block text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-2">Add a candidate to this board</label>
+  <input type="text" name="q" placeholder="Search candidates by name, email, or company…"
+         hx-get="{% url 'portal-requisition-candidate-search' requisition.id %}"
+         hx-trigger="keyup changed delay:300ms" hx-target="#add-candidate-results" hx-swap="innerHTML"
+         class="w-full border border-neutral-300 rounded-md px-3 py-2 text-sm">
+  <div id="add-candidate-results" class="mt-2"></div>
+</div>
+
+<div id="pipeline-board" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+  {% for stage_key, stage_label, column in board %}
+  <div id="stage-{{ stage_key }}" data-stage="{{ stage_key }}"
+       class="kanban-column bg-neutral-100 rounded-lg p-2 min-h-[24rem]">
+    <h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold px-1 mb-2">
+      {{ stage_label }}
+    </h2>
+    {% for match in column %}
+      {% include "candidates/portal/_match_card.html" with match=match %}
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.kanban-column').forEach(function (col) {
+    new Sortable(col, {
+      group: 'pipeline',
+      animation: 150,
+      onEnd: function (evt) {
+        if (evt.from === evt.to) return;
+        var matchId = evt.item.dataset.matchId;
+        var newStage = evt.to.dataset.stage;
+        var url = "{% url 'portal-update-match' 0 %}".replace('0', matchId);
+        htmx.ajax('POST', url, {
+          source: evt.item,
+          target: '#match-card-' + matchId,
+          swap: 'outerHTML',
+          values: { stage: newStage },
+        }).catch(function () {
+          alert('Could not save that move — reloading the board.');
+          window.location.reload();
+        });
+      },
+    });
+  });
+});
+</script>
+{% endblock %}

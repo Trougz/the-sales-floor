@@ -10,36 +10,15 @@ Same trust-boundary shape as qa_views.py (staff session + group membership),
 gated on 'Recruiters' rather than 'QA Reviewers' -- scoring a candidate is a
 core recruiting judgment call, not the QA/outreach step qa_views.py covers.
 """
-from functools import wraps
-
 from django import forms
 from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.db.models import F
 from django.db.models.functions import Abs
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
+from .decorators import recruiter_required
 from .models import Candidate, TITLE_CHOICES
-
-RECRUITERS_GROUP_NAME = 'Recruiters'
-
-
-def recruiter_required(view):
-    @wraps(view)
-    @login_required
-    @staff_member_required
-    def wrapper(request, *args, **kwargs):
-        # Superusers already have unrestricted access via /admin/ -- the group
-        # check exists to let a non-superuser recruiter in without granting
-        # that, not to gate the superusers themselves. Same reasoning as
-        # qa_views.qa_reviewer_required.
-        if not (request.user.is_superuser or request.user.groups.filter(name=RECRUITERS_GROUP_NAME).exists()):
-            raise PermissionDenied('Not a Recruiter.')
-        return view(request, *args, **kwargs)
-    return wrapper
 
 
 class ManualScoreForm(forms.Form):

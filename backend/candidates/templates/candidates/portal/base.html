@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Recruiting Portal{% endblock %} — The Sales Floor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: { DEFAULT: '#b3261e', dark: '#931f18' },
+          cream: '#f4f3f1',
+        },
+      },
+    },
+  };
+</script>
+<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+<script defer src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"></script>
+{% block extra_head %}{% endblock %}
+</head>
+<body class="bg-cream text-neutral-900 min-h-screen" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<div class="flex min-h-screen">
+  <aside class="w-56 shrink-0 bg-neutral-900 text-neutral-100 flex flex-col p-4">
+    <div class="font-bold text-lg mb-8 tracking-tight">Sales Floor<br>Recruiting</div>
+    <nav class="space-y-1 text-sm flex-1">
+      <a href="{% url 'portal-candidate-search' %}"
+         class="block px-3 py-2 rounded {% if active_nav == 'candidates' %}bg-brand text-white{% else %}hover:bg-neutral-800{% endif %}">
+        Search
+      </a>
+      <a href="{% url 'portal-requisition-list' %}"
+         class="block px-3 py-2 rounded {% if active_nav == 'requisitions' %}bg-brand text-white{% else %}hover:bg-neutral-800{% endif %}">
+        Requisitions
+      </a>
+    </nav>
+    <div class="text-xs text-neutral-400 pt-6 border-t border-neutral-800">
+      {{ request.user.username }}<br>
+      <a href="{% url 'admin:logout' %}" class="underline hover:text-neutral-200">Log out</a>
+    </div>
+  </aside>
+  <main class="flex-1 p-6 max-w-6xl">
+    {% block breadcrumbs %}{% endblock %}
+    {% if messages %}
+    <ul class="mb-4 space-y-2">
+      {% for message in messages %}
+        <li class="px-3 py-2 rounded text-sm {% if message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-green-100 text-green-800{% endif %}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% if candidates %}
+<div class="bg-white rounded-lg shadow-sm divide-y divide-neutral-100">
+  {% for candidate in candidates %}
+  <div class="flex items-center justify-between px-3 py-2 text-sm">
+    <div>
+      <a href="{% url 'portal-candidate-detail' candidate.id %}" class="font-medium text-brand hover:underline">{{ candidate.name }}</a>
+      <span class="text-neutral-500"> — {{ candidate.get_current_title_display|default:"—" }} @ {{ candidate.current_company_name }}</span>
+    </div>
+    <div>
+      <form hx-post="{% url 'portal-create-match' %}" hx-target="this" hx-swap="outerHTML">
+        <input type="hidden" name="candidate_id" value="{{ candidate.id }}">
+        <input type="hidden" name="requisition_id" value="{{ requisition.id }}">
+        <button type="submit" class="text-xs font-semibold text-brand hover:underline">Add</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% elif request.GET.q %}
+<div class="text-sm text-neutral-400 px-1">No matching candidates.</div>
+{% endif %}
