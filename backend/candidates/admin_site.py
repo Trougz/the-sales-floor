@@ -14,6 +14,11 @@ class SalesFloorAdminSite(AdminSite):
         'candidatesdrbdr', 'candidaterejected',
     ]
 
+    # Default AdminSite.site_url is '/', which this project never wires to
+    # anything -- "View site" would just 404. Point it at the recruiting
+    # portal instead, since that's the actual internal-facing app now.
+    site_url = '/portal/'
+
     def get_app_list(self, request, app_label=None):
         app_list = super().get_app_list(request, app_label)
         order = {name: i for i, name in enumerate(self.CANDIDATES_APP_MODEL_ORDER)}
