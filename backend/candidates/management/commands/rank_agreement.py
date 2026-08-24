@@ -2,7 +2,7 @@ import statistics
 import sys
 
 from django.core.management.base import BaseCommand
-from django.db.models import Avg, Count, F, FloatField
+from django.db.models import Avg, Count, F, FloatField, Max
 from django.db.models.functions import Abs, Cast
 
 from candidates.ai import rubric
@@ -106,13 +106,22 @@ class Command(BaseCommand):
         by_role = (
             qs.annotate(diff=Abs(Cast('ranking_score', FloatField()) - Cast('manual_score', FloatField())))
             .values('current_title')
-            .annotate(n=Count('id'), avg_ai=Avg('ranking_score'), avg_manual=Avg('manual_score'), avg_abs_diff=Avg('diff'))
+            .annotate(
+                n=Count('id'), avg_ai=Avg('ranking_score'), avg_manual=Avg('manual_score'),
+                avg_abs_diff=Avg('diff'), last_ranked=Max('ranking_computed_at'),
+            )
             .order_by('-avg_abs_diff')
         )
         for row in by_role:
             role = row['current_title'] or '(blank)'
+            # avg AI/human at 1 decimal (not 0) and last_ranked included on
+            # purpose -- whole-number rounding can hide real movement between
+            # runs (36.6 and 37.4 both display as "37"), which is exactly what
+            # made an earlier run of this command look like re-ranking hadn't
+            # happened for a role when it actually had.
+            last_ranked = row['last_ranked'].strftime('%Y-%m-%d %H:%M') if row['last_ranked'] else 'never'
             self.stdout.write(
                 f"  {role:<16} n={row['n']:<3} "
-                f"avg AI={row['avg_ai']:.0f}  avg human={row['avg_manual']:.0f}  "
-                f"avg |diff|={row['avg_abs_diff']:.1f}"
+                f"avg AI={row['avg_ai']:.1f}  avg human={row['avg_manual']:.1f}  "
+                f"avg |diff|={row['avg_abs_diff']:.1f}  most recently ranked={last_ranked}"
             )
