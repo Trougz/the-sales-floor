@@ -80,8 +80,23 @@ class Command(BaseCommand):
             self.stdout.write(
                 f'Screening-title overrides: {title_overrides}/{title_reviewed_count} '
                 f"reviewed candidate(s) where your screening_title differs from the AI's "
-                f'ranking_recommended_title\n'
+                f'ranking_recommended_title'
             )
+            # ranking_recommended_title is overwritten wholesale on every
+            # re-rank (see rank_candidate) -- if a candidate was re-ranked
+            # *after* being reviewed, this is comparing your judgment against
+            # an AI opinion you never actually saw, not a real disagreement.
+            # Only meaningful while the prompt/schema is stable; noisy right
+            # after a rubric change, since re-ranking everyone is exactly
+            # what surfaces this.
+            stale = title_reviewed.filter(ranking_computed_at__gt=F('manual_ranked_at')).count()
+            if stale:
+                self.stdout.write(self.style.WARNING(
+                    f'  -> {stale}/{title_reviewed_count} of those were re-ranked *after* you reviewed them -- '
+                    'the comparison above is stale for those and should not be trusted as-is. '
+                    'Common right after a rubric/prompt change; re-run this after things settle.'
+                ))
+            self.stdout.write('')
         else:
             self.stdout.write('Screening-title overrides: n/a (no reviewed candidates with an AI title recommendation yet)\n')
 
