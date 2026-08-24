@@ -10,7 +10,13 @@ import os
 import anthropic
 from django.conf import settings
 
-MAX_TOKENS = 2048
+# Raised from 2048 after the recommended_title/recommendation_reasoning
+# schema fields (added for screening-title recommendations) pushed some
+# real responses past the old cap -- confirmed live via JSONDecodeError
+# ("Unterminated string...") on AE/Sales Manager candidates, whose longer
+# resumes/rationales use more output tokens. See the stop_reason check
+# below for how this fails now if it's ever too low again.
+MAX_TOKENS = 4096
 
 
 class AIConfigurationError(RuntimeError):
@@ -88,4 +94,14 @@ def extract_structured(*, system: str, user_content: str, schema: dict) -> dict:
     )
 
     text = ''.join(block.text for block in response.content if block.type == 'text')
+
+    if response.stop_reason == 'max_tokens':
+        # Otherwise this surfaces as a cryptic JSONDecodeError ("Unterminated
+        # string...") from the truncated JSON below -- make the actual cause
+        # obvious so raising MAX_TOKENS is the obvious fix, not a guess.
+        raise RuntimeError(
+            f'Claude response was cut off at MAX_TOKENS={MAX_TOKENS} before finishing '
+            'the JSON -- raise MAX_TOKENS in candidates/ai/client.py.'
+        )
+
     return json.loads(text)
