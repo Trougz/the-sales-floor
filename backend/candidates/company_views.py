@@ -4,8 +4,10 @@ Requisitions ("projects"). Same trust boundary as the rest of the portal
 pattern.
 """
 from django import forms
+from django.contrib import messages
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
 from .decorators import recruiter_required
 from .models import Company
@@ -29,12 +31,17 @@ class CompanyForm(forms.ModelForm):
 
 @recruiter_required
 def company_list(request):
+    status = request.GET.get('status', 'active')
     q = request.GET.get('q', '').strip()
     qs = Company.objects.annotate(project_count=Count('requisitions'))
+    if status in dict(Company.STATUS_CHOICES):
+        qs = qs.filter(status=status)
     if q:
         qs = qs.filter(name__icontains=q)
     return render(request, 'candidates/portal/company_list.html', {
         'companies': qs,
+        'status': status,
+        'status_choices': Company.STATUS_CHOICES,
         'active_nav': 'companies',
     })
 
@@ -77,3 +84,29 @@ def company_detail(request, company_id):
         'requisitions': requisitions,
         'active_nav': 'companies',
     })
+
+
+@require_POST
+@recruiter_required
+def company_reject(request, company_id):
+    """"Delete" a company from the portal without actually deleting it --
+    Requisition.company CASCADEs, so a real delete would silently wipe out
+    that company's projects and every candidate's pipeline history on them.
+    Marking it rejected instead keeps all of that intact; it just drops out
+    of the default (active) company list and picker.
+    """
+    company = get_object_or_404(Company, pk=company_id)
+    company.status = 'rejected'
+    company.save(update_fields=['status'])
+    messages.success(request, f'{company.name} marked rejected. Its projects and candidate history are unchanged.')
+    return redirect(request.POST.get('next') or 'portal-company-list')
+
+
+@require_POST
+@recruiter_required
+def company_reactivate(request, company_id):
+    company = get_object_or_404(Company, pk=company_id)
+    company.status = 'active'
+    company.save(update_fields=['status'])
+    messages.success(request, f'{company.name} reactivated.')
+    return redirect(request.POST.get('next') or 'portal-company-list')

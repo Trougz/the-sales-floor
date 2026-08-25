@@ -11,6 +11,8 @@ urlpatterns = [
     path('companies/new/', company_views.company_create, name='portal-company-create'),
     path('companies/<int:company_id>/', company_views.company_detail, name='portal-company-detail'),
     path('companies/<int:company_id>/edit/', company_views.company_edit, name='portal-company-edit'),
+    path('companies/<int:company_id>/reject/', company_views.company_reject, name='portal-company-reject'),
+    path('companies/<int:company_id>/reactivate/', company_views.company_reactivate, name='portal-company-reactivate'),
     # URL name identifiers keep "requisition" (matches the Requisition model)
     # -- only the path segments and user-facing text say "project", which is
     # what recruiters actually call these.

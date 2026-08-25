@@ -258,11 +258,21 @@ class CandidateRejected(Candidate):
 
 
 class Company(models.Model):
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('rejected', 'Rejected'),
+    ]
+
     name = models.CharField(max_length=200, unique=True)
     contact_name = models.CharField(max_length=200, blank=True)
     contact_email = models.EmailField(blank=True)
     contact_phone = models.CharField(max_length=30, blank=True)
     notes = models.TextField(blank=True)
+    # "Deleting" a company from the portal just sets this to 'rejected' --
+    # the row (and any Requisitions/Matches under it) stays in the database
+    # rather than being destroyed, since Requisition.company CASCADEs and a
+    # real delete would silently wipe out projects and pipeline history.
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

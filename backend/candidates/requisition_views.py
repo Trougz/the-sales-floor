@@ -10,7 +10,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .decorators import recruiter_required
-from .models import Candidate, Match, Requisition
+from .models import Candidate, Company, Match, Requisition
 
 
 FIELD_CSS = 'w-full border border-neutral-300 rounded-md px-3 py-2 text-sm'
@@ -23,6 +23,14 @@ class RequisitionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Don't offer rejected companies for a *new* assignment -- but if
+        # this requisition is already tied to one (e.g. it was rejected
+        # after the project was opened), keep it selectable so editing the
+        # req doesn't force a company change.
+        company_qs = Company.objects.filter(status='active')
+        if self.instance and self.instance.company_id:
+            company_qs = Company.objects.filter(Q(status='active') | Q(pk=self.instance.company_id))
+        self.fields['company'].queryset = company_qs
         for field in self.fields.values():
             widget_css = FIELD_CSS
             if isinstance(field.widget, forms.Textarea):
