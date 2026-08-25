@@ -8,7 +8,7 @@
 <h1 class="text-2xl font-bold mt-2 mb-1">{{ candidate.name }}</h1>
 <p class="text-neutral-500 mb-6">
   {{ candidate.get_current_title_display|default:"—" }} @ {{ candidate.current_company_name }}
-  — {{ candidate.years_experience }} yrs experience
+  {% if candidate.years_experience is not None %}— {{ candidate.years_experience }} yrs experience{% endif %}
 </p>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -16,15 +16,15 @@
     <div class="bg-white rounded-lg shadow-sm p-5">
       <h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-3">Contact</h2>
       <dl class="text-sm space-y-2">
-        <div><dt class="text-neutral-400 text-xs">Email</dt><dd><a href="mailto:{{ candidate.email }}" class="text-brand hover:underline">{{ candidate.email }}</a></dd></div>
-        <div><dt class="text-neutral-400 text-xs">Phone</dt><dd>{{ candidate.phone }}</dd></div>
+        <div><dt class="text-neutral-400 text-xs">Email</dt><dd>{% if candidate.email %}<a href="mailto:{{ candidate.email }}" class="text-brand hover:underline">{{ candidate.email }}</a>{% else %}—{% endif %}</dd></div>
+        <div><dt class="text-neutral-400 text-xs">Phone</dt><dd>{{ candidate.phone|default:"—" }}</dd></div>
         {% if candidate.linkedin_url %}
         <div><dt class="text-neutral-400 text-xs">LinkedIn</dt><dd><a href="{{ candidate.linkedin_url }}" target="_blank" rel="noopener" class="text-brand hover:underline">{{ candidate.linkedin_url }}</a></dd></div>
         {% endif %}
         <div><dt class="text-neutral-400 text-xs">Status</dt><dd>{{ candidate.get_status_display }}</dd></div>
         <div><dt class="text-neutral-400 text-xs">Quota attainment (last period)</dt><dd>{{ candidate.quota_attainment_pct|default:"—" }}{% if candidate.quota_attainment_pct %}%{% endif %}</dd></div>
         <div><dt class="text-neutral-400 text-xs">Current / desired OTE</dt><dd>{{ candidate.ote|default:"—" }} / {{ candidate.get_desired_ote_display }}</dd></div>
-        <div><dt class="text-neutral-400 text-xs">Open to relocation</dt><dd>{{ candidate.open_to_relocation|yesno:"Yes,No" }}</dd></div>
+        <div><dt class="text-neutral-400 text-xs">Open to relocation</dt><dd>{{ candidate.open_to_relocation|yesno:"Yes,No,—" }}</dd></div>
         <div><dt class="text-neutral-400 text-xs">Industries</dt><dd>{% for i in candidate.industries.all %}{{ i.name }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</dd></div>
         <div><dt class="text-neutral-400 text-xs">CRM / tools</dt><dd>{% for t in candidate.crm_tools.all %}{{ t.name }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</dd></div>
       </dl>

@@ -23,6 +23,16 @@ DESIRED_OTE_RANGE_CHOICES = [
     ('$250k+', '$250k+'),
 ]
 
+# Distinguishes a self-submitted public-form candidate from one a recruiter
+# bulk-imported from a LinkedIn Recruiter export (see candidates/import_views.py).
+# Matters because imported rows are allowed to leave several fields blank
+# that the public form still requires -- see the fields below marked
+# "recruiter-imported rows may leave this blank".
+SOURCE_CHOICES = [
+    ('form', 'Public form'),
+    ('linkedin', 'LinkedIn sourcing'),
+]
+
 # Grouped (Django choices support an optgroup-style nested list) so the form
 # and admin both show "United States" / "Canada" as visual sections rather
 # than one flat alphabetical list of 64 names.
@@ -112,18 +122,25 @@ class Candidate(models.Model):
     # Current role
     current_company_name = models.CharField(max_length=200)
     current_title = models.CharField(max_length=20, choices=TITLE_CHOICES, blank=True)
-    years_experience = models.PositiveIntegerField()
+    # Required by the public form's own validation (views.REQUIRED_FIELDS);
+    # nullable here only because a recruiter-imported LinkedIn row often
+    # doesn't have this and shouldn't get a fabricated placeholder value.
+    years_experience = models.PositiveIntegerField(null=True, blank=True)
     quota_attainment_pct = models.PositiveIntegerField(
         null=True, blank=True, help_text='% to quota, last period'
     )
 
     # Compensation
     ote = models.PositiveIntegerField(null=True, blank=True, verbose_name='current OTE')
-    desired_ote = models.CharField(max_length=20, choices=DESIRED_OTE_RANGE_CHOICES)
+    # blank=True for the same reason as years_experience above -- still
+    # required by the public form itself.
+    desired_ote = models.CharField(max_length=20, choices=DESIRED_OTE_RANGE_CHOICES, blank=True)
 
     # Preferences
-    state_province = models.CharField(max_length=30, choices=STATE_PROVINCE_CHOICES)
-    open_to_relocation = models.BooleanField()
+    # blank=True for the same reason as years_experience above.
+    state_province = models.CharField(max_length=30, choices=STATE_PROVINCE_CHOICES, blank=True)
+    # null=True for the same reason as years_experience above.
+    open_to_relocation = models.BooleanField(null=True, blank=True)
     work_styles = models.ManyToManyField(WorkStyle, blank=True, related_name='candidates')
     industries = models.ManyToManyField(Industry, blank=True, related_name='candidates')
     crm_tools = models.ManyToManyField(CrmTool, blank=True, related_name='candidates')
@@ -131,6 +148,9 @@ class Candidate(models.Model):
     # Additional
     awards = models.TextField(blank=True)
     resume = models.FileField(upload_to='resumes/%Y/%m/')
+
+    # How this candidate entered the pool -- see SOURCE_CHOICES above.
+    source = models.CharField(max_length=10, choices=SOURCE_CHOICES, default='form')
 
     # Recruiting workflow
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')

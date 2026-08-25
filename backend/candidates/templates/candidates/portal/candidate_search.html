@@ -2,8 +2,13 @@
 {% block title %}Search candidates{% endblock %}
 {% block content %}
 
-<h1 class="text-2xl font-bold mb-1">Candidates</h1>
-<p class="text-neutral-500 mb-6">Search and filter the candidate pool.</p>
+<div class="flex items-start justify-between mb-6">
+  <div>
+    <h1 class="text-2xl font-bold mb-1">Candidates</h1>
+    <p class="text-neutral-500">Search and filter the candidate pool.</p>
+  </div>
+  <a href="{% url 'portal-import-candidates' %}" class="text-sm font-semibold text-brand hover:underline">Import from LinkedIn →</a>
+</div>
 
 <form hx-get="{% url 'portal-candidate-search' %}"
       hx-target="#candidate-results" hx-swap="innerHTML" hx-push-url="true"
