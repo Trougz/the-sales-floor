@@ -99,6 +99,13 @@ class RecruitersGroupTests(TestCase):
             'add_industry', 'change_industry', 'view_industry',
             'add_crmtool', 'change_crmtool', 'view_crmtool',
             'add_workstyle', 'change_workstyle', 'view_workstyle',
+            # Granted by migration 0016 for the AE/Sales Manager/SDR-BDR/
+            # Rejected proxy-model admin views -- see that migration for why
+            # these are separate codenames from change_candidate/view_candidate.
+            'change_candidateae', 'view_candidateae',
+            'change_candidatesalesmanager', 'view_candidatesalesmanager',
+            'change_candidatesdrbdr', 'view_candidatesdrbdr',
+            'change_candidaterejected', 'view_candidaterejected',
         })
 
     def test_group_cannot_delete_candidates_or_lookups(self):
