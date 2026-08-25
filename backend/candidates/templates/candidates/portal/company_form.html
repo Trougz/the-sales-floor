@@ -1,11 +1,11 @@
 {% extends "candidates/portal/base.html" %}
-{% block title %}{% if requisition %}Edit project{% else %}New project{% endif %}{% endblock %}
+{% block title %}{% if company %}Edit company{% else %}New company{% endif %}{% endblock %}
 {% block breadcrumbs %}
-<a href="{% url 'portal-requisition-list' %}" class="text-sm text-neutral-500 hover:underline">← Back to projects</a>
+<a href="{% url 'portal-company-list' %}" class="text-sm text-neutral-500 hover:underline">← Back to companies</a>
 {% endblock %}
 {% block content %}
 
-<h1 class="text-2xl font-bold mt-2 mb-6">{% if requisition %}Edit {{ requisition.title }}{% else %}New project{% endif %}</h1>
+<h1 class="text-2xl font-bold mt-2 mb-6">{% if company %}Edit {{ company.name }}{% else %}New company{% endif %}</h1>
 
 <form method="post" class="bg-white rounded-lg shadow-sm p-6 max-w-xl space-y-4">
   {% csrf_token %}
@@ -14,13 +14,12 @@
     <label for="{{ field.id_for_label }}" class="block text-sm font-semibold mb-1">{{ field.label }}</label>
     {{ field.errors }}
     {{ field }}
-    {% if field.name == 'company' %}<p class="text-xs text-neutral-400 mt-1">Don't see them? <a href="{% url 'portal-company-create' %}" class="text-brand hover:underline">Add a new company</a> first.</p>{% endif %}
     {% if field.help_text %}<p class="text-xs text-neutral-400 mt-1">{{ field.help_text }}</p>{% endif %}
   </div>
   {% endfor %}
   <div class="pt-2">
     <button type="submit" class="text-sm font-semibold bg-brand text-white px-4 py-2 rounded hover:bg-brand-dark">
-      {% if requisition %}Save changes{% else %}Create project{% endif %}
+      {% if company %}Save changes{% else %}Create company{% endif %}
     </button>
   </div>
 </form>

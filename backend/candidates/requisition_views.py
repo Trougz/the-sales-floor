@@ -1,10 +1,9 @@
 """Recruiting portal: requisitions ("projects") -- CRUD plus each
 requisition's pipeline board.
 
-Same trust boundary as portal_views.py (recruiter_required). Company
-creation/editing stays in /admin/ -- this form only picks from existing
-companies, since standing up a new client relationship is a bigger
-conversation than opening a req.
+Same trust boundary as portal_views.py (recruiter_required). Company itself
+is a separate CRUD surface, see company_views.py -- this form's `company`
+field just picks from existing ones (with a link to add one on the fly).
 """
 from django import forms
 from django.db.models import Q

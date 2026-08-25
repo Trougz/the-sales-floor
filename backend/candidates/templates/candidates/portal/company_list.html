@@ -1,0 +1,51 @@
+{% extends "candidates/portal/base.html" %}
+{% block title %}Companies{% endblock %}
+{% block content %}
+
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-2xl font-bold mb-1">Companies</h1>
+    <p class="text-neutral-500">Clients whose open roles become projects.</p>
+  </div>
+  <a href="{% url 'portal-company-create' %}"
+     class="text-sm font-semibold bg-brand text-white px-4 py-2 rounded hover:bg-brand-dark">+ New company</a>
+</div>
+
+<form method="get" class="mb-4">
+  <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search companies…"
+         class="w-full max-w-sm border border-neutral-300 rounded-md px-3 py-2 text-sm">
+</form>
+
+{% if companies %}
+<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-neutral-100 text-xs uppercase tracking-wide text-neutral-500">
+      <tr>
+        <th class="text-left px-4 py-2">Name</th>
+        <th class="text-left px-4 py-2">Contact</th>
+        <th class="text-left px-4 py-2">Email</th>
+        <th class="text-left px-4 py-2">Phone</th>
+        <th class="text-left px-4 py-2">Projects</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in companies %}
+      <tr class="border-t border-neutral-100 hover:bg-neutral-50">
+        <td class="px-4 py-2">
+          <a href="{% url 'portal-company-detail' c.id %}" class="font-medium text-brand hover:underline">{{ c.name }}</a>
+        </td>
+        <td class="px-4 py-2">{{ c.contact_name|default:"—" }}</td>
+        <td class="px-4 py-2">{{ c.contact_email|default:"—" }}</td>
+        <td class="px-4 py-2">{{ c.contact_phone|default:"—" }}</td>
+        <td class="px-4 py-2">{{ c.project_count }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="bg-white rounded-lg shadow-sm p-8 text-center text-neutral-500">
+  {% if request.GET.q %}No companies match "{{ request.GET.q }}".{% else %}No companies here yet.{% endif %}
+</div>
+{% endif %}
+{% endblock %}
