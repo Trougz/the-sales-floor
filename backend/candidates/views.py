@@ -7,8 +7,8 @@ from django.views.decorators.http import require_POST
 from .models import Candidate, Company, CrmTool, Industry, WorkStyle
 
 REQUIRED_FIELDS = [
-    'name', 'email', 'phone', 'company',
-    'years', 'desired_ote', 'relocation',
+    'name', 'email', 'phone', 'linkedin', 'company',
+    'years', 'desired_ote', 'state', 'relocation',
 ]
 
 # The public employer form is a networking capture, not a job post -- it only
@@ -38,13 +38,14 @@ def submit_candidate(request):
             name=data['name'].strip(),
             email=data['email'].strip(),
             phone=data['phone'].strip(),
-            linkedin_url=data.get('linkedin', '').strip(),
+            linkedin_url=data['linkedin'].strip(),
             current_company_name=data['company'].strip(),
             current_title=data.get('title', ''),
             years_experience=int(data['years']),
             quota_attainment_pct=int(data['quota']) if data.get('quota') else None,
             ote=int(data['ote']) if data.get('ote') else None,
             desired_ote=data['desired_ote'],
+            state_province=data['state'],
             open_to_relocation=data['relocation'] == 'yes',
             awards=data.get('awards', '').strip(),
             resume=resume,

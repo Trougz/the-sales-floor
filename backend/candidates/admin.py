@@ -24,7 +24,7 @@ class CandidateAdmin(admin.ModelAdmin):
         'score_gap', 'pass_fail', 'created_at',
     ]
     list_filter = [
-        'status', 'current_title', 'pass_fail',
+        'status', 'current_title', 'pass_fail', 'state_province',
         'open_to_relocation', 'work_styles', 'industries', 'crm_tools',
     ]
     search_fields = ['name', 'email', 'phone', 'current_company_name', 'linkedin_url']

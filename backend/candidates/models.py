@@ -23,6 +23,42 @@ DESIRED_OTE_RANGE_CHOICES = [
     ('$250k+', '$250k+'),
 ]
 
+# Grouped (Django choices support an optgroup-style nested list) so the form
+# and admin both show "United States" / "Canada" as visual sections rather
+# than one flat alphabetical list of 64 names.
+STATE_PROVINCE_CHOICES = [
+    ('United States', [
+        ('Alabama', 'Alabama'), ('Alaska', 'Alaska'), ('Arizona', 'Arizona'),
+        ('Arkansas', 'Arkansas'), ('California', 'California'), ('Colorado', 'Colorado'),
+        ('Connecticut', 'Connecticut'), ('Delaware', 'Delaware'),
+        ('District of Columbia', 'District of Columbia'), ('Florida', 'Florida'),
+        ('Georgia', 'Georgia'), ('Hawaii', 'Hawaii'), ('Idaho', 'Idaho'),
+        ('Illinois', 'Illinois'), ('Indiana', 'Indiana'), ('Iowa', 'Iowa'),
+        ('Kansas', 'Kansas'), ('Kentucky', 'Kentucky'), ('Louisiana', 'Louisiana'),
+        ('Maine', 'Maine'), ('Maryland', 'Maryland'), ('Massachusetts', 'Massachusetts'),
+        ('Michigan', 'Michigan'), ('Minnesota', 'Minnesota'), ('Mississippi', 'Mississippi'),
+        ('Missouri', 'Missouri'), ('Montana', 'Montana'), ('Nebraska', 'Nebraska'),
+        ('Nevada', 'Nevada'), ('New Hampshire', 'New Hampshire'), ('New Jersey', 'New Jersey'),
+        ('New Mexico', 'New Mexico'), ('New York', 'New York'),
+        ('North Carolina', 'North Carolina'), ('North Dakota', 'North Dakota'),
+        ('Ohio', 'Ohio'), ('Oklahoma', 'Oklahoma'), ('Oregon', 'Oregon'),
+        ('Pennsylvania', 'Pennsylvania'), ('Rhode Island', 'Rhode Island'),
+        ('South Carolina', 'South Carolina'), ('South Dakota', 'South Dakota'),
+        ('Tennessee', 'Tennessee'), ('Texas', 'Texas'), ('Utah', 'Utah'),
+        ('Vermont', 'Vermont'), ('Virginia', 'Virginia'), ('Washington', 'Washington'),
+        ('West Virginia', 'West Virginia'), ('Wisconsin', 'Wisconsin'), ('Wyoming', 'Wyoming'),
+    ]),
+    ('Canada', [
+        ('Alberta', 'Alberta'), ('British Columbia', 'British Columbia'),
+        ('Manitoba', 'Manitoba'), ('New Brunswick', 'New Brunswick'),
+        ('Newfoundland and Labrador', 'Newfoundland and Labrador'),
+        ('Northwest Territories', 'Northwest Territories'), ('Nova Scotia', 'Nova Scotia'),
+        ('Nunavut', 'Nunavut'), ('Ontario', 'Ontario'),
+        ('Prince Edward Island', 'Prince Edward Island'), ('Quebec', 'Quebec'),
+        ('Saskatchewan', 'Saskatchewan'), ('Yukon', 'Yukon'),
+    ]),
+]
+
 
 class Industry(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -71,7 +107,7 @@ class Candidate(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField()
     phone = models.CharField(max_length=30)
-    linkedin_url = models.URLField(blank=True)
+    linkedin_url = models.URLField()
 
     # Current role
     current_company_name = models.CharField(max_length=200)
@@ -86,6 +122,7 @@ class Candidate(models.Model):
     desired_ote = models.CharField(max_length=20, choices=DESIRED_OTE_RANGE_CHOICES)
 
     # Preferences
+    state_province = models.CharField(max_length=30, choices=STATE_PROVINCE_CHOICES)
     open_to_relocation = models.BooleanField()
     work_styles = models.ManyToManyField(WorkStyle, blank=True, related_name='candidates')
     industries = models.ManyToManyField(Industry, blank=True, related_name='candidates')
