@@ -712,6 +712,64 @@ footer {
   border-top: 1px solid var(--border);
 }
 
+footer a {
+  color: var(--ink-faint);
+  text-decoration: underline;
+}
+
+footer a:hover {
+  color: var(--ink-dim);
+}
+
+/* Privacy policy prose */
+.policy h2 {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  margin-top: 40px;
+  margin-bottom: 12px;
+}
+
+.policy h2:first-of-type {
+  margin-top: 0;
+}
+
+.policy p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-dim);
+  margin-bottom: 16px;
+}
+
+.policy ul {
+  margin: 0 0 16px 20px;
+  color: var(--ink-dim);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.policy li {
+  margin-bottom: 6px;
+}
+
+.policy strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.policy a {
+  color: var(--red-deep);
+  text-decoration: underline;
+}
+
+.policy-updated {
+  font-size: 13px;
+  color: var(--ink-faint);
+  margin-bottom: 32px;
+}
+
 /* Responsive
    Everything below 640px is "mobile": nav shrinks, page padding/hero
    sizing tightens, and any 2-column grid (chooser cards, form-field grids)
