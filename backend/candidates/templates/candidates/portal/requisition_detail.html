@@ -16,12 +16,25 @@
       {% if requisition.get_timeline_display %} · {{ requisition.get_timeline_display }}{% endif %}
       · {{ requisition.get_status_display }}
     </p>
+    {% if requisition.location_required %}<p class="text-sm text-neutral-500 mt-1">Location: {{ requisition.get_location_required_display }}</p>{% endif %}
+    {% if requisition.required_crm_tools.all %}
+    <p class="text-sm text-neutral-500 mt-1">Tools: {% for t in requisition.required_crm_tools.all %}{{ t.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+    {% endif %}
+    {% if requisition.job_listing %}
+    <details class="mt-2">
+      <summary class="text-sm text-brand cursor-pointer">Job listing</summary>
+      <p class="text-sm text-neutral-600 whitespace-pre-wrap mt-2 max-w-2xl">{{ requisition.job_listing }}</p>
+    </details>
+    {% endif %}
   </div>
   <a href="{% url 'portal-requisition-edit' requisition.id %}" class="text-sm text-brand hover:underline">Edit</a>
 </div>
 
 <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
-  <label class="block text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-2">Add a candidate to this board</label>
+  <div class="flex items-center justify-between mb-2">
+    <label class="block text-xs uppercase tracking-wide text-neutral-500 font-semibold">Add a candidate to this board</label>
+    <a href="{% url 'portal-fit-search-mode-choice' requisition.id %}" class="text-xs font-semibold text-brand hover:underline">Find candidates for this project →</a>
+  </div>
   <input type="text" name="q" placeholder="Search candidates by name, email, or company…"
          hx-get="{% url 'portal-requisition-candidate-search' requisition.id %}"
          hx-trigger="keyup changed delay:300ms" hx-target="#add-candidate-results" hx-swap="innerHTML"

@@ -183,6 +183,7 @@ class RequisitionAdmin(admin.ModelAdmin):
     search_fields = ['title', 'company__name']
     autocomplete_fields = ['company']
     list_editable = ['status']
+    filter_horizontal = ['required_crm_tools']
     inlines = [MatchInline]
 
 

@@ -1,11 +1,22 @@
 from django.urls import path
 
-from . import company_views, import_views, pipeline_views, portal_views, requisition_views
+from . import company_views, fit_search_views, import_views, pipeline_views, portal_views, requisition_views
 
 urlpatterns = [
     path('', portal_views.index, name='portal-index'),
     path('candidates/', portal_views.candidate_search, name='portal-candidate-search'),
     path('candidates/import/', import_views.import_linkedin_candidates, name='portal-import-candidates'),
+    path('candidates/search-for-project/', fit_search_views.project_picker, name='portal-fit-search-picker'),
+    path(
+        'candidates/search-for-project/<int:requisition_id>/',
+        fit_search_views.fit_search_mode_choice,
+        name='portal-fit-search-mode-choice',
+    ),
+    path(
+        'candidates/search-for-project/<int:requisition_id>/results/',
+        fit_search_views.fit_search_results,
+        name='portal-fit-search-results',
+    ),
     path('candidates/<int:candidate_id>/', portal_views.candidate_detail, name='portal-candidate-detail'),
     path('companies/', company_views.company_list, name='portal-company-list'),
     path('companies/new/', company_views.company_create, name='portal-company-create'),

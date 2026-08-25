@@ -307,6 +307,18 @@ class Requisition(models.Model):
     industry = models.ForeignKey(
         Industry, on_delete=models.SET_NULL, null=True, blank=True, related_name='requisitions'
     )
+    # Full pasted job posting text -- informational only today. Not fed into
+    # any AI call: doing that safely would need a background-job setup this
+    # project doesn't have (see candidates.fit_search's module docstring).
+    job_listing = models.TextField(blank=True)
+    # Single-state hard requirement for candidates.fit_search's location
+    # cutoff; blank means "no requirement / remote", not "unknown".
+    location_required = models.CharField(max_length=30, choices=STATE_PROVINCE_CHOICES, blank=True)
+    # Scored (not hard-cutoff) in candidates.fit_search -- mirrors
+    # Candidate.crm_tools. related_name='requisitions' doesn't collide with
+    # anything else on CrmTool (its only other reverse relation is
+    # Candidate.crm_tools -> related_name='candidates').
+    required_crm_tools = models.ManyToManyField(CrmTool, blank=True, related_name='requisitions')
     comp_min = models.PositiveIntegerField(null=True, blank=True)
     comp_max = models.PositiveIntegerField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
