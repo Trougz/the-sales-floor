@@ -4,8 +4,9 @@ from django.utils.html import format_html, format_html_join
 from .ai.client import AIConfigurationError
 from .ai.ranking import MAX_CANDIDATES_PER_BATCH, rank_candidate
 from .models import (
-    Candidate, CandidateAE, CandidateRejected, CandidateSalesManager, CandidateSDRBDR,
-    Company, CrmTool, Industry, Match, Requisition, WorkStyle,
+    Campaign, CampaignEnrollment, CampaignStep, Candidate, CandidateAE, CandidateRejected,
+    CandidateSalesManager, CandidateSDRBDR, Company, Contact, CrmTool, Industry, Match,
+    Requisition, StepExecution, WorkStyle,
 )
 
 
@@ -13,6 +14,16 @@ class MatchInline(admin.TabularInline):
     model = Match
     extra = 0
     autocomplete_fields = ['candidate', 'requisition']
+
+
+class ContactInline(admin.TabularInline):
+    model = Contact
+    extra = 0
+
+
+class CampaignStepInline(admin.TabularInline):
+    model = CampaignStep
+    extra = 0
 
 
 @admin.register(Candidate)
@@ -171,6 +182,7 @@ class CandidateRejectedAdmin(_ScreenedCandidateAdminMixin, CandidateAdmin):
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ['name', 'contact_name', 'contact_email', 'contact_phone', 'created_at']
     search_fields = ['name', 'contact_name', 'contact_email']
+    inlines = [ContactInline]
 
 
 @admin.register(Requisition)
@@ -208,3 +220,34 @@ class CrmToolAdmin(admin.ModelAdmin):
 @admin.register(WorkStyle)
 class WorkStyleAdmin(admin.ModelAdmin):
     search_fields = ['name']
+
+
+@admin.register(Contact)
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ['name', 'company', 'title', 'email', 'phone']
+    search_fields = ['name', 'email', 'company__name']
+    autocomplete_fields = ['company']
+
+
+@admin.register(Campaign)
+class CampaignAdmin(admin.ModelAdmin):
+    list_display = ['name', 'audience_type', 'requisition', 'status', 'created_by', 'created_at']
+    list_filter = ['audience_type', 'status']
+    search_fields = ['name']
+    autocomplete_fields = ['requisition', 'created_by']
+    inlines = [CampaignStepInline]
+
+
+@admin.register(CampaignEnrollment)
+class CampaignEnrollmentAdmin(admin.ModelAdmin):
+    list_display = ['campaign', 'candidate', 'contact', 'status', 'enrolled_at']
+    list_filter = ['status', 'campaign']
+    search_fields = ['candidate__name', 'contact__name', 'campaign__name']
+    autocomplete_fields = ['campaign', 'candidate', 'contact']
+
+
+@admin.register(StepExecution)
+class StepExecutionAdmin(admin.ModelAdmin):
+    list_display = ['enrollment', 'campaign_step', 'status', 'due_at', 'completed_at', 'completed_by']
+    list_filter = ['status', 'campaign_step__step_type']
+    autocomplete_fields = ['completed_by']

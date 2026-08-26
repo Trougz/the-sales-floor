@@ -10,7 +10,7 @@ from django.urls import reverse
 
 from .decorators import recruiter_required
 from .fit_search import find_candidates_for_requisition
-from .models import Requisition
+from .models import Campaign, Requisition
 
 
 @recruiter_required
@@ -63,5 +63,6 @@ def fit_search_results(request, requisition_id):
         'requisition': requisition,
         'ranked': ranked,
         'counts': counts,
+        'active_candidate_campaigns': Campaign.objects.filter(audience_type='candidate', status='active'),
         'active_nav': 'candidates',
     })

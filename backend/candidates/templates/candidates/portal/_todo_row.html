@@ -1,0 +1,34 @@
+<tr id="todo-row-{{ se.id }}" class="border-t border-neutral-100 {% if se.status != 'pending' %}opacity-50{% endif %}">
+  <td class="px-4 py-2 whitespace-nowrap">{{ se.due_at|date:"M j, g:i A" }}</td>
+  <td class="px-4 py-2">{{ se.campaign_step.get_step_type_display }}</td>
+  <td class="px-4 py-2">
+    {% if se.enrollment.candidate %}
+      <a href="{% url 'portal-candidate-detail' se.enrollment.candidate_id %}" class="text-brand hover:underline">{{ se.enrollment.candidate.name }}</a>
+    {% else %}
+      {{ se.enrollment.contact.name }} <span class="text-neutral-400">({{ se.enrollment.contact.company.name }})</span>
+    {% endif %}
+  </td>
+  <td class="px-4 py-2 max-w-sm">
+    {% if se.campaign_step.step_type == 'email' and se.campaign_step.subject %}<div class="font-medium">{{ se.campaign_step.subject }}</div>{% endif %}
+    <div class="text-neutral-500 text-xs">{{ se.campaign_step.body|truncatewords:20|default:"—" }}</div>
+  </td>
+  <td class="px-4 py-2">{{ se.enrollment.campaign.name }}</td>
+  <td class="px-4 py-2 text-right whitespace-nowrap">
+    {% if se.campaign_step.step_type == 'email' %}
+      <span class="text-xs {% if se.status == 'pending' %}text-amber-700{% else %}text-green-700{% endif %}">
+        {% if se.status == 'pending' %}Awaiting send{% else %}Sent {{ se.completed_at|date:"M j" }}{% endif %}
+      </span>
+    {% elif se.status != 'pending' %}
+      <span class="text-xs text-neutral-500">{{ se.get_status_display }}</span>
+    {% else %}
+      <form hx-post="{% url 'portal-todo-complete' se.id %}" hx-target="#todo-row-{{ se.id }}" hx-swap="outerHTML" class="inline">
+        {% csrf_token %}
+        <button type="submit" class="text-xs font-semibold text-brand hover:underline mr-2">Mark done</button>
+      </form>
+      <form hx-post="{% url 'portal-todo-skip' se.id %}" hx-target="#todo-row-{{ se.id }}" hx-swap="outerHTML" class="inline">
+        {% csrf_token %}
+        <button type="submit" class="text-xs text-neutral-500 hover:underline">Skip</button>
+      </form>
+    {% endif %}
+  </td>
+</tr>

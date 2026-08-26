@@ -1,0 +1,14 @@
+<tr id="contact-row-{{ contact.id }}" class="border-t border-neutral-100">
+  <td colspan="5" class="py-2">
+    <form hx-post="{% url 'portal-contact-edit' contact.id %}" hx-target="#contact-row-{{ contact.id }}" hx-swap="outerHTML"
+          class="flex flex-wrap gap-2 items-end">
+      {% csrf_token %}
+      <div><label class="block text-xs text-neutral-400">Name</label>{{ form.name }}</div>
+      <div><label class="block text-xs text-neutral-400">Title</label>{{ form.title }}</div>
+      <div><label class="block text-xs text-neutral-400">Email</label>{{ form.email }}</div>
+      <div><label class="block text-xs text-neutral-400">Phone</label>{{ form.phone }}</div>
+      <div><label class="block text-xs text-neutral-400">LinkedIn</label>{{ form.linkedin_url }}</div>
+      <button type="submit" class="text-xs font-semibold bg-brand text-white px-3 py-1.5 rounded hover:bg-brand-dark">Save</button>
+    </form>
+  </td>
+</tr>

@@ -1,0 +1,25 @@
+<div id="contact-list">
+  <table class="w-full text-sm mb-3">
+    <thead class="text-xs text-neutral-400">
+      <tr><th class="text-left pb-2">Name</th><th class="text-left pb-2">Title</th><th class="text-left pb-2">Email</th><th class="text-left pb-2">Phone</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for contact in contacts %}
+        {% include "candidates/portal/_contact_row.html" with contact=contact %}
+      {% empty %}
+      <tr><td colspan="5" class="text-sm text-neutral-400 py-2">No additional contacts yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <form hx-post="{% url 'portal-contact-create' company.id %}" hx-target="#contact-list" hx-swap="outerHTML"
+        class="flex flex-wrap gap-2 items-end border-t border-neutral-100 pt-3">
+    {% csrf_token %}
+    <div><label class="block text-xs text-neutral-400">Name</label>{{ form.name }}</div>
+    <div><label class="block text-xs text-neutral-400">Title</label>{{ form.title }}</div>
+    <div><label class="block text-xs text-neutral-400">Email</label>{{ form.email }}</div>
+    <div><label class="block text-xs text-neutral-400">Phone</label>{{ form.phone }}</div>
+    <button type="submit" class="text-xs font-semibold bg-brand text-white px-3 py-1.5 rounded hover:bg-brand-dark">+ Add contact</button>
+  </form>
+  {% if form.errors %}<div class="text-xs text-red-700 mt-1">{{ form.errors }}</div>{% endif %}
+</div>

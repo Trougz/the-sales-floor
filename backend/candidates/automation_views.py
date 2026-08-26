@@ -21,7 +21,9 @@ from django.views.decorators.http import require_GET, require_POST
 
 from .ai.client import AIConfigurationError
 from .ai.ranking import MAX_CANDIDATES_PER_BATCH, rank_candidate
-from .models import Candidate
+from .campaign_engine import complete_step_execution
+from .campaign_messages import get_recipient, render_step_message
+from .models import Candidate, StepExecution
 
 logger = logging.getLogger(__name__)
 
@@ -171,3 +173,71 @@ def mark_contacted(request):
     candidate.save(update_fields=[field])
 
     return JsonResponse({'result': 'success', 'id': candidate.id, 'type': contact_type})
+
+
+def _campaign_step_payload(step_execution):
+    subject, body = render_step_message(step_execution)
+    recipient = get_recipient(step_execution.enrollment)
+    return {
+        'step_execution_id': step_execution.id,
+        'campaign_id': step_execution.enrollment.campaign_id,
+        'campaign_name': step_execution.enrollment.campaign.name,
+        'step_order': step_execution.campaign_step.order,
+        'recipient_type': 'candidate' if step_execution.enrollment.candidate_id else 'contact',
+        'recipient_id': recipient.id,
+        'name': recipient.name,
+        'email': recipient.email,
+        'subject': subject,
+        'body': body,
+    }
+
+
+@require_GET
+@automation_auth_required
+def pending_campaign_emails(request):
+    """Email-type CampaignStep StepExecutions currently due -- n8n polls this
+    exactly like pending_nurture/pending_invite, sends via whatever ESP it
+    owns, then confirms via mark_campaign_step_sent below.
+    """
+    step_executions = (
+        StepExecution.objects.filter(
+            campaign_step__step_type='email',
+            status='pending',
+            due_at__lte=timezone.now(),
+            enrollment__status='active',
+            enrollment__campaign__status='active',
+        )
+        .select_related(
+            'campaign_step', 'enrollment__campaign',
+            'enrollment__candidate', 'enrollment__contact__company',
+        )
+    )
+    return JsonResponse({
+        'result': 'success',
+        'step_executions': [_campaign_step_payload(se) for se in step_executions],
+    })
+
+
+@csrf_exempt
+@require_POST
+@automation_auth_required
+def mark_campaign_step_sent(request):
+    """Record that n8n actually sent this email step -- and, as the "step
+    completed" event for automated steps, advance the enrollment to its next
+    step (or complete it), via the same shared function the manual to-do
+    "mark done" view uses. Idempotent, matching mark_contacted.
+    """
+    try:
+        body = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'result': 'error', 'message': 'Invalid JSON body'}, status=400)
+
+    try:
+        step_execution = StepExecution.objects.select_related('campaign_step', 'enrollment__campaign').get(
+            pk=body.get('step_execution_id'), campaign_step__step_type='email',
+        )
+    except (StepExecution.DoesNotExist, ValueError, TypeError):
+        return JsonResponse({'result': 'error', 'message': 'No such pending email step'}, status=404)
+
+    complete_step_execution(step_execution, completed_by=None)
+    return JsonResponse({'result': 'success', 'id': step_execution.id})

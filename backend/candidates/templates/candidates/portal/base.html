@@ -42,6 +42,14 @@
          class="block px-3 py-2 rounded {% if active_nav == 'import' %}bg-brand text-white{% else %}hover:bg-neutral-800{% endif %}">
         Import from LinkedIn
       </a>
+      <a href="{% url 'portal-campaign-list' %}"
+         class="block px-3 py-2 rounded {% if active_nav == 'campaigns' %}bg-brand text-white{% else %}hover:bg-neutral-800{% endif %}">
+        Campaigns
+      </a>
+      <a href="{% url 'portal-todo-list' %}"
+         class="block px-3 py-2 rounded {% if active_nav == 'todos' %}bg-brand text-white{% else %}hover:bg-neutral-800{% endif %}">
+        To-Do's
+      </a>
     </nav>
     <div class="text-xs text-neutral-400 pt-6 border-t border-neutral-800">
       {{ request.user.username }}<br>

@@ -283,6 +283,33 @@ class Company(models.Model):
         return self.name
 
 
+class Contact(models.Model):
+    """A specific person at a Company, for business-development outreach --
+    distinct from Company.contact_name/contact_email/contact_phone (the
+    single "primary" contact shown on the company page today, kept as-is).
+    A company can have several Contacts, each individually enrollable in a
+    Campaign. Always scoped to one Company, never browsed globally -- see
+    candidates/contact_views.py.
+    """
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='contacts')
+    name = models.CharField(max_length=200)
+    email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=30, blank=True)
+    title = models.CharField(
+        max_length=200, blank=True,
+        help_text='Job title at this company, e.g. "VP Sales" -- free text, unrelated to TITLE_CHOICES.',
+    )
+    linkedin_url = models.URLField(blank=True)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return f'{self.name} ({self.company.name})'
+
+
 class Requisition(models.Model):
     STATUS_CHOICES = [
         ('open', 'Open'),
@@ -361,6 +388,202 @@ class Match(models.Model):
 
     def __str__(self):
         return f'{self.candidate} -> {self.requisition} ({self.stage})'
+
+
+class Campaign(models.Model):
+    """A multi-step outreach sequence -- see candidates/campaign_engine.py
+    for the scheduling logic and candidates/campaign_views.py for the
+    portal CRUD. Enrolls either Candidates (sourcing) or Contacts (business
+    development), never both -- see audience_type.
+    """
+    AUDIENCE_CHOICES = [
+        ('candidate', 'Candidate sourcing'),
+        ('contact', 'Business development'),
+    ]
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('paused', 'Paused'),
+        ('archived', 'Archived'),
+    ]
+
+    name = models.CharField(max_length=200)
+    audience_type = models.CharField(max_length=10, choices=AUDIENCE_CHOICES)
+    # Only meaningful for audience_type='candidate' -- ties a shortlist
+    # campaign to "invite this shortlist to screening for project X",
+    # continuing the fit_search AI-shortlist workflow. Always null for
+    # audience_type='contact' BD campaigns. SET_NULL (not CASCADE) since a
+    # requisition going away shouldn't destroy campaign/send history.
+    requisition = models.ForeignKey(
+        Requisition, on_delete=models.SET_NULL, null=True, blank=True, related_name='campaigns',
+    )
+    # 'paused' stops both the n8n email feed and the to-do queue from
+    # surfacing this campaign's steps without touching any StepExecution
+    # data -- reactivating resumes exactly where it left off.
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='created_campaigns',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.name
+
+    def scheduling_summary(self):
+        """'N steps scheduled over M sending days' -- computed live from
+        the steps' delay_days, not stored or dependent on any
+        StepExecution having been materialized yet."""
+        steps = list(self.steps.all())
+        return {'step_count': len(steps), 'total_days': sum(s.delay_days for s in steps)}
+
+
+class CampaignStep(models.Model):
+    STEP_TYPE_CHOICES = [
+        ('email', 'Email'),
+        ('linkedin_inmail', 'LinkedIn InMail'),
+        ('linkedin_connection', 'LinkedIn connection request'),
+        ('phone_call', 'Phone call'),
+        ('general_task', 'General task'),
+    ]
+
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name='steps')
+    order = models.PositiveIntegerField(help_text='1-based position in the sequence.')
+    step_type = models.CharField(max_length=20, choices=STEP_TYPE_CHOICES)
+    # Only meaningful for step_type='email' -- see save() below.
+    subject = models.CharField(max_length=255, blank=True)
+    # Drafted message (email/InMail) or instructions (call/general task).
+    body = models.TextField(blank=True)
+    delay_days = models.PositiveIntegerField(
+        default=0,
+        help_text='Days after the previous step (or enrollment, for step 1) before this step is due. 0 = immediately.',
+    )
+    # Email-only "between 9:00 AM and 6:00 PM" setting -- see save() below
+    # and candidates.campaign_engine.compute_due_at.
+    send_window_start = models.TimeField(null=True, blank=True)
+    send_window_end = models.TimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['campaign', 'order']
+        constraints = [
+            models.UniqueConstraint(fields=['campaign', 'order'], name='unique_campaign_step_order'),
+        ]
+
+    def __str__(self):
+        return f'Step {self.order} ({self.get_step_type_display()}) — {self.campaign.name}'
+
+    def save(self, *args, **kwargs):
+        # Enforced unconditionally here, not just in a form, so the
+        # invariant holds regardless of call path (admin inline, shell,
+        # a future bulk-edit view) -- a non-email step should never carry
+        # a stale window from an earlier step-type change.
+        if self.step_type != 'email':
+            self.send_window_start = None
+            self.send_window_end = None
+        super().save(*args, **kwargs)
+
+
+class CampaignEnrollment(models.Model):
+    """A specific Candidate or Contact enrolled in a Campaign. Exactly one
+    of candidate/contact is set, matching campaign.audience_type -- enforced
+    at three layers: the creating view rejects a mismatched target before
+    touching the DB, clean() catches it for any ModelForm/admin path, and
+    the CheckConstraint below enforces "exactly one of candidate/contact" at
+    the row level (a single-table CHECK can't also compare against
+    campaign.audience_type, so that half stays app-layer only).
+    """
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('completed', 'Completed'),
+        ('removed', 'Removed'),
+    ]
+
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name='enrollments')
+    candidate = models.ForeignKey(
+        Candidate, on_delete=models.CASCADE, null=True, blank=True, related_name='campaign_enrollments',
+    )
+    contact = models.ForeignKey(
+        Contact, on_delete=models.CASCADE, null=True, blank=True, related_name='campaign_enrollments',
+    )
+    enrolled_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
+
+    class Meta:
+        ordering = ['-enrolled_at']
+        constraints = [
+            # A nullable FK on one side of each of these is fine -- SQL
+            # treats every NULL as distinct for uniqueness, on both SQLite
+            # and Postgres, so each constraint is silently inert for the
+            # audience type it doesn't apply to.
+            models.UniqueConstraint(fields=['campaign', 'candidate'], name='unique_campaign_candidate'),
+            models.UniqueConstraint(fields=['campaign', 'contact'], name='unique_campaign_contact'),
+            models.CheckConstraint(
+                condition=(
+                    models.Q(candidate__isnull=False, contact__isnull=True)
+                    | models.Q(candidate__isnull=True, contact__isnull=False)
+                ),
+                name='campaign_enrollment_exactly_one_target',
+            ),
+        ]
+
+    def __str__(self):
+        return f'{self.candidate or self.contact} in {self.campaign.name}'
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if bool(self.candidate_id) == bool(self.contact_id):
+            raise ValidationError('Enrollment must have exactly one of candidate or contact set.')
+        if self.campaign.audience_type == 'candidate' and not self.candidate_id:
+            raise ValidationError('This campaign only enrolls candidates.')
+        if self.campaign.audience_type == 'contact' and not self.contact_id:
+            raise ValidationError('This campaign only enrolls contacts.')
+
+
+class StepExecution(models.Model):
+    """The concrete to-do/send record: 'step N for this enrollment is due
+    at time X'. Only the current pending step exists for a given enrollment
+    at any time (just-in-time materialization) -- see
+    candidates.campaign_engine.complete_step_execution, the one place a new
+    row gets created, called identically from a recruiter's manual
+    'mark done' and n8n's automated send confirmation.
+    """
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('done', 'Done'),
+        ('skipped', 'Skipped'),
+    ]
+
+    enrollment = models.ForeignKey(CampaignEnrollment, on_delete=models.CASCADE, related_name='step_executions')
+    campaign_step = models.ForeignKey(CampaignStep, on_delete=models.CASCADE, related_name='step_executions')
+    due_at = models.DateTimeField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    completed_at = models.DateTimeField(null=True, blank=True)
+    # Null for n8n-confirmed email sends; set for manual completions --
+    # same "who/what did this" convention as Candidate.manual_ranked_by.
+    completed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='completed_step_executions',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['due_at']
+        constraints = [
+            # Belt-and-suspenders for the just-in-time design: at most one
+            # *pending* StepExecution per enrollment, enforced at the DB
+            # level, not just by convention.
+            models.UniqueConstraint(
+                fields=['enrollment'],
+                condition=models.Q(status='pending'),
+                name='unique_pending_step_execution_per_enrollment',
+            ),
+        ]
+
+    def __str__(self):
+        return f'{self.campaign_step} for {self.enrollment} (due {self.due_at:%Y-%m-%d})'
 
 
 class ResumeExtraction(models.Model):

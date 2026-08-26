@@ -1,0 +1,62 @@
+{% extends "candidates/portal/base.html" %}
+{% block title %}Campaigns{% endblock %}
+{% block content %}
+
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-2xl font-bold mb-1">Campaigns</h1>
+    <p class="text-neutral-500">Multi-step outreach sequences for candidate sourcing and business development.</p>
+  </div>
+  <a href="{% url 'portal-campaign-create' %}"
+     class="text-sm font-semibold bg-brand text-white px-4 py-2 rounded hover:bg-brand-dark">+ New campaign</a>
+</div>
+
+<div class="flex flex-wrap gap-2 mb-4 text-sm">
+  {% for value, label in status_choices %}
+    <a href="?status={{ value }}{% if audience_type %}&audience_type={{ audience_type }}{% endif %}"
+       class="px-3 py-1.5 rounded {% if status == value %}bg-neutral-900 text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">
+      {{ label }}
+    </a>
+  {% endfor %}
+  <span class="mx-1 text-neutral-300">|</span>
+  <a href="?status={{ status }}"
+     class="px-3 py-1.5 rounded {% if not audience_type %}bg-neutral-900 text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">Any audience</a>
+  {% for value, label in audience_choices %}
+    <a href="?status={{ status }}&audience_type={{ value }}"
+       class="px-3 py-1.5 rounded {% if audience_type == value %}bg-neutral-900 text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">
+      {{ label }}
+    </a>
+  {% endfor %}
+</div>
+
+{% if campaigns %}
+<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-neutral-100 text-xs uppercase tracking-wide text-neutral-500">
+      <tr>
+        <th class="text-left px-4 py-2">Name</th>
+        <th class="text-left px-4 py-2">Audience</th>
+        <th class="text-left px-4 py-2">Project</th>
+        <th class="text-left px-4 py-2">Enrolled</th>
+        <th class="text-left px-4 py-2">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in campaigns %}
+      <tr class="border-t border-neutral-100 hover:bg-neutral-50">
+        <td class="px-4 py-2">
+          <a href="{% url 'portal-campaign-detail' c.id %}" class="font-medium text-brand hover:underline">{{ c.name }}</a>
+        </td>
+        <td class="px-4 py-2">{{ c.get_audience_type_display }}</td>
+        <td class="px-4 py-2">{{ c.requisition.title|default:"—" }}</td>
+        <td class="px-4 py-2">{{ c.enrollment_count }}</td>
+        <td class="px-4 py-2">{{ c.get_status_display }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="bg-white rounded-lg shadow-sm p-8 text-center text-neutral-500">No campaigns here yet.</div>
+{% endif %}
+{% endblock %}

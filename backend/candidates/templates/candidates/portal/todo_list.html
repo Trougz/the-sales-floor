@@ -1,0 +1,36 @@
+{% extends "candidates/portal/base.html" %}
+{% block title %}To-Do's{% endblock %}
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-1">To-Do's</h1>
+<p class="text-neutral-500 mb-6">Campaign steps that need a human touch, across everything active.</p>
+
+<div class="flex flex-wrap gap-2 mb-4 text-sm">
+  <a href="?step_type=" class="px-3 py-1.5 rounded {% if not step_type %}bg-neutral-900 text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">All manual</a>
+  {% for value, label in manual_step_types %}
+    <a href="?step_type={{ value }}" class="px-3 py-1.5 rounded {% if step_type == value %}bg-neutral-900 text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">{{ label }}</a>
+  {% endfor %}
+  <span class="mx-1 text-neutral-300">|</span>
+  <a href="?step_type=email" class="px-3 py-1.5 rounded {% if is_email_tab %}bg-neutral-900 text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">Email steps (read-only)</a>
+</div>
+
+<form method="get" class="flex flex-wrap gap-3 mb-4 text-sm items-center">
+  <input type="hidden" name="step_type" value="{{ step_type }}">
+  <select name="campaign" onchange="this.form.submit()" class="border border-neutral-300 rounded-md px-2 py-1.5 text-sm">
+    <option value="">All campaigns</option>
+    {% for c in campaigns %}<option value="{{ c.id }}" {% if selected_campaign == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+  </select>
+  {% if not is_email_tab %}
+  <div class="flex gap-2">
+    <a href="?step_type={{ step_type }}&campaign={{ selected_campaign }}" class="px-2 py-1 rounded {% if not bucket %}bg-brand text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">All due</a>
+    <a href="?step_type={{ step_type }}&campaign={{ selected_campaign }}&bucket=overdue" class="px-2 py-1 rounded {% if bucket == 'overdue' %}bg-brand text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">Overdue</a>
+    <a href="?step_type={{ step_type }}&campaign={{ selected_campaign }}&bucket=today" class="px-2 py-1 rounded {% if bucket == 'today' %}bg-brand text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">Today</a>
+    <a href="?step_type={{ step_type }}&campaign={{ selected_campaign }}&bucket=upcoming" class="px-2 py-1 rounded {% if bucket == 'upcoming' %}bg-brand text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">Upcoming</a>
+  </div>
+  {% endif %}
+</form>
+
+<div id="todo-results">
+  {% include "candidates/portal/_todo_results.html" %}
+</div>
+{% endblock %}

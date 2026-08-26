@@ -12,7 +12,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .decorators import recruiter_required
-from .models import Candidate, CrmTool, Industry, Requisition, TITLE_CHOICES
+from .models import Campaign, Candidate, CrmTool, Industry, Requisition, TITLE_CHOICES
 
 RESULTS_PER_PAGE = 25
 
@@ -78,6 +78,7 @@ def candidate_search(request):
         # re-adding an already-matched candidate is a harmless no-op that
         # create_match reports back as "already in this pipeline".
         'open_requisitions': Requisition.objects.filter(status='open').select_related('company').order_by('company__name', 'title'),
+        'active_candidate_campaigns': Campaign.objects.filter(audience_type='candidate', status='active'),
         'active_nav': 'candidates',
     }
 
@@ -102,9 +103,14 @@ def candidate_detail(request, candidate_id):
         .select_related('company')
         .order_by('company__name', 'title')
     )
+    active_campaigns = (
+        Campaign.objects.filter(audience_type='candidate', status='active')
+        .exclude(enrollments__candidate=candidate)
+    )
     return render(request, 'candidates/portal/candidate_detail.html', {
         'candidate': candidate,
         'matches': matches,
         'open_requisitions': open_requisitions,
+        'active_candidate_campaigns': active_campaigns,
         'active_nav': 'candidates',
     })

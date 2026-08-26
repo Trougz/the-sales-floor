@@ -198,6 +198,13 @@ CALENDLY_SCHEDULING_URL = os.environ.get('CALENDLY_SCHEDULING_URL', '')
 # endpoint -- a second secret here wouldn't buy any real isolation.
 N8N_INVITE_WEBHOOK_URL = os.environ.get('N8N_INVITE_WEBHOOK_URL', '')
 
+# Business-hours timezone for CampaignStep.send_window_start/end (see
+# candidates/campaign_engine.py) -- distinct from TIME_ZONE above (UTC,
+# storage-only): "between 9:00 AM and 6:00 PM" in the step editor means the
+# recruiting team's local hours, not UTC. One global setting, not per-user --
+# this is a small internal tool with a single recruiting team.
+CAMPAIGN_SEND_TIMEZONE = os.environ.get('CAMPAIGN_SEND_TIMEZONE', 'America/New_York')
+
 # The only login form this project has is the admin's. qa_views' pages use
 # @login_required (stacked ahead of @staff_member_required, see
 # qa_reviewer_required), which without this would send anonymous users to

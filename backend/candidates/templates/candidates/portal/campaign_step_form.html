@@ -1,0 +1,29 @@
+{% extends "candidates/portal/base.html" %}
+{% block title %}{% if step %}Edit step{% else %}New step{% endif %}{% endblock %}
+{% block breadcrumbs %}
+<a href="{% url 'portal-campaign-detail' campaign.id %}" class="text-sm text-neutral-500 hover:underline">← Back to {{ campaign.name }}</a>
+{% endblock %}
+{% block content %}
+
+<h1 class="text-2xl font-bold mt-2 mb-6">{% if step %}Edit step {{ step.order }}{% else %}New step for {{ campaign.name }}{% endif %}</h1>
+
+<form method="post" class="bg-white rounded-lg shadow-sm p-6 max-w-xl space-y-4">
+  {% csrf_token %}
+  {% for field in form %}
+  <div>
+    <label for="{{ field.id_for_label }}" class="block text-sm font-semibold mb-1">{{ field.label }}</label>
+    {{ field.errors }}
+    {{ field }}
+    {% if field.name == 'subject' %}<p class="text-xs text-neutral-400 mt-1">Email only. Use {First Name}, {Full Name}, {Company}, {Title} to personalize.</p>{% endif %}
+    {% if field.name == 'body' %}<p class="text-xs text-neutral-400 mt-1">Drafted message (email/LinkedIn) or instructions (call/task). Same tokens work here.</p>{% endif %}
+    {% if field.name == 'send_window_start' or field.name == 'send_window_end' %}<p class="text-xs text-neutral-400 mt-1">Email steps only -- ignored for every other step type.</p>{% endif %}
+    {% if field.help_text %}<p class="text-xs text-neutral-400 mt-1">{{ field.help_text }}</p>{% endif %}
+  </div>
+  {% endfor %}
+  <div class="pt-2">
+    <button type="submit" class="text-sm font-semibold bg-brand text-white px-4 py-2 rounded hover:bg-brand-dark">
+      {% if step %}Save changes{% else %}Add step{% endif %}
+    </button>
+  </div>
+</form>
+{% endblock %}

@@ -23,4 +23,14 @@ urlpatterns = [
         automation_views.mark_contacted,
         name='automation-mark-contacted',
     ),
+    path(
+        'automation/campaigns/pending-emails/',
+        automation_views.pending_campaign_emails,
+        name='automation-pending-campaign-emails',
+    ),
+    path(
+        'automation/campaigns/mark-step-sent/',
+        automation_views.mark_campaign_step_sent,
+        name='automation-mark-campaign-step-sent',
+    ),
 ]

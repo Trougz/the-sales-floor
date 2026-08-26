@@ -57,6 +57,25 @@
       <p class="text-sm text-neutral-400">No open projects this candidate isn't already in.</p>
       {% endif %}
     </div>
+
+    <div class="bg-white rounded-lg shadow-sm p-5">
+      <h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-3">Add to a campaign</h2>
+      {% if active_candidate_campaigns %}
+      <form hx-post="{% url 'portal-create-enrollment' %}" hx-target="#enroll-status-detail" hx-swap="innerHTML"
+            class="flex items-center gap-2">
+        <input type="hidden" name="candidate_id" value="{{ candidate.id }}">
+        <select name="campaign_id" class="border border-neutral-300 rounded px-2 py-1.5 text-sm flex-1">
+          {% for c in active_candidate_campaigns %}
+            <option value="{{ c.id }}">{{ c.name }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="text-sm font-semibold bg-brand text-white px-3 py-1.5 rounded hover:bg-brand-dark">Add</button>
+      </form>
+      <div id="enroll-status-detail" class="text-sm mt-2"></div>
+      {% else %}
+      <p class="text-sm text-neutral-400">No active campaigns this candidate isn't already enrolled in.</p>
+      {% endif %}
+    </div>
   </div>
 
   <div class="space-y-6">

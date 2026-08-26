@@ -1,0 +1,42 @@
+<div class="text-sm text-neutral-500 mb-2">{{ page_obj.paginator.count }} item{{ page_obj.paginator.count|pluralize }}</div>
+
+{% if page_obj.object_list %}
+<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-neutral-100 text-xs uppercase tracking-wide text-neutral-500">
+      <tr>
+        <th class="text-left px-4 py-2">Due</th>
+        <th class="text-left px-4 py-2">Type</th>
+        <th class="text-left px-4 py-2">Who</th>
+        <th class="text-left px-4 py-2">Details</th>
+        <th class="text-left px-4 py-2">Campaign</th>
+        <th class="text-left px-4 py-2"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for se in page_obj.object_list %}
+        {% include "candidates/portal/_todo_row.html" with se=se %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if page_obj.has_other_pages %}
+<div class="flex gap-3 mt-4 text-sm">
+  {% if page_obj.has_previous %}
+    <a href="{% querystring page=page_obj.previous_page_number %}"
+       hx-get="{% querystring page=page_obj.previous_page_number %}" hx-target="#todo-results" hx-push-url="true"
+       class="text-brand hover:underline">← Prev</a>
+  {% endif %}
+  <span class="text-neutral-500">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+    <a href="{% querystring page=page_obj.next_page_number %}"
+       hx-get="{% querystring page=page_obj.next_page_number %}" hx-target="#todo-results" hx-push-url="true"
+       class="text-brand hover:underline">Next →</a>
+  {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="bg-white rounded-lg shadow-sm p-8 text-center text-neutral-500">Nothing here.</div>
+{% endif %}

@@ -1,0 +1,30 @@
+<div id="campaign-steps">
+{% if steps %}
+<div id="step-sortable" class="space-y-2">
+  {% for step in steps %}
+  <div id="step-{{ step.id }}" data-step-id="{{ step.id }}"
+       class="bg-white rounded-lg shadow-sm p-3 flex items-start justify-between cursor-grab active:cursor-grabbing border-l-4 border-brand">
+    <div>
+      <div class="text-sm font-semibold">{{ step.order }}. {{ step.get_step_type_display }}
+        {% if step.step_type == 'email' and step.subject %}— {{ step.subject }}{% endif %}
+      </div>
+      <div class="text-xs text-neutral-500 mt-1 max-w-xl">{{ step.body|truncatewords:25|default:"—" }}</div>
+      <div class="text-xs text-neutral-400 mt-1">
+        {% if step.delay_days %}{{ step.delay_days }} day{{ step.delay_days|pluralize }} after previous step{% else %}Immediately{% endif %}
+        {% if step.send_window_start %} · between {{ step.send_window_start|time:"g:i A" }} and {{ step.send_window_end|time:"g:i A" }}{% endif %}
+      </div>
+    </div>
+    <div class="flex items-center gap-3 shrink-0 ml-4">
+      <a href="{% url 'portal-campaign-step-edit' step.id %}" class="text-xs text-brand hover:underline">Edit</a>
+      <form method="post" action="{% url 'portal-campaign-step-delete' step.id %}" onsubmit="return confirm('Delete this step?');">
+        {% csrf_token %}
+        <button type="submit" class="text-xs text-red-700 hover:underline">Delete</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="bg-white rounded-lg shadow-sm p-8 text-center text-neutral-500">No steps yet -- add the first one below.</div>
+{% endif %}
+</div>

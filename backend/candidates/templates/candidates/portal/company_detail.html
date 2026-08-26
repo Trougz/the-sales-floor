@@ -28,7 +28,7 @@
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
   <div class="bg-white rounded-lg shadow-sm p-5">
-    <h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-3">Contact</h2>
+    <h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-3">Primary contact</h2>
     <dl class="text-sm space-y-2">
       <div><dt class="text-neutral-400 text-xs">Name</dt><dd>{{ company.contact_name|default:"—" }}</dd></div>
       <div><dt class="text-neutral-400 text-xs">Email</dt><dd>{% if company.contact_email %}<a href="mailto:{{ company.contact_email }}" class="text-brand hover:underline">{{ company.contact_email }}</a>{% else %}—{% endif %}</dd></div>
@@ -61,5 +61,11 @@
     <p class="text-sm text-neutral-400">No projects yet for this company.</p>
     {% endif %}
   </div>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm p-5 mt-6">
+  <h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-3">Additional contacts</h2>
+  <p class="text-xs text-neutral-400 mb-3">Other people at this company -- each can be enrolled in a business-development campaign individually.</p>
+  {% include "candidates/portal/_contact_list.html" %}
 </div>
 {% endblock %}

@@ -9,8 +9,9 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
+from .contact_views import ContactForm
 from .decorators import recruiter_required
-from .models import Company
+from .models import Campaign, Company
 
 FIELD_CSS = 'w-full border border-neutral-300 rounded-md px-3 py-2 text-sm'
 
@@ -82,6 +83,9 @@ def company_detail(request, company_id):
     return render(request, 'candidates/portal/company_detail.html', {
         'company': company,
         'requisitions': requisitions,
+        'contacts': company.contacts.all(),
+        'form': ContactForm(),
+        'active_contact_campaigns': Campaign.objects.filter(audience_type='contact', status='active'),
         'active_nav': 'companies',
     })
 
