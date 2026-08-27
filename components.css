@@ -253,8 +253,8 @@ nav {
   font-family: var(--font-display);
   font-style: var(--display-style);
   font-weight: var(--display-weight);
-  font-size: 44px;
-  line-height: 1.1;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-snug);
   letter-spacing: var(--display-tracking);
   margin-bottom: 22px;
 }
@@ -814,10 +814,6 @@ footer a:hover {
 
   .form-page {
     padding: 40px 20px 80px;
-  }
-
-  .form-header h1 {
-    font-size: 32px;
   }
 
   .grid-2,
