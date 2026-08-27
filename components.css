@@ -102,33 +102,29 @@ nav {
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(2) { opacity: 0; }
 .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Home / chooser page */
-.home-page {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 120px 24px 130px;
-  text-align: center;
-  position: relative;
-}
-
+/* Home / landing */
 .home-hero {
   position: relative;
+  overflow: hidden; /* keeps the ember glow from ever widening the page */
+  padding: clamp(64px, 10vw, 128px) 0 clamp(48px, 7vw, 96px);
 }
+
+.home-hero .container { position: relative; z-index: 1; }
 
 .home-hero::before {
   content: '';
   position: absolute;
-  top: -140px;
+  top: -160px;
   left: 50%;
-  /* Must not exceed the content column -- at a fixed 560px this pseudo-element
-     hangs ~100px past each edge on a 360px phone and forces a horizontal
-     scrollbar (it's invisible to element-based overflow checks). */
-  width: min(560px, 100%);
-  height: 560px;
+  /* Width-constrained so it can't force a horizontal scrollbar (it's a
+     pseudo-element, so element-based overflow checks won't catch it); the
+     parent's `overflow: hidden` is the belt to this suspenders. */
+  width: min(720px, 92%);
+  height: 620px;
   transform: translateX(-50%);
   background: radial-gradient(circle, color-mix(in srgb, var(--accent) 7%, transparent) 0%, transparent 70%);
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
   animation: ember 6s ease-in-out infinite;
 }
 
@@ -137,44 +133,27 @@ nav {
   50% { opacity: 1; transform: translateX(-50%) scale(1.06); }
 }
 
-.home-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent-deep);
-  margin-bottom: 24px;
-}
-
-.home-eyebrow .flame {
-  width: 11px;
-  height: 14px;
-}
-
-.home-hero h1 {
-  max-width: 820px;
-  margin: 0 auto 20px;
+.home-hero__title {
+  max-width: 20ch;
+  margin-bottom: 20px;
   font-family: var(--font-display);
   font-style: var(--display-style);
   font-weight: var(--display-weight);
-  font-size: 56px;
-  line-height: 1.05;
+  font-size: clamp(44px, 7vw, 78px);
+  line-height: var(--lh-tight);
   letter-spacing: var(--display-tracking);
 }
 
-.home-hero h1 em {
+.home-hero__title em {
   font-style: italic;
   color: var(--accent);
 }
 
-.home-hero p {
-  max-width: 620px;
-  margin: 0 auto 64px;
-  font-size: 18px;
+.home-hero__sub {
+  max-width: 54ch;
+  margin-bottom: clamp(36px, 5vw, 56px);
+  font-size: var(--fs-lead);
+  line-height: 1.5;
   color: var(--ink-dim);
 }
 
@@ -811,33 +790,16 @@ footer a:hover {
     grid-template-columns: 1fr;
   }
 
-  /* Tightened so both chooser cards land above the fold on a typical phone
-     rather than the second one peeking off the bottom edge. */
-  .home-page {
-    padding: 44px 20px 64px;
-  }
-
-  .home-eyebrow {
-    margin-bottom: 16px;
-  }
-
-  .home-hero h1 {
-    font-size: 32px;
-  }
-
-  .home-hero p {
-    font-size: 16px;
-    margin-bottom: 32px;
+  .home-hero__sub {
+    font-size: var(--fs-body);
   }
 
   .chooser {
     grid-template-columns: 1fr;
   }
 
-  /* Both choices must be visible without scrolling on a phone, so the cards
-     reduce to just their titles -- the descriptions are desktop-only. Also
-     avoids two side-by-side cards wrapping their titles to a different
-     number of lines and throwing the rows out of alignment with each other. */
+  /* Cards reduce to their titles on a phone so both choices stay compact and
+     don't wrap to different line counts and misalign. */
   .chooser-card {
     gap: 20px;
     padding: 24px 22px;
