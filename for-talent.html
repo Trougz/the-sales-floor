@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For Talent | The Sales Floor</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="canonical" href="https://thesalesfloor.biz/for-talent" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,900;1,700;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="base.css" />
+  <link rel="stylesheet" href="components.css" />
+  <script src="partials.js" defer></script>
+  <script src="content.js" defer></script>
+  <script src="placeholders.js" defer></script>
+  <script src="ui.js" defer></script>
+</head>
+<body>
+
+  <div data-partial="header"></div>
+  <noscript>
+    <header>
+      <nav>
+        <a href="/" class="logo">
+          <svg class="flame" viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M20 2C20 12 7 15 7 28C7 38 13 46 21 50C17 44 15 37 19 30C21 34 25 36 27 32C29 39 34 41 34 32C34 24 27 20 27 12C27 19 23 19 23 14C23 7 20 6 20 2Z" />
+          </svg>
+          The Sales Floor
+        </a>
+        <div class="nav-menu">
+          <a href="/for-talent" class="nav-btn active">For Talent</a>
+          <a href="/for-companies" class="nav-btn">For Companies</a>
+          <a href="/about" class="nav-btn">About</a>
+          <a href="/candidates" class="btn btn--primary nav-cta">Apply</a>
+        </div>
+      </nav>
+    </header>
+  </noscript>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow" data-text="pages.forTalent.eyebrow">For talent</span>
+        <h1 class="page-hero__title" data-text="pages.forTalent.title">Your next sales role, without the recruiter runaround.</h1>
+        <p class="page-hero__sub" data-text="pages.forTalent.sub">Drop your details once. When a role genuinely fits, we reach out — with the hiring manager already interested.</p>
+        <div class="page-hero__actions">
+          <a href="/candidates" class="btn btn--primary btn--lg">Apply to the pool</a>
+          <a href="#how" class="btn btn--ghost btn--lg">How it works</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Where our people land -->
+    <section class="section section--tint">
+      <div class="container">
+        <p class="strip-label">Where our people have landed</p>
+        <div data-logos></div>
+      </div>
+    </section>
+
+    <!-- Benefits -->
+    <section class="section">
+      <div class="container">
+        <div class="section__head">
+          <h2 class="section-title">What you get out of it</h2>
+        </div>
+        <div class="benefit-grid" data-each="pages.forTalent.benefits">
+          <template>
+            <div class="benefit">
+              <h3 class="benefit__title">{{title}}</h3>
+              <p class="benefit__body">{{body}}</p>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section section--tint section--bordered" id="how">
+      <div class="container">
+        <div class="section__head">
+          <h2 class="section-title">How it works</h2>
+        </div>
+        <ol class="step-list" data-each="pages.forTalent.steps">
+          <template>
+            <li class="step">
+              <div class="step__n">{{n}}</div>
+              <div class="step__title">{{title}}</div>
+              <p class="step__body">{{body}}</p>
+            </li>
+          </template>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Placement proof -->
+    <section class="section">
+      <div class="container">
+        <div class="section__head">
+          <span class="eyebrow">Track record</span>
+          <h2 class="section-title">Some reps we&rsquo;ve placed</h2>
+        </div>
+        <div data-carousel="placements" data-label="Recently placed candidates"></div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section cta-band">
+      <div class="container">
+        <h2 class="section-title">Ready when you are.</h2>
+        <p class="cta-band__body">The intake takes about two minutes. We read every one.</p>
+        <a href="/candidates" class="btn btn--primary btn--lg">Apply to the pool</a>
+      </div>
+    </section>
+
+  </main>
+
+  <div data-partial="footer"></div>
+  <noscript>
+    <footer>
+      <p>&copy; 2026 The Sales Floor. All rights reserved. <a href="/privacy">Privacy Policy</a></p>
+    </footer>
+  </noscript>
+
+</body>
+</html>

@@ -16,6 +16,13 @@
   var P = window.Placeholders || {};
   var usedPlaceholders = false;
 
+  // Resolve a dotted path against SITE_CONTENT, e.g. "pages.forTalent.title".
+  function dig(obj, path) {
+    return String(path).split('.').reduce(function (acc, key) {
+      return acc == null ? undefined : acc[key];
+    }, obj);
+  }
+
   function prefersReducedMotion() {
     return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
@@ -151,7 +158,39 @@
     document.querySelectorAll('[data-carousel]').forEach(buildCarousel);
   }
 
+  /* ---- Text + list binding from content.js ----
+     <h1 data-text="pages.forTalent.title"></h1>
+     <div data-each="pages.forTalent.benefits">
+       <template><div class="benefit"><h3>{{title}}</h3><p>{{body}}</p></div></template>
+     </div>
+  */
+  function bindText() {
+    document.querySelectorAll('[data-text]').forEach(function (node) {
+      var val = dig(C, node.getAttribute('data-text'));
+      if (typeof val === 'string') {
+        node.textContent = val;
+        usedPlaceholders = true;
+      }
+    });
+  }
+
+  function bindEach() {
+    document.querySelectorAll('[data-each]').forEach(function (host) {
+      var arr = dig(C, host.getAttribute('data-each'));
+      var tpl = host.querySelector('template');
+      if (!Array.isArray(arr) || !tpl) return;
+      host.innerHTML = arr.map(function (item) {
+        return tpl.innerHTML.replace(/\{\{(\w+)\}\}/g, function (_, k) {
+          return esc(item[k] == null ? '' : item[k]);
+        });
+      }).join('');
+      usedPlaceholders = true;
+    });
+  }
+
   function init() {
+    bindText();
+    bindEach();
     buildLogos();
     buildCarousels();
     if (usedPlaceholders) {

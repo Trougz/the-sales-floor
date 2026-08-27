@@ -19,6 +19,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
 }
 
 .logo {
@@ -41,10 +42,10 @@ nav {
   height: 26px;
 }
 
-.nav-links {
+.nav-menu {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .nav-btn {
@@ -54,7 +55,7 @@ nav {
   letter-spacing: 0.02em;
   color: var(--ink-dim);
   text-decoration: none;
-  padding: 8px 16px;
+  padding: 8px 14px;
   border-radius: var(--radius-pill);
   border: 1px solid transparent;
   white-space: nowrap;
@@ -71,6 +72,35 @@ nav {
   background: var(--ink);
   border-color: var(--ink);
 }
+
+.nav-cta { margin-left: 8px; }
+
+/* Hamburger — hidden until the 640px breakpoint swaps in the drawer. */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  margin-right: -10px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-toggle__bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--ink);
+  transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* Home / chooser page */
 .home-page {
@@ -731,13 +761,41 @@ footer a:hover {
     height: 21px;
   }
 
-  .nav-links {
-    gap: 6px;
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  .nav-menu {
+    position: fixed;
+    inset: 64px 0 auto 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 12px 20px 20px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+    transform: translateY(-8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease);
+  }
+
+  .nav-menu.is-open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .nav-btn {
-    font-size: 11px;
-    padding: 6px 9px;
+    font-size: 15px;
+    padding: 12px;
+    border-radius: var(--radius);
+  }
+
+  .nav-cta {
+    margin-left: 0;
+    margin-top: 8px;
   }
 
   .form-page {
@@ -791,24 +849,6 @@ footer a:hover {
 
   .chooser-title {
     font-size: 26px;
-  }
-}
-
-/* Narrow phones (~360px): the logo plus both nav labels need ~348px against
-   320px of usable width, so everything in the bar steps down once more. */
-@media (max-width: 400px) {
-  .logo {
-    font-size: 18px;
-    gap: 7px;
-  }
-
-  .nav-links {
-    gap: 4px;
-  }
-
-  .nav-btn {
-    font-size: 10px;
-    padding: 5px 8px;
   }
 }
 
@@ -879,6 +919,48 @@ footer a:hover {
   font-size: var(--fs-lead);
   line-height: 1.5;
   color: var(--ink-dim);
+}
+
+/* ---- Marketing page hero ---- */
+.page-hero {
+  position: relative;
+  padding: clamp(56px, 9vw, 108px) 0 clamp(40px, 6vw, 76px);
+}
+
+.page-hero__title {
+  font-family: var(--font-display);
+  font-style: var(--display-style);
+  font-weight: var(--display-weight);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--display-tracking);
+  max-width: 17ch;
+}
+
+.page-hero__sub {
+  margin-top: 20px;
+  max-width: 54ch;
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+.page-hero__actions {
+  margin-top: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ---- Small centred strip label (e.g. above the logo marquee) ---- */
+.strip-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  text-align: center;
+  margin-bottom: 28px;
 }
 
 /* ---- Button / link component (distinct from the form-only .btn-submit) ---- */
@@ -1197,6 +1279,8 @@ footer a:hover {
   border-top: 1px solid var(--border);
   padding: clamp(48px, 8vw, 80px) 0 28px;
   font-size: var(--fs-small);
+  text-align: left; /* override the bare `footer` centring used by the noscript fallback */
+  color: var(--ink);
 }
 
 .site-footer__grid {
@@ -1247,6 +1331,12 @@ footer a:hover {
 .site-footer__bottom a:hover { color: var(--ink-dim); }
 
 /* ---- Newsletter (placeholder — no backend; see partials.js) ---- */
+.newsletter__label {
+  display: block;
+  color: var(--ink-dim);
+  margin-bottom: 4px;
+}
+
 .newsletter__row {
   display: flex;
   gap: 8px;

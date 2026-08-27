@@ -24,12 +24,23 @@
 
   // [href, label] — `active` is resolved per page from the URL in currentPath().
   var NAV_LINKS = [
-    ['/candidates', 'For Candidates'],
-    ['/employers', 'For Employers']
+    ['/for-talent', 'For Talent'],
+    ['/for-companies', 'For Companies'],
+    ['/about', 'About']
   ];
+  var NAV_CTA = ['/candidates', 'Apply'];
+
+  var FOOTER_LINKS = [
+    ['/for-talent', 'For Talent'],
+    ['/for-companies', 'For Companies'],
+    ['/about', 'About'],
+    ['/privacy', 'Privacy']
+  ];
+  // Social links are placeholders until real handles exist.
+  var SOCIAL_LINKS = ['LinkedIn', 'YouTube', 'Instagram', 'TikTok'];
 
   // Normalise location.pathname to one of our clean route keys:
-  //   "/", "/candidates", "/employers", "/privacy", ...
+  //   "/", "/for-talent", "/candidates", "/privacy", ...
   // Tolerates trailing slashes and a ".html" extension, so the active state is
   // correct whether the page is served with clean URLs (GitHub Pages), with the
   // extension (python -m http.server), or opened straight off disk (file://).
@@ -52,14 +63,58 @@
     return (
       '<header><nav>' +
         '<a href="/" class="logo">' + FLAME_SVG + 'The Sales Floor</a>' +
-        '<div class="nav-links">' + links + '</div>' +
+        '<button class="nav-toggle" type="button" aria-label="Open menu" ' +
+          'aria-expanded="false" aria-controls="nav-menu">' +
+          '<span class="nav-toggle__bar"></span>' +
+          '<span class="nav-toggle__bar"></span>' +
+          '<span class="nav-toggle__bar"></span>' +
+        '</button>' +
+        '<div class="nav-menu" id="nav-menu">' +
+          links +
+          '<a href="' + NAV_CTA[0] + '" class="btn btn--primary nav-cta">' + NAV_CTA[1] + '</a>' +
+        '</div>' +
       '</nav></header>'
     );
   }
 
-  var FOOTER_HTML =
-    '<footer><p>&copy; 2026 The Sales Floor. All rights reserved. ' +
-    '<a href="/privacy">Privacy Policy</a></p></footer>';
+  function footerHtml() {
+    var company = FOOTER_LINKS.map(function (i) {
+      return '<a href="' + i[0] + '">' + i[1] + '</a>';
+    }).join('');
+    var social = SOCIAL_LINKS.map(function (name) {
+      // href="#" + aria-disabled until real profiles are wired up.
+      return '<a href="#" aria-disabled="true">' + name + '</a>';
+    }).join('');
+
+    return (
+      '<footer class="site-footer"><div class="container">' +
+        '<div class="site-footer__grid">' +
+          '<div class="site-footer__brand">' +
+            '<a href="/" class="logo">' + FLAME_SVG + 'The Sales Floor</a>' +
+            '<p class="site-footer__tag">Sales recruiting, run by people who carried a bag.</p>' +
+            '<a href="/employers" class="btn btn--ghost">Get in touch</a>' +
+          '</div>' +
+          '<div class="site-footer__col"><h4>Company</h4>' + company + '</div>' +
+          '<div class="site-footer__col"><h4>Social</h4>' + social + '</div>' +
+          '<div class="site-footer__col">' +
+            '<h4>Stay in the loop</h4>' +
+            '<form class="newsletter" novalidate>' +
+              '<label for="nl-email" class="newsletter__label">Hiring insights and new roles, now and then.</label>' +
+              '<div class="newsletter__row">' +
+                '<input type="email" id="nl-email" name="email" placeholder="you@company.com" autocomplete="email" />' +
+                '<button type="submit" class="btn btn--primary">Join</button>' +
+              '</div>' +
+              '<p class="newsletter__note">Placeholder — not connected to anything yet.</p>' +
+            '</form>' +
+          '</div>' +
+        '</div>' +
+        '<div class="site-footer__bottom">' +
+          '<span>&copy; 2026 The Sales Floor. All rights reserved.</span>' +
+          '<a href="/privacy">Privacy Policy</a>' +
+        '</div>' +
+      '</div></footer>'
+    );
+  }
 
   // Replace the placeholder element itself (not its innerHTML) so the injected
   // <header> ends up as a direct child of <body>. A wrapping <div> would become
@@ -75,11 +130,71 @@
   function inject() {
     var active = currentPath();
     swap('[data-partial="header"]', headerHtml(active));
-    swap('[data-partial="footer"]', FOOTER_HTML);
+    swap('[data-partial="footer"]', footerHtml());
+    wireNav();
+    wireNewsletter();
     initThemeDev();
   }
 
-  /* Dev-only theme switcher.
+  /* ---- Mobile nav ---- */
+  function wireNav() {
+    var toggle = document.querySelector('.nav-toggle');
+    var menu = document.querySelector('.nav-menu');
+    if (!toggle || !menu) return;
+
+    function setOpen(open) {
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      menu.classList.toggle('is-open', open);
+    }
+
+    toggle.addEventListener('click', function () {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    // Close on link tap, Escape, click-away, and when we grow back to desktop.
+    menu.addEventListener('click', function (e) {
+      if (e.target.closest('a')) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+    document.addEventListener('click', function (e) {
+      if (
+        toggle.getAttribute('aria-expanded') === 'true' &&
+        !e.target.closest('.nav-menu') &&
+        !e.target.closest('.nav-toggle')
+      ) {
+        setOpen(false);
+      }
+    });
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 640) setOpen(false);
+    });
+  }
+
+  /* ---- Newsletter (placeholder, no backend) ---- */
+  function wireNewsletter() {
+    var form = document.querySelector('.newsletter');
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = form.querySelector('input[type="email"]');
+      if (!email || email.value.indexOf('@') === -1) {
+        if (email) email.focus();
+        return;
+      }
+      // TODO: there is no subscribe endpoint yet. This only fakes a confirmation
+      // so the UI can be reviewed; nothing is sent or stored.
+      form.innerHTML =
+        '<p class="newsletter__ok">Thanks — noted. (Placeholder: this isn’t stored anywhere yet.)</p>';
+    });
+  }
+
+  /* ---- Dev-only theme switcher ----
      Lets us eyeball alternate token sets ([data-theme="alt"] in tokens.css)
      without shipping anything to visitors: it only runs on localhost or when
      the URL carries ?themedev, so the production hostname is never themed and
