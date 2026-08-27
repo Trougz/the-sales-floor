@@ -10,23 +10,27 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,900;1,700;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <script src="partials.js" defer></script>
 </head>
 <body>
 
-  <header>
-    <nav>
-      <a href="/" class="logo">
-        <svg class="flame" viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M20 2C20 12 7 15 7 28C7 38 13 46 21 50C17 44 15 37 19 30C21 34 25 36 27 32C29 39 34 41 34 32C34 24 27 20 27 12C27 19 23 19 23 14C23 7 20 6 20 2Z" />
-        </svg>
-        The Sales Floor
-      </a>
-      <div class="nav-links">
-        <a href="/candidates" class="nav-btn">For Candidates</a>
-        <a href="/employers" class="nav-btn">For Employers</a>
-      </div>
-    </nav>
-  </header>
+  <div data-partial="header"></div>
+  <noscript>
+    <header>
+      <nav>
+        <a href="/" class="logo">
+          <svg class="flame" viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M20 2C20 12 7 15 7 28C7 38 13 46 21 50C17 44 15 37 19 30C21 34 25 36 27 32C29 39 34 41 34 32C34 24 27 20 27 12C27 19 23 19 23 14C23 7 20 6 20 2Z" />
+          </svg>
+          The Sales Floor
+        </a>
+        <div class="nav-links">
+          <a href="/candidates" class="nav-btn">For Candidates</a>
+          <a href="/employers" class="nav-btn">For Employers</a>
+        </div>
+      </nav>
+    </header>
+  </noscript>
 
   <main>
     <div class="form-page">
@@ -145,9 +149,12 @@
     </div>
   </main>
 
-  <footer>
-    <p>&copy; 2026 The Sales Floor. All rights reserved. <a href="/privacy">Privacy Policy</a></p>
-  </footer>
+  <div data-partial="footer"></div>
+  <noscript>
+    <footer>
+      <p>&copy; 2026 The Sales Floor. All rights reserved. <a href="/privacy">Privacy Policy</a></p>
+    </footer>
+  </noscript>
 
 </body>
 </html>
