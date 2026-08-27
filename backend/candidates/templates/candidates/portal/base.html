@@ -19,14 +19,49 @@
 </script>
 <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 <script defer src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"></script>
+<script>
+  // Apply the saved night-mode preference before first paint (no flash).
+  if (localStorage.getItem('portalDark') === '1') document.documentElement.classList.add('portal-dark');
+</script>
+<style>
+  /* Night mode: only the main content area is darkened -- the sidebar is
+     already dark. Portal templates use a small, consistent set of neutral
+     utilities, so remapping those here covers the whole surface without
+     touching every template. Brand red is left as-is. */
+  html.portal-dark body { background-color: #17171a; }
+  html.portal-dark main { background-color: #17171a; color: #e4e4e7; }
+  html.portal-dark main .bg-white { background-color: #232327 !important; }
+  html.portal-dark main .bg-cream { background-color: #17171a !important; }
+  html.portal-dark main .bg-neutral-50 { background-color: #202024 !important; }
+  html.portal-dark main .bg-neutral-100 { background-color: #2e2e33 !important; }
+  html.portal-dark main .text-neutral-900,
+  html.portal-dark main .text-neutral-800,
+  html.portal-dark main .text-neutral-700 { color: #e4e4e7 !important; }
+  html.portal-dark main .text-neutral-600,
+  html.portal-dark main .text-neutral-500,
+  html.portal-dark main .text-neutral-400,
+  html.portal-dark main .text-neutral-300 { color: #a1a1aa !important; }
+  html.portal-dark main .border-neutral-100,
+  html.portal-dark main .border-neutral-200,
+  html.portal-dark main .border-neutral-300 { border-color: #3f3f46 !important; }
+  html.portal-dark main [class*="divide-neutral"] > * { border-color: #3f3f46 !important; }
+  html.portal-dark main .shadow-sm,
+  html.portal-dark main .shadow { box-shadow: 0 1px 3px rgba(0,0,0,.5) !important; }
+  html.portal-dark main .hover\:bg-neutral-50:hover { background-color: #26262b !important; }
+  html.portal-dark main .hover\:bg-neutral-100:hover { background-color: #2e2e33 !important; }
+</style>
 {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-cream text-neutral-900 min-h-screen" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<body class="bg-cream text-neutral-900 min-h-screen" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+      x-data="{ portalDark: localStorage.getItem('portalDark') === '1' }">
 <div class="flex min-h-screen">
   <aside class="w-56 shrink-0 bg-neutral-900 text-neutral-100 flex flex-col p-4">
     <div class="font-bold text-lg mb-8 tracking-tight">The Sales Floor</div>
-    {# Grouped nav: outreach queue up top, then the core CRM records, then data import.
-       Groups are separated by border-t dividers -- no section-header text by design. #}
+    {% comment %}
+      Grouped nav: outreach queue up top, then the core CRM records, then data
+      import. Groups are separated by border-t dividers -- no section-header text
+      by design. ({% comment %} spans lines; {# #} does not and would render.)
+    {% endcomment %}
     <nav class="text-sm flex-1">
       <div class="space-y-1">
         <a href="{% url 'portal-campaign-list' %}"
@@ -79,7 +114,17 @@
         </a>
       </div>
     </nav>
-    <div class="text-xs text-neutral-400 pt-6 border-t border-neutral-800">
+    <div class="pt-3 border-t border-neutral-800">
+      <button type="button"
+              @click="portalDark = !portalDark; document.documentElement.classList.toggle('portal-dark', portalDark); localStorage.setItem('portalDark', portalDark ? '1' : '0')"
+              class="flex items-center gap-3 w-full px-3 py-2 rounded text-sm hover:bg-neutral-800">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+        </svg>
+        <span x-text="portalDark ? 'Light mode' : 'Night mode'">Night mode</span>
+      </button>
+    </div>
+    <div class="text-xs text-neutral-400 px-3 pt-2">
       {{ request.user.username }}<br>
       <a href="{% url 'admin:logout' %}" class="underline hover:text-neutral-200">Log out</a>
     </div>
