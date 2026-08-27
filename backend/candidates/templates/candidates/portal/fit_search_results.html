@@ -1,7 +1,9 @@
 {% extends "candidates/portal/base.html" %}
 {% block title %}Candidates for {{ requisition.title }}{% endblock %}
 {% block breadcrumbs %}
-<a href="{% url 'portal-fit-search-mode-choice' requisition.id %}" class="text-sm text-neutral-500 hover:underline">← Change search mode</a>
+<a href="{% url 'portal-requisition-detail' requisition.id %}" class="text-sm text-neutral-500 hover:underline">← Back to {{ requisition.title }}</a>
+<span class="text-neutral-300 mx-2">·</span>
+<a href="{% url 'portal-fit-search-mode-choice' requisition.id %}" class="text-sm text-neutral-500 hover:underline">Change search mode</a>
 {% endblock %}
 {% block content %}
 

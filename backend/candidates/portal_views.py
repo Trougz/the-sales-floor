@@ -8,7 +8,7 @@ fields (status, ranking, manual_score, etc.) stay editable only in /admin/ and
 /review/, not duplicated here.
 """
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .decorators import recruiter_required
@@ -61,12 +61,32 @@ def candidate_search(request):
 
     # distinct() guards against row duplication from the M2M filters above
     # (a candidate matching two selected industries would otherwise appear twice).
-    qs = qs.distinct().prefetch_related('industries', 'crm_tools').order_by('-created_at')
+    qs = qs.distinct().prefetch_related('industries', 'crm_tools')
+
+    # ranking_score is nullable and SQLite (dev) vs Postgres (prod) disagree on
+    # default NULL ordering, so spell out nulls_last -- same reason review_queue does.
+    sort = request.GET.get('sort', '')
+    if sort == 'score':
+        qs = qs.order_by(F('ranking_score').desc(nulls_last=True), '-created_at')
+    else:
+        qs = qs.order_by('-created_at')
 
     page_obj = Paginator(qs, RESULTS_PER_PAGE).get_page(request.GET.get('page'))
 
+    # Set when the recruiter reached this page from a project's "Find candidates"
+    # flow -- keeps them anchored in the Projects tab with a way back. filter().first()
+    # (not get_object_or_404) so a stale/hand-edited value just falls back to the
+    # normal People view instead of 404ing.
+    fp = request.GET.get('from_project', '')
+    back_project = (
+        Requisition.objects.select_related('company').filter(pk=fp).first()
+        if fp.isdigit() else None
+    )
+
     ctx = {
         'page_obj': page_obj,
+        'sort': sort,
+        'back_project': back_project,
         'title_choices': TITLE_CHOICES,
         'status_choices': Candidate.STATUS_CHOICES,
         'industries': Industry.objects.all(),
@@ -79,7 +99,7 @@ def candidate_search(request):
         # create_match reports back as "already in this pipeline".
         'open_requisitions': Requisition.objects.filter(status='open').select_related('company').order_by('company__name', 'title'),
         'active_candidate_campaigns': Campaign.objects.filter(audience_type='candidate', status='active'),
-        'active_nav': 'candidates',
+        'active_nav': 'requisitions' if back_project else 'candidates',
     }
 
     # Same view, same querying logic, two templates: the HTMX swap only ever

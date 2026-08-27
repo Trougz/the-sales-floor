@@ -27,14 +27,15 @@
     </details>
     {% endif %}
   </div>
-  <a href="{% url 'portal-requisition-edit' requisition.id %}" class="text-sm text-brand hover:underline">Edit</a>
+  <div class="flex items-center gap-4 shrink-0">
+    <a href="{% url 'portal-fit-search-mode-choice' requisition.id %}"
+       class="text-sm font-semibold bg-brand text-white px-4 py-2 rounded hover:bg-brand-dark">Find candidates for this project</a>
+    <a href="{% url 'portal-requisition-edit' requisition.id %}" class="text-sm text-brand hover:underline">Edit</a>
+  </div>
 </div>
 
 <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
-  <div class="flex items-center justify-between mb-2">
-    <label class="block text-xs uppercase tracking-wide text-neutral-500 font-semibold">Add a candidate to this board</label>
-    <a href="{% url 'portal-fit-search-mode-choice' requisition.id %}" class="text-xs font-semibold text-brand hover:underline">Find candidates for this project →</a>
-  </div>
+  <label class="block text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-2">Add a known candidate by name</label>
   <input type="text" name="q" placeholder="Search candidates by name, email, or company…"
          hx-get="{% url 'portal-requisition-candidate-search' requisition.id %}"
          hx-trigger="keyup changed delay:300ms" hx-target="#add-candidate-results" hx-swap="innerHTML"
