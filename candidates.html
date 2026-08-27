@@ -44,6 +44,18 @@
 
       <form id="intake-form" novalidate>
 
+        <!-- Section 0: Who are you? (preselects Current Title below) -->
+        <fieldset class="role-picker">
+          <legend>Which best describes you?</legend>
+          <div class="role-picker__chips">
+            <button type="button" class="role-chip" data-role="SDR" aria-pressed="false">SDR</button>
+            <button type="button" class="role-chip" data-role="BDR" aria-pressed="false">BDR</button>
+            <button type="button" class="role-chip" data-role="AE" aria-pressed="false">AE</button>
+            <button type="button" class="role-chip" data-role="Sales Manager" aria-pressed="false">Sales Manager</button>
+          </div>
+          <p class="role-picker__hint">Sets your current title below &mdash; you can still change it.</p>
+        </fieldset>
+
         <!-- Section 1: Contact Info -->
         <fieldset>
           <legend>Contact Info</legend>
@@ -336,6 +348,7 @@
     </footer>
   </noscript>
 
+  <script src="role-select.js" defer></script>
   <script src="script.js"></script>
 </body>
 </html>
