@@ -181,8 +181,33 @@
       if (!Array.isArray(arr) || !tpl) return;
       host.innerHTML = arr.map(function (item) {
         return tpl.innerHTML.replace(/\{\{(\w+)\}\}/g, function (_, k) {
-          return esc(item[k] == null ? '' : item[k]);
+          // Array-of-strings items answer to {{text}}; otherwise look up the key.
+          var v = (typeof item === 'string') ? (k === 'text' ? item : '') : item[k];
+          return esc(v == null ? '' : v);
         });
+      }).join('');
+      usedPlaceholders = true;
+    });
+  }
+
+  /* ---- Team grid (monogram avatar needs JS, so it is built here) ---- */
+  function buildTeam() {
+    document.querySelectorAll('[data-team]').forEach(function (host) {
+      var people = dig(C, host.getAttribute('data-team')) || C.team || [];
+      if (!Array.isArray(people) || !people.length) return;
+      host.innerHTML = people.map(function (m) {
+        var avatar = P.avatarMonogram ? P.avatarMonogram(m.name, { size: 56 }) : '';
+        return (
+          '<div class="team-member">' +
+            '<div class="team-member__head">' + avatar +
+              '<div>' +
+                '<div class="team-member__name">' + esc(m.name) + '</div>' +
+                '<div class="team-member__title">' + esc(m.title || '') + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<p class="team-member__bio">' + esc(m.bio || '') + '</p>' +
+          '</div>'
+        );
       }).join('');
       usedPlaceholders = true;
     });
@@ -191,6 +216,7 @@
   function init() {
     bindText();
     bindEach();
+    buildTeam();
     buildLogos();
     buildCarousels();
     if (usedPlaceholders) {

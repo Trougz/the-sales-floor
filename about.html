@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About | The Sales Floor</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="canonical" href="https://thesalesfloor.biz/about" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,900;1,700;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="base.css" />
+  <link rel="stylesheet" href="components.css" />
+  <script src="partials.js" defer></script>
+  <script src="content.js" defer></script>
+  <script src="placeholders.js" defer></script>
+  <script src="ui.js" defer></script>
+</head>
+<body>
+
+  <div data-partial="header"></div>
+  <noscript>
+    <header>
+      <nav>
+        <a href="/" class="logo">
+          <svg class="flame" viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M20 2C20 12 7 15 7 28C7 38 13 46 21 50C17 44 15 37 19 30C21 34 25 36 27 32C29 39 34 41 34 32C34 24 27 20 27 12C27 19 23 19 23 14C23 7 20 6 20 2Z" />
+          </svg>
+          The Sales Floor
+        </a>
+        <div class="nav-menu">
+          <a href="/for-talent" class="nav-btn">For Talent</a>
+          <a href="/for-companies" class="nav-btn">For Companies</a>
+          <a href="/about" class="nav-btn active">About</a>
+          <a href="/candidates" class="btn btn--primary nav-cta">Apply</a>
+        </div>
+      </nav>
+    </header>
+  </noscript>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow" data-text="pages.about.eyebrow">About</span>
+        <h1 class="page-hero__title" data-text="pages.about.title">A recruiting desk that respects the seat.</h1>
+      </div>
+    </section>
+
+    <!-- Our story -->
+    <section class="section section--tint section--bordered">
+      <div class="container container--text">
+        <div class="section__head">
+          <h2 class="section-title">Our story</h2>
+        </div>
+        <div class="prose" data-each="pages.about.story">
+          <template><p>{{text}}</p></template>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team -->
+    <section class="section">
+      <div class="container">
+        <div class="section__head">
+          <span class="eyebrow">Who&rsquo;s behind it</span>
+          <h2 class="section-title">The team</h2>
+        </div>
+        <div class="team-grid" data-team="team"></div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section cta-band">
+      <div class="container">
+        <h2 class="section-title">Come onto the floor.</h2>
+        <p class="cta-band__body">Whether you&rsquo;re hiring or looking, start with a two-minute form.</p>
+        <div class="page-hero__actions" style="justify-content: center;">
+          <a href="/candidates" class="btn btn--primary btn--lg">I&rsquo;m looking</a>
+          <a href="/employers" class="btn btn--ghost btn--lg">I&rsquo;m hiring</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div data-partial="footer"></div>
+  <noscript>
+    <footer>
+      <p>&copy; 2026 The Sales Floor. All rights reserved. <a href="/privacy">Privacy Policy</a></p>
+    </footer>
+  </noscript>
+
+</body>
+</html>

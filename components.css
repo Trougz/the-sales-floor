@@ -1251,6 +1251,16 @@ footer a:hover {
 
 .team-member__bio { font-size: var(--fs-small); line-height: 1.7; color: var(--ink-dim); }
 
+/* ---- Long-form prose (about story, etc.) ---- */
+.prose > p {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--ink-dim);
+  margin-bottom: 18px;
+}
+
+.prose > p:last-child { margin-bottom: 0; }
+
 /* ---- CTA band ---- */
 .cta-band {
   background: var(--ink);
