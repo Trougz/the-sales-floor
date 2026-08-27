@@ -8,6 +8,7 @@ from . import (
 urlpatterns = [
     path('', portal_views.index, name='portal-index'),
     path('candidates/', portal_views.candidate_search, name='portal-candidate-search'),
+    path('imports/', import_views.import_hub, name='portal-import'),
     path('candidates/import/', import_views.import_linkedin_candidates, name='portal-import-candidates'),
     path('candidates/search-for-project/', fit_search_views.project_picker, name='portal-fit-search-picker'),
     path(

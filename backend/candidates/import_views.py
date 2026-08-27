@@ -85,6 +85,13 @@ def find_data_sheet(workbook):
 
 
 @recruiter_required
+def import_hub(request):
+    """Landing page listing the available candidate import sources. LinkedIn is
+    the only one today; new sources get added as cards in import_hub.html."""
+    return render(request, 'candidates/portal/import_hub.html', {'active_nav': 'import'})
+
+
+@recruiter_required
 def import_linkedin_candidates(request):
     if request.method != 'POST':
         return render(request, 'candidates/portal/import_candidates.html', {'active_nav': 'import'})
