@@ -68,15 +68,6 @@
   --shadow-card: 0 6px 20px rgba(22, 23, 26, 0.08);
   --dur: 0.15s;
   --ease: ease;
-
-  /* ---- Legacy aliases ----
-     Kept so the older var(--red)/var(--gold) references can migrate in stages.
-     Removed once `grep -R "var(--red" "var(--gold" *.css` comes back clean. */
-  --red: var(--accent);
-  --red-deep: var(--accent-deep);
-  --red-dim: var(--accent-dim);
-  --gold: var(--accent-2);
-  --gold-ink: var(--accent-2-ink);
 }
 
 /* ---- Alt theme (stub) ----
