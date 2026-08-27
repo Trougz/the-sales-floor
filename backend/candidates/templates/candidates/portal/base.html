@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}Recruiting Portal{% endblock %} — The Sales Floor</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'%3E%3Cpolygon%20points='16,16%20104,16%2091,42%2029,42'%20fill='%23D93A26'/%3E%3Cpolygon%20points='32,48%2088,48%2076,72%2044,72'%20fill='%23FFFFFF'/%3E%3Cpolygon%20points='47,78%2073,78%2060,104'%20fill='%23FFFFFF'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'%3E%3Crect%20width='120'%20height='120'%20rx='26'%20fill='%2316171A'/%3E%3Cpolygon%20points='24,26%2096,26%2085,48%2035,48'%20fill='%23D93A26'/%3E%3Cpolygon%20points='38,54%2082,54%2072,74%2048,74'%20fill='%23FFFFFF'/%3E%3Cpolygon%20points='51,80%2069,80%2060,100'%20fill='%23FFFFFF'/%3E%3C/svg%3E">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
@@ -58,8 +58,7 @@
 <div class="flex min-h-screen">
   <aside class="w-56 shrink-0 bg-neutral-900 text-neutral-100 flex flex-col p-4">
     <div class="flex items-center gap-2.5 mb-8">
-      {# 3-stage funnel mark: red mouth = top of funnel. Lower bands use
-         currentColor so they read light on the dark sidebar. #}
+      {# 3-stage funnel mark: red mouth = top of funnel; lower bands currentColor to read light on the dark sidebar. #}
       <svg viewBox="0 0 120 120" class="w-6 h-6 shrink-0" aria-hidden="true">
         <polygon points="16,16 104,16 91,42 29,42" fill="#D93A26"/>
         <polygon points="32,48 88,48 76,72 44,72" fill="currentColor"/>
