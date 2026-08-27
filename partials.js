@@ -76,6 +76,51 @@
     var active = currentPath();
     swap('[data-partial="header"]', headerHtml(active));
     swap('[data-partial="footer"]', FOOTER_HTML);
+    initThemeDev();
+  }
+
+  /* Dev-only theme switcher.
+     Lets us eyeball alternate token sets ([data-theme="alt"] in tokens.css)
+     without shipping anything to visitors: it only runs on localhost or when
+     the URL carries ?themedev, so the production hostname is never themed and
+     never shows the button. Choice persists in localStorage. */
+  var THEMES = ['default', 'alt'];
+
+  function applyTheme(name) {
+    if (name && name !== 'default') {
+      document.documentElement.setAttribute('data-theme', name);
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+  }
+
+  function initThemeDev() {
+    var host = location.hostname;
+    var enabled =
+      host === 'localhost' || host === '127.0.0.1' ||
+      /[?&]themedev\b/.test(location.search);
+    if (!enabled) return;
+
+    var stored = null;
+    try { stored = localStorage.getItem('tsf-theme'); } catch (e) {}
+    var initial =
+      new URLSearchParams(location.search).get('theme') || stored || 'default';
+    if (THEMES.indexOf(initial) === -1) initial = 'default';
+    applyTheme(initial);
+    try { localStorage.setItem('tsf-theme', initial); } catch (e) {}
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'theme-dev-toggle';
+    btn.textContent = 'theme: ' + initial;
+    btn.addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme') || 'default';
+      var next = THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length];
+      applyTheme(next);
+      try { localStorage.setItem('tsf-theme', next); } catch (e) {}
+      btn.textContent = 'theme: ' + next;
+    });
+    document.body.appendChild(btn);
   }
 
   if (document.readyState === 'loading') {
