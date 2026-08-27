@@ -14,16 +14,16 @@
 <div class="flex flex-wrap gap-2 mb-4 text-sm">
   {% for value, label in status_choices %}
     <a href="?status={{ value }}{% if audience_type %}&audience_type={{ audience_type }}{% endif %}"
-       class="px-3 py-1.5 rounded {% if status == value %}bg-neutral-900 text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">
+       class="px-3 py-1.5 rounded {% if status == value %}bg-neutral-900 text-white border border-neutral-900{% else %}bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-100{% endif %}">
       {{ label }}
     </a>
   {% endfor %}
   <span class="mx-1 text-neutral-300">|</span>
   <a href="?status={{ status }}"
-     class="px-3 py-1.5 rounded {% if not audience_type %}bg-neutral-900 text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">Any audience</a>
+     class="px-3 py-1.5 rounded {% if not audience_type %}bg-neutral-900 text-white border border-neutral-900{% else %}bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-100{% endif %}">Any audience</a>
   {% for value, label in audience_choices %}
     <a href="?status={{ status }}&audience_type={{ value }}"
-       class="px-3 py-1.5 rounded {% if audience_type == value %}bg-neutral-900 text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">
+       class="px-3 py-1.5 rounded {% if audience_type == value %}bg-neutral-900 text-white border border-neutral-900{% else %}bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-100{% endif %}">
       {{ label }}
     </a>
   {% endfor %}

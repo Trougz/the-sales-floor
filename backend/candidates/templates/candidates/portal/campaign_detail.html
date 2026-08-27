@@ -20,15 +20,18 @@
   <a href="{% url 'portal-campaign-edit' campaign.id %}" class="text-sm text-brand hover:underline">Edit</a>
 </div>
 
-<div class="flex items-center justify-between mb-3">
-  <h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold">Steps</h2>
-  <a href="{% url 'portal-campaign-step-create' campaign.id %}" class="text-xs font-semibold text-brand hover:underline">+ Add step</a>
+<div class="panel mb-6">
+  <div class="panel-head">Steps
+    <a href="{% url 'portal-campaign-step-create' campaign.id %}" class="normal-case tracking-normal text-xs font-semibold text-brand hover:underline">+ Add step</a>
+  </div>
+  <div class="panel-body">
+    {% include "candidates/portal/_campaign_steps.html" with steps=steps %}
+  </div>
 </div>
-{% include "candidates/portal/_campaign_steps.html" with steps=steps %}
 
-<h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold mt-8 mb-3">Enrollments</h2>
-{% if enrollments %}
-<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="panel">
+  <div class="panel-head">Enrollments</div>
+  {% if enrollments %}
   <table class="w-full text-sm">
     <thead class="bg-neutral-100 text-xs uppercase tracking-wide text-neutral-500">
       <tr>
@@ -57,10 +60,10 @@
       {% endfor %}
     </tbody>
   </table>
+  {% else %}
+  <div class="panel-body text-center text-neutral-500">No one enrolled yet.</div>
+  {% endif %}
 </div>
-{% else %}
-<div class="bg-white rounded-lg shadow-sm p-8 text-center text-neutral-500">No one enrolled yet.</div>
-{% endif %}
 {% endblock %}
 {% block extra_scripts %}
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>

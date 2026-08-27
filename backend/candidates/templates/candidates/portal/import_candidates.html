@@ -13,7 +13,9 @@
 {% endif %}
 
 {% if results %}
-<div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+<div class="panel mb-6">
+  <div class="panel-head">Import results</div>
+  <div class="panel-body">
   <div class="flex gap-8 text-sm mb-4">
     <div><span class="text-2xl font-extrabold text-brand">{{ results.created }}</span><br>Candidate{{ results.created|pluralize }} added</div>
     <div><span class="text-2xl font-extrabold text-neutral-500">{{ results.skipped_duplicate }}</span><br>Already in the database</div>
@@ -34,10 +36,13 @@
   </table>
   <p class="text-xs text-neutral-400 mt-3">Fix these rows in the export and re-upload just that file -- already-imported candidates are automatically skipped as duplicates, so re-uploading the whole file again is safe.</p>
   {% endif %}
+  </div>
 </div>
 <a href="{% url 'portal-import-candidates' %}" class="text-sm font-semibold text-brand hover:underline">Import another file</a>
 {% else %}
-<form method="post" enctype="multipart/form-data" class="bg-white rounded-lg shadow-sm p-6 max-w-xl space-y-4">
+<form method="post" enctype="multipart/form-data" class="panel max-w-xl">
+  <div class="panel-head">Upload file</div>
+  <div class="panel-body space-y-4">
   {% csrf_token %}
   <div>
     <label for="file" class="block text-sm font-semibold mb-1">LinkedIn Recruiter export (.xlsx)</label>
@@ -45,6 +50,7 @@
            class="w-full border border-neutral-300 rounded-md px-3 py-2 text-sm">
   </div>
   <button type="submit" class="text-sm font-semibold bg-brand text-white px-4 py-2 rounded hover:bg-brand-dark">Upload and import</button>
+  </div>
 </form>
 {% endif %}
 {% endblock %}

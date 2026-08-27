@@ -1,5 +1,5 @@
 <div id="match-card-{{ match.id }}" data-match-id="{{ match.id }}"
-     class="match-card bg-white rounded shadow p-3 mb-2 border-l-4 cursor-grab active:cursor-grabbing
+     class="match-card bg-white rounded shadow p-3 border-l-4 cursor-grab active:cursor-grabbing
      {% if match.stage == 'rejected' %}border-neutral-300 opacity-60{% elif match.stage == 'placed' %}border-green-600{% else %}border-brand{% endif %}"
      x-data="{ editingScore: false }">
   <a href="{% url 'portal-candidate-detail' match.candidate_id %}" class="font-semibold text-sm text-neutral-900 hover:text-brand hover:underline">

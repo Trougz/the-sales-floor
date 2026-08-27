@@ -14,7 +14,7 @@
 <div class="flex gap-2 mb-4 text-sm">
   {% for value, label in status_choices %}
     <a href="?status={{ value }}{% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}"
-       class="px-3 py-1.5 rounded {% if status == value %}bg-neutral-900 text-white{% else %}bg-white text-neutral-600 hover:bg-neutral-100{% endif %}">
+       class="px-3 py-1.5 rounded {% if status == value %}bg-neutral-900 text-white border border-neutral-900{% else %}bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-100{% endif %}">
       {{ label }}
     </a>
   {% endfor %}

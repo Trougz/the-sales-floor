@@ -25,16 +25,68 @@
   if (localStorage.getItem('portalDark') === '1') document.documentElement.classList.add('portal-dark');
 </script>
 <style>
-  /* Night mode: only the main content area is darkened -- the sidebar is
-     already dark. Portal templates use a small, consistent set of neutral
-     utilities, so remapping those here covers the whole surface without
-     touching every template. Brand red is left as-is. */
-  html.portal-dark body { background-color: #17171a; }
-  html.portal-dark main { background-color: #17171a; color: #e4e4e7; }
-  html.portal-dark main .bg-white { background-color: #232327 !important; }
-  html.portal-dark main .bg-cream { background-color: #17171a !important; }
-  html.portal-dark main .bg-neutral-50 { background-color: #202024 !important; }
-  html.portal-dark main .bg-neutral-100 { background-color: #2e2e33 !important; }
+  /* ---- Portal surface system --------------------------------------------
+     Every section reads as its own bordered "tile" with a page -> panel ->
+     header-strip -> nested-card value ramp, in both themes. Tokens carry the
+     theme; selectors are shared. All rules are scoped to `main` so the dark
+     sidebar (<aside>, outside main) is never touched. */
+  :root {
+    --s-page: #f4f3f1;   /* = cream */
+    --s-panel: #ffffff;
+    --s-sunken: #f6f5f2; /* header strips, table heads, kanban columns */
+    --s-border: #e5e3df;
+    --s-head-ink: #6b7280;
+    --s-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+  }
+  html.portal-dark {
+    --s-page: #141416;
+    --s-panel: #1f1f23;
+    --s-sunken: #2a2a30;
+    --s-border: #3a3a42;
+    --s-head-ink: #9ca3af;
+    --s-shadow: none;
+  }
+
+  /* Component vocabulary used by the template sweep. */
+  main .panel {
+    background: var(--s-panel);
+    border: 1px solid var(--s-border);
+    border-radius: .5rem;
+    box-shadow: var(--s-shadow);
+    overflow: hidden;
+  }
+  main .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: .625rem 1.25rem;
+    background: var(--s-sunken);
+    border-bottom: 1px solid var(--s-border);
+    font-size: .6875rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--s-head-ink);
+  }
+  main .panel-body { padding: 1.25rem; }
+
+  /* Blanket treatment so panels/tables/tiles NOT converted still get a border
+     in both themes. `:not(.border-l-4)` leaves rail-style cards alone. */
+  main .bg-white.rounded-lg:not(.border-l-4) { border: 1px solid var(--s-border); }
+  main .bg-neutral-100.rounded-lg { border: 1px solid var(--s-border); }
+  main thead.bg-neutral-100 { border-bottom: 1px solid var(--s-border); }
+
+  /* ---- Night mode: recolour the raw utility classes -------------------- */
+  html.portal-dark body { background-color: var(--s-page); }
+  html.portal-dark main { background-color: var(--s-page); color: #e4e4e7; }
+  html.portal-dark main .bg-white { background-color: var(--s-panel) !important; }
+  html.portal-dark main .bg-cream { background-color: var(--s-page) !important; }
+  html.portal-dark main .bg-neutral-50 { background-color: #1a1a1e !important; }
+  html.portal-dark main .bg-neutral-100 { background-color: var(--s-sunken) !important; }
+  /* Active pill tabs are bg-neutral-900 -- invisible on a dark page until lifted.
+     Safe here: the sidebar is <aside>, outside main. */
+  html.portal-dark main .bg-neutral-900 { background-color: #3a3a42 !important; }
   html.portal-dark main .text-neutral-900,
   html.portal-dark main .text-neutral-800,
   html.portal-dark main .text-neutral-700 { color: #e4e4e7 !important; }
@@ -44,12 +96,15 @@
   html.portal-dark main .text-neutral-300 { color: #a1a1aa !important; }
   html.portal-dark main .border-neutral-100,
   html.portal-dark main .border-neutral-200,
-  html.portal-dark main .border-neutral-300 { border-color: #3f3f46 !important; }
-  html.portal-dark main [class*="divide-neutral"] > * { border-color: #3f3f46 !important; }
+  html.portal-dark main .border-neutral-300 { border-color: var(--s-border) !important; }
+  html.portal-dark main [class*="divide-neutral"] > * { border-color: var(--s-border) !important; }
+  /* Borders carry the separation in dark now -- kill the faint shadow hack,
+     and give rail cards (border-l-4) a hairline ring instead. */
   html.portal-dark main .shadow-sm,
-  html.portal-dark main .shadow { box-shadow: 0 1px 3px rgba(0,0,0,.5) !important; }
+  html.portal-dark main .shadow { box-shadow: none !important; }
+  html.portal-dark main .border-l-4 { box-shadow: 0 0 0 1px var(--s-border); }
   html.portal-dark main .hover\:bg-neutral-50:hover { background-color: #26262b !important; }
-  html.portal-dark main .hover\:bg-neutral-100:hover { background-color: #2e2e33 !important; }
+  html.portal-dark main .hover\:bg-neutral-100:hover { background-color: var(--s-sunken) !important; }
 </style>
 {% block extra_head %}{% endblock %}
 </head>

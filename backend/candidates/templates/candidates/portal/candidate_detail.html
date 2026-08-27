@@ -13,8 +13,9 @@
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
   <div class="space-y-6">
-    <div class="bg-white rounded-lg shadow-sm p-5">
-      <h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-3">Contact</h2>
+    <div class="panel">
+      <div class="panel-head">Contact</div>
+      <div class="panel-body">
       <dl class="text-sm space-y-2">
         <div><dt class="text-neutral-400 text-xs">Email</dt><dd>{% if candidate.email %}<a href="mailto:{{ candidate.email }}" class="text-brand hover:underline">{{ candidate.email }}</a>{% else %}—{% endif %}</dd></div>
         <div><dt class="text-neutral-400 text-xs">Phone</dt><dd>{{ candidate.phone|default:"—" }}</dd></div>
@@ -28,19 +29,23 @@
         <div><dt class="text-neutral-400 text-xs">Industries</dt><dd>{% for i in candidate.industries.all %}{{ i.name }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</dd></div>
         <div><dt class="text-neutral-400 text-xs">CRM / tools</dt><dd>{% for t in candidate.crm_tools.all %}{{ t.name }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</dd></div>
       </dl>
+      </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow-sm p-5">
-      <h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-3">AI ranking</h2>
+    <div class="panel">
+      <div class="panel-head">AI ranking</div>
+      <div class="panel-body">
       <div class="text-3xl font-extrabold text-brand">{{ candidate.ranking_score|default:"—" }}<span class="text-sm text-neutral-400 font-normal"> / 100</span></div>
       {% if candidate.ranking_score is None %}<div class="text-sm text-neutral-500 mb-3">Not yet ranked</div>{% endif %}
       {% if candidate.ranking_notes %}
       <div class="text-sm whitespace-pre-wrap text-neutral-700">{{ candidate.ranking_notes }}</div>
       {% endif %}
+      </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow-sm p-5">
-      <h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-3">Add to a project</h2>
+    <div class="panel">
+      <div class="panel-head">Add to a project</div>
+      <div class="panel-body">
       {% if open_requisitions %}
       <form hx-post="{% url 'portal-create-match' %}" hx-target="#add-status-detail" hx-swap="innerHTML"
             class="flex items-center gap-2">
@@ -56,10 +61,12 @@
       {% else %}
       <p class="text-sm text-neutral-400">No open projects this candidate isn't already in.</p>
       {% endif %}
+      </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow-sm p-5">
-      <h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-3">Add to a campaign</h2>
+    <div class="panel">
+      <div class="panel-head">Add to a campaign</div>
+      <div class="panel-body">
       {% if active_candidate_campaigns %}
       <form hx-post="{% url 'portal-create-enrollment' %}" hx-target="#enroll-status-detail" hx-swap="innerHTML"
             class="flex items-center gap-2">
@@ -75,12 +82,14 @@
       {% else %}
       <p class="text-sm text-neutral-400">No active campaigns this candidate isn't already enrolled in.</p>
       {% endif %}
+      </div>
     </div>
   </div>
 
   <div class="space-y-6">
-    <div class="bg-white rounded-lg shadow-sm p-5">
-      <h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-3">Pipelines</h2>
+    <div class="panel">
+      <div class="panel-head">Pipelines</div>
+      <div class="panel-body">
       {% if matches %}
       <table class="w-full text-sm">
         <thead class="text-xs text-neutral-400"><tr><th class="text-left pb-2">Project</th><th class="text-left pb-2">Stage</th><th class="text-left pb-2">Fit</th></tr></thead>
@@ -97,16 +106,19 @@
       {% else %}
       <p class="text-sm text-neutral-400">Not in any pipeline yet.</p>
       {% endif %}
+      </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow-sm p-5">
-      <h2 class="text-xs uppercase tracking-wide text-neutral-500 font-semibold mb-3">Resume</h2>
+    <div class="panel">
+      <div class="panel-head">Resume</div>
+      <div class="panel-body">
       {% if candidate.resume %}
         <iframe class="w-full border border-neutral-200 rounded" style="height: 500px" src="{{ candidate.resume.url }}"></iframe>
         <div class="text-sm mt-2"><a href="{{ candidate.resume.url }}" target="_blank" rel="noopener" class="text-brand hover:underline">Open in new tab</a></div>
       {% else %}
         <p class="text-sm text-neutral-400">No resume on file.</p>
       {% endif %}
+      </div>
     </div>
   </div>
 </div>
