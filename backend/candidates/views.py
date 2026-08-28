@@ -1,3 +1,9 @@
+import logging
+import threading
+import urllib.error
+import urllib.request
+
+from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.files.storage import default_storage
 from django.http import FileResponse, Http404, JsonResponse
@@ -5,6 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from .models import Candidate, Company, CrmTool, Industry, WorkStyle
+
+logger = logging.getLogger(__name__)
 
 REQUIRED_FIELDS = [
     'name', 'email', 'phone', 'linkedin', 'company',
@@ -16,6 +24,36 @@ REQUIRED_FIELDS = [
 # comp, timeline) are entered by a recruiter in the admin after a real
 # conversation, so nothing here creates one.
 EMPLOYER_REQUIRED_FIELDS = ['company_name', 'contact_email']
+
+
+def _notify_n8n_new_submission(candidate_id):
+    """Best-effort ping to n8n so it can immediately call rank-unranked
+    instead of waiting for its next scheduled poll. Runs on a background
+    thread (see submit_candidate) so a slow/unreachable n8n never adds
+    latency to -- or fails -- the candidate's actual form submission; the
+    candidate's data is already safely saved by the time this fires.
+    """
+    if not settings.N8N_SUBMIT_WEBHOOK_URL:
+        return
+
+    payload = f'{{"candidate_id": {candidate_id}}}'.encode('utf-8')
+    req = urllib.request.Request(
+        settings.N8N_SUBMIT_WEBHOOK_URL,
+        data=payload,
+        method='POST',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Automation-Key': settings.AUTOMATION_API_KEY,
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            resp.read()
+    except (urllib.error.URLError, TimeoutError):
+        # Nothing to show anyone -- the candidate's submission already
+        # succeeded. This candidate just waits for the next scheduled
+        # rank-unranked poll instead of being ranked instantly.
+        logger.exception('n8n submit-notify webhook failed for candidate %s', candidate_id)
 
 
 @csrf_exempt
@@ -56,6 +94,10 @@ def submit_candidate(request):
     candidate.work_styles.set(WorkStyle.objects.filter(name__in=data.getlist('location')))
     candidate.industries.set(Industry.objects.filter(name__in=data.getlist('industry')))
     candidate.crm_tools.set(CrmTool.objects.filter(name__in=data.getlist('crm')))
+
+    threading.Thread(
+        target=_notify_n8n_new_submission, args=(candidate.id,), daemon=True
+    ).start()
 
     return JsonResponse({'result': 'success', 'id': candidate.id})
 

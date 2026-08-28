@@ -198,6 +198,15 @@ CALENDLY_SCHEDULING_URL = os.environ.get('CALENDLY_SCHEDULING_URL', '')
 # endpoint -- a second secret here wouldn't buy any real isolation.
 N8N_INVITE_WEBHOOK_URL = os.environ.get('N8N_INVITE_WEBHOOK_URL', '')
 
+# n8n webhook Django pings (from candidates/views.py's submit_candidate) right
+# after a new public submission saves, so n8n can call rank-unranked
+# immediately instead of waiting for its next scheduled poll. Same shared
+# secret, same reasoning as N8N_INVITE_WEBHOOK_URL above. Blank is a valid,
+# supported state -- the ping is best-effort only (see
+# _notify_n8n_new_submission), so an unset URL just means new candidates wait
+# for the scheduled poll instead of failing the submission.
+N8N_SUBMIT_WEBHOOK_URL = os.environ.get('N8N_SUBMIT_WEBHOOK_URL', '')
+
 # Business-hours timezone for CampaignStep.send_window_start/end (see
 # candidates/campaign_engine.py) -- distinct from TIME_ZONE above (UTC,
 # storage-only): "between 9:00 AM and 6:00 PM" in the step editor means the

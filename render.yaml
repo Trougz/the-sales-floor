@@ -41,6 +41,8 @@ services:
         sync: false
       - key: N8N_INVITE_WEBHOOK_URL
         sync: false
+      - key: N8N_SUBMIT_WEBHOOK_URL
+        sync: false
 
   # Self-hosted n8n (chosen over n8n Cloud: flat-rate, no execution cap --
   # see conversation history for the cost/ops comparison). Base recipe is
