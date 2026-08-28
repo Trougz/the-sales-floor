@@ -49,14 +49,25 @@ services:
   # after 30 days (same gotcha as salesfloor-db below) and the free web
   # service tier spins down on idle, which would silently kill webhook/
   # schedule responsiveness.
+  #
+  # plan is `standard` (2GB), not `starter` (512MB): n8n on Node/V8 tries to
+  # grow its heap toward its default ~1.5GB target regardless of container
+  # size, so 512MB isn't enough for it to even finish booting -- confirmed
+  # in production, the first deploy at `starter` crash-looped with "FATAL
+  # ERROR: ... JavaScript heap out of memory". NODE_OPTIONS below caps the
+  # heap explicitly (n8n's own recommended fix) so it fails predictably
+  # rather than creeping toward that default again if this ever gets
+  # redeployed on a smaller plan by mistake.
   - type: web
     name: salesfloor-n8n
     runtime: image
-    plan: starter
+    plan: standard
     image:
       url: docker.io/n8nio/n8n:latest
     healthCheckPath: /healthz
     envVars:
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=1536
       # Do not modify after first deploy -- doing so makes every stored
       # credential (Gmail OAuth, header-auth secrets) unreadable.
       - key: N8N_ENCRYPTION_KEY
