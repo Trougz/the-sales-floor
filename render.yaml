@@ -42,6 +42,63 @@ services:
       - key: N8N_INVITE_WEBHOOK_URL
         sync: false
 
+  # Self-hosted n8n (chosen over n8n Cloud: flat-rate, no execution cap --
+  # see conversation history for the cost/ops comparison). Base recipe is
+  # Render's own official template (render-examples/n8n), upgraded from its
+  # free-tier defaults to paid plans -- Render's free Postgres is deleted
+  # after 30 days (same gotcha as salesfloor-db below) and the free web
+  # service tier spins down on idle, which would silently kill webhook/
+  # schedule responsiveness.
+  - type: web
+    name: salesfloor-n8n
+    runtime: image
+    plan: starter
+    image:
+      url: docker.io/n8nio/n8n:latest
+    healthCheckPath: /healthz
+    envVars:
+      # Do not modify after first deploy -- doing so makes every stored
+      # credential (Gmail OAuth, header-auth secrets) unreadable.
+      - key: N8N_ENCRYPTION_KEY
+        generateValue: true
+      - key: DB_TYPE
+        value: postgresdb
+      - key: DB_POSTGRESDB_DATABASE
+        fromDatabase:
+          name: n8n-db
+          property: database
+      - key: DB_POSTGRESDB_HOST
+        fromDatabase:
+          name: n8n-db
+          property: host
+      - key: DB_POSTGRESDB_PASSWORD
+        fromDatabase:
+          name: n8n-db
+          property: password
+      - key: DB_POSTGRESDB_USER
+        fromDatabase:
+          name: n8n-db
+          property: user
+      - key: N8N_PROTOCOL
+        value: https
+      - key: N8N_HOST
+        value: salesfloor-n8n.onrender.com
+      - key: WEBHOOK_URL
+        value: https://salesfloor-n8n.onrender.com/
+      - key: GENERIC_TIMEZONE
+        value: America/New_York
+      # Keeps the executions table from growing forever -- 14 days is
+      # enough to debug a failure without unbounded disk growth.
+      - key: EXECUTIONS_DATA_PRUNE
+        value: "true"
+      - key: EXECUTIONS_DATA_MAX_AGE
+        value: "336"
+
 databases:
   - name: salesfloor-db
+    plan: basic-256mb
+  # n8n's own workflow/credential/execution storage. No disk on the web
+  # service above -- everything n8n needs to persist lives here instead,
+  # same reasoning as why the Django resume disk exists and this doesn't.
+  - name: n8n-db
     plan: basic-256mb
