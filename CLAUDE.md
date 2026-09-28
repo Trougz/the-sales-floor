@@ -10,10 +10,12 @@ The team deliberately wants to own a proprietary ATS rather than buy one (Greenh
 
 ## What this is
 
-Three parts today:
+Three live parts today, plus one prototype (`web/`, below):
 - A static public site (repo root), deployed via GitHub Pages (`CNAME` → `thesalesfloor.biz`), now **three pages**: `index.html` (a neutral "chooser" landing page — no form, just routes to one of the other two), `candidates.html` (the candidate intake form), and `employers.html` (the hiring-company intake form). Header/nav markup is duplicated across all three files by hand (no templating engine in this stack).
 - A Django backend (`backend/`), deployed on Render (`salesfloor-api.onrender.com`) with a managed Postgres database. Two intake endpoints, each with its own client script: `script.js` → `/api/candidates/` (on `candidates.html`) and `employers.js` → `/api/employers/` (on `employers.html`). Both resolve to local Django on `localhost`/`127.0.0.1` and the Render URL in production. **Both confirmed working end-to-end on the live site** — real submissions through `thesalesfloor.biz` landed correctly in the Django admin.
 - **A recruiting portal** (`/portal/` on the same Django backend) — the actual internal tool recruiters use day-to-day: candidate search, an AI-adjacent "search for project" fit ranking, company/contact management, requisition ("project") CRUD with a drag-and-drop pipeline board, LinkedIn bulk import, and multi-step outreach campaigns with a To-Do's queue. See "Recruiting portal" under Architecture.
+
+- **`web/` — a React + Vite + React Router prototype of a fuller marketing site** (multipage: Home, For Talent, For Companies, How It Works, About, Resources, Contact). **Not deployed and not wired to anything yet** — the live static pages above are unchanged. Forms in it are front-end only. See "React marketing-site prototype (`web/`)" under Architecture.
 
 **⚠️ GitHub Pages serves the repo root, so anything committed at the top level is publicly downloadable at `thesalesfloor.biz/<filename>`.** Internal brand/content research (Nate's video breakdowns, `brand/`, inspiration exports) was briefly published this way and is now gitignored — see the "Internal brand/content research" block in `.gitignore`. Don't commit internal material to the repo root. Note those files remain in git *history*; purging that needs a rewrite + force push, which hasn't been done.
 
@@ -28,6 +30,16 @@ cd backend
 .venv\Scripts\python.exe manage.py runserver
 ```
 (Recreate the venv with `py -m venv backend\.venv` then `.venv\Scripts\python.exe -m pip install -r requirements.txt` if `.venv/` isn't present — it's gitignored.) First run, create your own admin login: `manage.py createsuperuser`. There is one automated test suite, `candidates/tests.py` (resume download auth) — run it with `.venv\Scripts\python.exe manage.py test candidates`; note the test runner forces `DEBUG=False`, which is what makes it a real check of production behaviour. Then visit `/admin/` to manage candidates, companies, requisitions, and matches. Uses SQLite locally (`db.sqlite3`, gitignored) automatically — `dj_database_url` only switches to Postgres when a `DATABASE_URL` env var is present, which is the case on Render, not locally.
+
+### React marketing-site prototype (`web/`)
+```
+cd web
+npm install
+npm run dev              # http://localhost:5173 — clean URLs (/talent, /companies, ...)
+npm run build            # dist/  — needs an SPA fallback on the host (every path -> index.html)
+npm run build:preview    # dist-preview/index.html — ONE self-contained file, hash URLs (#/talent); opens straight from disk
+```
+No test runner or linter is configured. Verification so far was done with Playwright + axe-core scripts kept outside the repo.
 
 ### Deploying (Render)
 `render.yaml` at the repo root is a Render Blueprint: it provisions the web service (`backend/` as root dir, gunicorn + whitenoise, a persistent disk at `/var/data` for resume uploads) and a Postgres database together from one file — create a Render account, connect this GitHub repo, and use "New Blueprint Instance" rather than clicking together services by hand. Two things this can't automate: the Render account/billing itself, and creating the admin login on the deployed instance (`manage.py createsuperuser` via Render's shell, same reasoning as local — it's a credential).
@@ -51,6 +63,14 @@ Config is read from environment variables so the same `salesfloor/settings.py` w
 - Header/nav markup is duplicated by hand across all three HTML files (see below), and so is the inline flame `<svg>`.
 - `.home-hero::before` (the ember glow) is absolutely positioned and sized `min(560px, 100%)`. It must stay width-constrained: at a fixed px width it overhangs the viewport on phones and forces a horizontal scrollbar — and because it's a pseudo-element, element-based overflow checks won't find it.
 - Header/nav markup (logo + the two nav buttons, with an `active` class on whichever page you're on) is duplicated across all three HTML files by hand — there's no shared include/template. A nav change (new link, copy tweak, styling) means editing `index.html`, `candidates.html`, and `employers.html` together, not just one.
+
+### React marketing-site prototype (`web/`)
+Vite + React 19 + React Router (`BrowserRouter`; `HashRouter` in the `preview` build via the `__HASH_ROUTER__` define in `vite.config.js`). Plain CSS split by concern in `src/styles/` (tokens live in `base.css`, reused from the live site: `#F4F3F1` / `#D93A26` / Barlow Condensed + Inter, fonts self-hosted via `@fontsource`). `src/pages/` = one file per route; `src/components/{layout,ui,forms,sections,visuals}`; all copy/lists live in `src/data/*.js` so content edits don't touch components.
+- **Forms are front-end only.** `src/services/forms.js` `submitForm()` is the single seam to replace when wiring the Django API (`/api/candidates/`, `/api/employers/`). Fields the API doesn't accept yet are listed in that file's header (candidate `target_roles`; company `website`/`role`/`hires`/`location`/`compensation`/`timeline`; contact + newsletter have no endpoint). The candidate form's field `name=`s and required set mirror the live intake form on purpose — same coupling rule as the root static site.
+- **Sample / placeholder content is labelled in the UI, never presented as real:** sample talent profiles (`data/profiles.js`), sample articles (`data/articles.js`), and dashed `Placeholder` blocks for testimonials, client logos, candidate/placement stories, and Nate Mills' bio (`[INSERT VERIFIED NATE MILLS BIO]`). The only named companies are Pepper and NOSO Labs (rendered as plain text, from the team). Don't add invented stats, clients, quotes, or bio details.
+- **Role tiers are explicit:** `data/roles.js` keeps `CORE_ROLES` (SDR/BDR/AE — confirmed on the live site) separate from `EXPANDING_ROLES` (Mid-Market AE, Enterprise AE, Founding AE, Sales Manager), which render with an "Expanding" marker. Promote a role between the lists only once it's a real offering.
+- `pages/Privacy.jsx` is ported from the live `privacy.html`; the new forms collect a few extra fields, so the policy needs review before this goes live.
+- **Deployment caveat:** GitHub Pages serves the repo root, so `web/` source is reachable at `thesalesfloor.biz/web/...` (raw source only; `node_modules`/`dist` are gitignored). Decide where the built site is hosted (and whether to exclude `web/` from Pages) before cutover.
 
 ### Django backend (`backend/`)
 Single app, `candidates`, in project `salesfloor`:
