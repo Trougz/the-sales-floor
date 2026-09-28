@@ -14,7 +14,7 @@
 /* ---------- Progress ---------- */
 .form-progress {
   position: sticky;
-  top: calc(var(--header-h) + 10px);
+  top: calc(var(--safe-top) + var(--header-h) + 10px);
   z-index: 4;
   display: grid;
   gap: 10px;

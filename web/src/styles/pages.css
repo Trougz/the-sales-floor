@@ -1031,7 +1031,7 @@
 
 .form-layout__sticky {
   position: sticky;
-  top: calc(var(--header-h) + 32px);
+  top: calc(var(--safe-top) + var(--header-h) + 32px);
   display: grid;
   gap: 20px;
 }
@@ -1426,7 +1426,7 @@
 
 .philosophy__grid > .section-head {
   position: sticky;
-  top: calc(var(--header-h) + 32px);
+  top: calc(var(--safe-top) + var(--header-h) + 32px);
   margin-bottom: 0;
 }
 
