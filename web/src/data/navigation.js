@@ -1,43 +1,15 @@
 /**
- * Primary navigation. Items with `children` render as a dropdown on desktop
- * and an accordion in the mobile menu. Hash links (`/talent#join`) scroll to
- * the section on the destination page (see ScrollManager).
+ * Primary navigation: one flat button per page. Each page carries its own sections
+ * (e.g. /talent has roles, profiles, process and the join form), so there are no
+ * dropdowns. Hash links in the CTAs/footer (`/talent#join`) scroll to the section on
+ * the destination page (see ScrollManager).
  */
 export const NAV_ITEMS = [
-  {
-    label: 'For Talent',
-    to: '/talent',
-    children: [
-      { label: 'Overview', to: '/talent', desc: 'Why sales pros join the network' },
-      { label: 'Roles we recruit', to: '/talent#roles', desc: 'SDR, BDR, Account Executive' },
-      { label: 'The talent network', to: '/talent#network', desc: 'See sample profiles' },
-      { label: 'How to join', to: '/talent#process', desc: 'Four simple steps' },
-      { label: 'Join the network', to: '/talent#join', desc: 'Two-minute profile' },
-    ],
-  },
-  {
-    label: 'For Companies',
-    to: '/companies',
-    children: [
-      { label: 'Overview', to: '/companies', desc: 'A more direct path to talent' },
-      { label: 'Roles you can hire', to: '/companies#roles', desc: 'SDR to sales leadership' },
-      { label: 'Why The Sales Floor', to: '/companies#why', desc: 'Signal over noise' },
-      { label: 'Start hiring', to: '/companies#hire', desc: 'Tell us who you need' },
-    ],
-  },
+  { label: 'For Talent', to: '/talent' },
+  { label: 'For Companies', to: '/companies' },
   { label: 'How It Works', to: '/process' },
   { label: 'About', to: '/about' },
-  {
-    label: 'Resources',
-    to: '/resources',
-    children: [
-      { label: 'Latest insights', to: '/resources', desc: 'The content hub' },
-      { label: 'Sales career advice', to: '/resources?category=career' },
-      { label: 'Hiring advice', to: '/resources?category=hiring' },
-      { label: 'Compensation', to: '/resources?category=compensation' },
-      { label: 'Newsletter', to: '/resources#newsletter' },
-    ],
-  },
+  { label: 'Resources', to: '/resources' },
   { label: 'Contact', to: '/contact' },
 ];
 

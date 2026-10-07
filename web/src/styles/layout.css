@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Layout: header, dropdowns, mobile menu, footer
+   Layout: header, mobile menu, footer
    ========================================================================== */
 
 /* ---------- Logo ---------- */
@@ -136,10 +136,6 @@
   transition: color 0.2s ease;
 }
 
-.nav-item--has-menu .nav-link {
-  padding-right: 2px;
-}
-
 .nav-link::after {
   content: '';
   position: absolute;
@@ -154,12 +150,7 @@
   transition: transform 0.3s var(--ease);
 }
 
-.nav-item--has-menu .nav-link::after {
-  right: 2px;
-}
-
 .nav-link:hover,
-.nav-item.is-open .nav-link,
 .nav-link.is-active {
   color: var(--ink);
 }
@@ -167,83 +158,6 @@
 .nav-link:hover::after,
 .nav-link.is-active::after {
   transform: scaleX(1);
-}
-
-.nav-chevron {
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 32px;
-  margin-right: 4px;
-  border-radius: 999px;
-  color: var(--ink-dim);
-}
-
-.nav-chevron svg {
-  transition: transform 0.3s var(--ease);
-}
-
-.nav-item.is-open .nav-chevron svg {
-  transform: rotate(180deg);
-}
-
-.nav-chevron:hover {
-  color: var(--ink);
-}
-
-/* ---------- Dropdown ---------- */
-.dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  min-width: 290px;
-  padding-top: 10px; /* invisible bridge so hover isn't lost between trigger and panel */
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(6px);
-  transition:
-    opacity 0.2s ease,
-    transform 0.25s var(--ease),
-    visibility 0s linear 0.25s;
-  z-index: 5;
-}
-
-.nav-item.is-open .dropdown {
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  transition-delay: 0s;
-}
-
-.dropdown__list {
-  padding: 8px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  box-shadow: var(--shadow-lg);
-}
-
-.dropdown__link {
-  display: grid;
-  gap: 1px;
-  padding: 11px 14px;
-  border-radius: 13px;
-  transition: background-color 0.15s ease;
-}
-
-.dropdown__link:hover,
-.dropdown__link:focus-visible {
-  background: var(--bg);
-}
-
-.dropdown__label {
-  font-size: 0.92rem;
-  font-weight: 600;
-}
-
-.dropdown__desc {
-  font-size: 0.8rem;
-  color: var(--ink-faint);
 }
 
 /* ---------- Mobile menu ---------- */
@@ -282,14 +196,8 @@
   border-bottom: 1px solid var(--border);
 }
 
-.mobile-menu__row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
 .mobile-menu__link {
-  flex: 1;
+  display: block;
   padding: 16px 0;
   font-family: var(--font-display);
   font-style: italic;
@@ -301,58 +209,6 @@
 
 .mobile-menu__link.is-active {
   color: var(--red);
-}
-
-.mobile-menu__toggle {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--surface);
-  border: 1px solid var(--border);
-}
-
-.mobile-menu__toggle svg {
-  transition: transform 0.3s var(--ease);
-}
-
-.mobile-menu__toggle[aria-expanded='true'] svg {
-  transform: rotate(180deg);
-}
-
-.mobile-menu__sub {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.35s var(--ease);
-}
-
-.mobile-menu__sub.is-open {
-  grid-template-rows: 1fr;
-}
-
-.mobile-menu__sub ul {
-  overflow: hidden;
-  display: grid;
-  gap: 2px;
-}
-
-.mobile-menu__sub li:last-child {
-  padding-bottom: 14px;
-}
-
-.mobile-menu__sub a {
-  display: block;
-  padding: 9px 0 9px 14px;
-  border-left: 2px solid var(--border);
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--ink-dim);
-}
-
-.mobile-menu__sub a:hover {
-  color: var(--red-deep);
-  border-left-color: var(--red);
 }
 
 .mobile-menu__ctas {

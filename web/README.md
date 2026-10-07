@@ -15,7 +15,7 @@ npm run build:preview    # one self-contained file → dist-preview/index.html (
 | Path | What |
 | --- | --- |
 | `src/pages/` | One component per route |
-| `src/components/layout` | Header (dropdowns), mobile menu, footer, scroll/focus manager |
+| `src/components/layout` | Header, mobile menu, footer, scroll/focus manager |
 | `src/components/ui` | Button, Tabs, Accordion, Badge, Placeholder, Reveal (scroll animation) |
 | `src/components/forms` | `useForm`-driven fields + Candidate / Company / Contact / Newsletter forms |
 | `src/components/sections` · `visuals` | Reusable page sections, the hero network visual, profile cards |

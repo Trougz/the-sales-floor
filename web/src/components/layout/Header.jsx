@@ -3,7 +3,6 @@ import { NavLink, useLocation } from 'react-router';
 import { Menu, X } from 'lucide-react';
 import Logo from '../ui/Logo.jsx';
 import Button from '../ui/Button.jsx';
-import NavDropdown from './NavDropdown.jsx';
 import MobileMenu from './MobileMenu.jsx';
 import { CTA_PRIMARY, CTA_SECONDARY, NAV_ITEMS } from '../../data/navigation.js';
 
@@ -54,17 +53,13 @@ export default function Header() {
 
         <nav aria-label="Primary" className="site-nav">
           <ul className="site-nav__list">
-            {NAV_ITEMS.map((item) =>
-              item.children ? (
-                <NavDropdown key={item.label} item={item} />
-              ) : (
-                <li key={item.label} className="nav-item">
-                  <NavLink to={item.to} className={({ isActive }) => `nav-link${isActive ? ' is-active' : ''}`}>
-                    {item.label}
-                  </NavLink>
-                </li>
-              ),
-            )}
+            {NAV_ITEMS.map((item) => (
+              <li key={item.label} className="nav-item">
+                <NavLink to={item.to} className={({ isActive }) => `nav-link${isActive ? ' is-active' : ''}`}>
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </nav>
 
