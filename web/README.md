@@ -25,7 +25,7 @@ npm run build:preview    # one self-contained file → dist-preview/index.html (
 ## Before this goes live
 
 - **Forms are front-end only.** Replace `submitForm()` in `src/services/forms.js` to send them to the backend (its header lists which fields the current API accepts).
-- **Sample content is labelled and must be replaced:** sample profiles, sample articles, and Nate Mills' bio (`[INSERT VERIFIED NATE MILLS BIO]`, plus a photo).
+- **Sample content is labelled and must be replaced:** sample profiles, sample articles, and Nate Mills' bio (`[INSERT VERIFIED NATE MILLS BIO]`).
 - **Roles:** `CORE_ROLES` (SDR, BDR, AE) vs `EXPANDING_ROLES` in `src/data/roles.js` — promote a role only when it's a real offering.
 - The flame logo is still the hand-drawn placeholder (one file: `src/components/ui/Flame.jsx`).
 - Review `src/pages/Privacy.jsx` — the new forms collect a few more fields than the live one.

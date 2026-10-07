@@ -3,6 +3,7 @@ import Reveal from '../components/ui/Reveal.jsx';
 import SectionHead from '../components/ui/SectionHead.jsx';
 import Placeholder from '../components/ui/Placeholder.jsx';
 import FinalCta from '../components/sections/FinalCta.jsx';
+import founderPhoto from '../assets/founder.jpg';
 import { PHILOSOPHY } from '../data/principles.js';
 
 export default function About() {
@@ -27,11 +28,8 @@ export default function About() {
 
       <section className="section" id="founder" aria-labelledby="founder-title">
         <div className="container founder">
-          <Reveal className="founder__photo" role="img" aria-label="Photo placeholder for Nate Mills">
-            <span className="founder__initials" aria-hidden="true">
-              NM
-            </span>
-            <span className="founder__photo-note">[Photo placeholder]</span>
+          <Reveal className="founder__photo">
+            <img src={founderPhoto} alt="Nate Mills, founder of The Sales Floor" width="402" height="503" />
           </Reveal>
           <Reveal className="founder__copy" delay={120}>
             <span className="eyebrow">Founder</span>
