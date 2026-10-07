@@ -3,7 +3,7 @@ import Reveal from '../components/ui/Reveal.jsx';
 import SectionHead from '../components/ui/SectionHead.jsx';
 import Placeholder from '../components/ui/Placeholder.jsx';
 import FinalCta from '../components/sections/FinalCta.jsx';
-import { ABOUT_PILLARS, PHILOSOPHY } from '../data/principles.js';
+import { PHILOSOPHY } from '../data/principles.js';
 
 export default function About() {
   usePageMeta('About', 'The Sales Floor is a founder-led, sales-native recruiting network built to make better introductions between sales talent and modern sales organizations.');
@@ -21,26 +21,6 @@ export default function About() {
             <p className="lead hero-in" style={{ '--d': '180ms' }}>
               The Sales Floor is a curated network that connects strong sales talent with the startups and growth-stage companies hiring them, with sales-native recruiting and better introductions at the center.
             </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="section section--tight" aria-labelledby="pillars-title">
-        <div className="container">
-          <SectionHead eyebrow="What we’re about" title={<span id="pillars-title">Five ideas behind the network.</span>} />
-          <div className="pillars">
-            {ABOUT_PILLARS.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <Reveal key={item.title} as="article" delay={index * 80} className="card card--hover feature-card pillar">
-                  <span className="icon-tile">
-                    <Icon size={24} aria-hidden="true" />
-                  </span>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </Reveal>
-              );
-            })}
           </div>
         </div>
       </section>
@@ -82,47 +62,6 @@ export default function About() {
               </Reveal>
             ))}
           </ol>
-        </div>
-      </section>
-
-      <section className="section" id="proof" aria-labelledby="proof-title">
-        <div className="container">
-          <SectionHead
-            eyebrow="Social proof"
-            title={<span id="proof-title">Proof, when it’s <em>real.</em></span>}
-            lead="This is where verified logos, testimonials, and stories will live. Every block below is a placeholder until real, permissioned content is added."
-          />
-
-          <div className="proof">
-            <Reveal as="section" className="proof__block" aria-labelledby="proof-logos">
-              <h3 id="proof-logos">Client logos</h3>
-              <ul className="proof__logos">
-                <li className="proof__logo proof__logo--name">Pepper</li>
-                <li className="proof__logo proof__logo--name">NOSO Labs</li>
-                <li className="proof__logo proof__logo--empty">Client logo</li>
-                <li className="proof__logo proof__logo--empty">Client logo</li>
-              </ul>
-              <p className="proof__hint">Pepper and NOSO Labs are shown as plain text. Swap in approved logo files.</p>
-            </Reveal>
-
-            <Reveal as="section" className="proof__block" delay={100} aria-labelledby="proof-testimonials">
-              <h3 id="proof-testimonials">Testimonials</h3>
-              <div className="proof__stack">
-                <Placeholder label="[Testimonial placeholder]" hint="Add a verified quote with name, title, and company, and only with permission." />
-                <Placeholder label="[Testimonial placeholder]" hint="Company-side or candidate-side." />
-              </div>
-            </Reveal>
-
-            <Reveal as="section" className="proof__block" delay={200} aria-labelledby="proof-candidates">
-              <h3 id="proof-candidates">Candidate stories</h3>
-              <Placeholder label="[Candidate story placeholder]" hint="A real member’s experience joining the network, with their consent." />
-            </Reveal>
-
-            <Reveal as="section" className="proof__block" delay={300} aria-labelledby="proof-placements">
-              <h3 id="proof-placements">Placement stories</h3>
-              <Placeholder label="[Placement story placeholder]" hint="A real introduction that became a hire. Add only what both sides have approved." />
-            </Reveal>
-          </div>
         </div>
       </section>
 

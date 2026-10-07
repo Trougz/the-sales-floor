@@ -1,27 +1,14 @@
-import { useState } from 'react';
 import { Lock, ShieldCheck } from 'lucide-react';
 import usePageMeta from '../hooks/usePageMeta.js';
 import Button from '../components/ui/Button.jsx';
 import Reveal from '../components/ui/Reveal.jsx';
 import SectionHead from '../components/ui/SectionHead.jsx';
 import Badge from '../components/ui/Badge.jsx';
-import { TabPanel, Tabs } from '../components/ui/Tabs.jsx';
 import CardStack from '../components/visuals/CardStack.jsx';
-import ProfileCard from '../components/visuals/ProfileCard.jsx';
 import RoleCard from '../components/sections/RoleCard.jsx';
-import StepList from '../components/sections/StepList.jsx';
 import CandidateForm from '../components/forms/CandidateForm.jsx';
 import { CORE_ROLES, EXPANDING_ROLES } from '../data/roles.js';
-import { SAMPLE_PROFILES } from '../data/profiles.js';
-import { TALENT_STEPS } from '../data/steps.js';
 import { WHY_JOIN } from '../data/principles.js';
-
-const FILTERS = [
-  { id: 'all', label: 'All roles', count: SAMPLE_PROFILES.length },
-  { id: 'sdr', label: 'SDR', count: SAMPLE_PROFILES.filter((p) => p.roleId === 'sdr').length },
-  { id: 'bdr', label: 'BDR', count: SAMPLE_PROFILES.filter((p) => p.roleId === 'bdr').length },
-  { id: 'ae', label: 'Account Executive', count: SAMPLE_PROFILES.filter((p) => p.roleId === 'ae').length },
-];
 
 const AFTER_JOINING = [
   { title: 'We review your profile', body: 'A sales-focused recruiter looks at your background and what you told us you want.' },
@@ -31,8 +18,6 @@ const AFTER_JOINING = [
 
 export default function Talent() {
   usePageMeta('For Sales Talent', 'Join The Sales Floor talent network. Tell us what you’re looking for and get introduced to relevant companies, without endless applications or recruiter spam.');
-  const [filter, setFilter] = useState('all');
-  const visible = SAMPLE_PROFILES.filter((profile) => filter === 'all' || profile.roleId === filter);
 
   return (
     <>
@@ -94,34 +79,8 @@ export default function Talent() {
         </div>
       </section>
 
-      {/* Talent network */}
-      <section className="section section--soft" id="network" aria-labelledby="network-title">
-        <div className="container">
-          <SectionHead
-            eyebrow="The talent network"
-            title={<span id="network-title">The people on <em>the floor.</em></span>}
-            lead="Every profile captures the details that decide whether a role fits: role, industry, experience, quota attainment, location, work preference, sales tools, and compensation."
-          />
-          <Reveal className="network-toolbar">
-            <Tabs tabs={FILTERS} value={filter} onChange={setFilter} idBase="network" label="Filter sample profiles by role" />
-            <p className="network-toolbar__note">
-              <Badge tone="sample">Sample</Badge> Illustrative profiles, not real candidates.
-            </p>
-          </Reveal>
-          {FILTERS.map((f) => (
-            <TabPanel key={f.id} id={f.id} value={filter} idBase="network">
-              <div className="grid grid--3 profile-grid">
-                {visible.map((profile) => (
-                  <ProfileCard key={profile.id} profile={profile} />
-                ))}
-              </div>
-            </TabPanel>
-          ))}
-        </div>
-      </section>
-
       {/* Roles */}
-      <section className="section" id="roles" aria-labelledby="roles-title">
+      <section className="section section--soft" id="roles" aria-labelledby="roles-title">
         <div className="container">
           <SectionHead eyebrow="Roles" title={<span id="roles-title">The roles we recruit for.</span>} lead="Software sales at startups and growth-stage companies, across the core seats on a modern sales team." />
           <div className="grid grid--3">
@@ -140,14 +99,6 @@ export default function Talent() {
               <RoleCard key={role.id} role={role} expanding delay={index * 80} />
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Process */}
-      <section className="section section--soft" id="process" aria-labelledby="process-title">
-        <div className="container">
-          <SectionHead eyebrow="The process" title={<span id="process-title">Simple on purpose.</span>} lead="Four steps from profile to introduction." />
-          <StepList steps={TALENT_STEPS} />
         </div>
       </section>
 

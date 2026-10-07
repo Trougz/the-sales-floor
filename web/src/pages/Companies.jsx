@@ -9,7 +9,6 @@ import StepList from '../components/sections/StepList.jsx';
 import CompanyForm from '../components/forms/CompanyForm.jsx';
 import { CORE_ROLES, LEADERSHIP_ROLE } from '../data/roles.js';
 import { COMPANY_PAGE_STEPS } from '../data/steps.js';
-import { COMPANY_PRINCIPLES } from '../data/principles.js';
 
 const COMPANY_ROLES = [...CORE_ROLES, LEADERSHIP_ROLE];
 
@@ -79,42 +78,6 @@ export default function Companies() {
               <RoleCard key={role.id} role={role} audience="company" delay={index * 80} />
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Why */}
-      <section className="section" id="why" aria-labelledby="why-title">
-        <div className="container">
-          <SectionHead eyebrow="Why The Sales Floor" title={<span id="why-title">Four principles behind <em>every introduction.</em></span>} />
-          <div className="grid grid--4">
-            {COMPANY_PRINCIPLES.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <Reveal key={item.title} as="article" delay={index * 80} className="card card--hover feature-card">
-                  <span className="icon-tile">
-                    <Icon size={24} aria-hidden="true" />
-                  </span>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </Reveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Employer CTA */}
-      <section className="section section--dark cta-band" aria-labelledby="cta-band-title">
-        <div className="cta-band__glow" aria-hidden="true" />
-        <div className="container">
-          <Reveal className="cta-band__inner">
-            <h2 id="cta-band-title">
-              Tell us who <em>you’re looking for.</em>
-            </h2>
-            <Button to="/companies#hire" size="lg" arrow>
-              Hire Sales Talent
-            </Button>
-          </Reveal>
         </div>
       </section>
 

@@ -2,7 +2,6 @@ import usePageMeta from '../hooks/usePageMeta.js';
 import Reveal from '../components/ui/Reveal.jsx';
 import SectionHead from '../components/ui/SectionHead.jsx';
 import FlowDiagram from '../components/visuals/FlowDiagram.jsx';
-import CompareSection from '../components/sections/CompareSection.jsx';
 import PathCards from '../components/sections/PathCards.jsx';
 import { COMPANY_STEPS, TALENT_STEPS } from '../data/steps.js';
 
@@ -51,7 +50,7 @@ export default function Process() {
         </div>
       </section>
 
-      <section className="section" aria-labelledby="tracks-title">
+      <section className="section section--soft" aria-labelledby="tracks-title">
         <div className="container">
           <SectionHead center eyebrow="Two sides, one process" title={<span id="tracks-title">Here’s what happens on each side.</span>} lead="The steps are simple, and each one exists to make the eventual introduction more relevant." />
           <div className="tracks">
@@ -60,13 +59,6 @@ export default function Process() {
           </div>
         </div>
       </section>
-
-      <CompareSection
-        id="key-concept"
-        eyebrow="Key concept"
-        title={<>Not another job board. <em>A better way to meet.</em></>}
-        lead="Talent shouldn’t have to endlessly apply, and companies shouldn’t have to sort through endless resumes. We put the right two sides in front of each other, and only when it makes sense."
-      />
 
       <section className="section" aria-labelledby="paths-title">
         <div className="container">

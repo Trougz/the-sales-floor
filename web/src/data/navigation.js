@@ -9,8 +9,6 @@ export const NAV_ITEMS = [
   { label: 'For Companies', to: '/companies' },
   { label: 'How It Works', to: '/process' },
   { label: 'About', to: '/about' },
-  { label: 'Resources', to: '/resources' },
-  { label: 'Contact', to: '/contact' },
 ];
 
 export const CTA_PRIMARY = { label: 'Join the Talent Network', to: '/talent#join' };
@@ -22,7 +20,6 @@ export const FOOTER_COLUMNS = [
     links: [
       { label: 'For Talent', to: '/talent' },
       { label: 'Roles we recruit', to: '/talent#roles' },
-      { label: 'Sample profiles', to: '/talent#network' },
       { label: 'Join the network', to: '/talent#join' },
     ],
   },
@@ -31,7 +28,6 @@ export const FOOTER_COLUMNS = [
     links: [
       { label: 'For Companies', to: '/companies' },
       { label: 'Roles you can hire', to: '/companies#roles' },
-      { label: 'Why The Sales Floor', to: '/companies#why' },
       { label: 'Hire sales talent', to: '/companies#hire' },
     ],
   },

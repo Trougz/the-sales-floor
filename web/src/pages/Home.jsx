@@ -9,17 +9,11 @@ import Badge from '../components/ui/Badge.jsx';
 import NetworkVisual from '../components/visuals/NetworkVisual.jsx';
 import ProfileCard from '../components/visuals/ProfileCard.jsx';
 import LogoStrip from '../components/sections/LogoStrip.jsx';
-import AudienceSplit from '../components/sections/AudienceSplit.jsx';
-import HowItWorksTabs from '../components/sections/HowItWorksTabs.jsx';
 import RoleCard from '../components/sections/RoleCard.jsx';
-import CompareSection from '../components/sections/CompareSection.jsx';
-import ExploreGrid from '../components/sections/ExploreGrid.jsx';
-import ArticleCard from '../components/sections/ArticleCard.jsx';
 import FaqSection from '../components/sections/FaqSection.jsx';
 import FinalCta from '../components/sections/FinalCta.jsx';
 import { CORE_ROLES, EXPANDING_ROLES } from '../data/roles.js';
 import { SAMPLE_PROFILES } from '../data/profiles.js';
-import { ARTICLES } from '../data/articles.js';
 
 const HERO_PROOF = ['Free for sales talent', 'Sales-native recruiters', 'No recruiter spam'];
 const SHOWCASE = [SAMPLE_PROFILES[0], SAMPLE_PROFILES[2], SAMPLE_PROFILES[4]];
@@ -69,20 +63,8 @@ export default function Home() {
       {/* 2. Who we work with */}
       <LogoStrip />
 
-      {/* 3. Two sides */}
-      <section className="section" aria-labelledby="sides-title">
-        <div className="container">
-          <SectionHead
-            eyebrow="One floor, two sides"
-            title={<span id="sides-title">Built for the people who sell and the people who hire them.</span>}
-            lead="Sales talent shouldn’t have to chase every posting, and companies shouldn’t have to dig through every resume. We sit in the middle and make it relevant."
-          />
-          <AudienceSplit />
-        </div>
-      </section>
-
-      {/* 4. Talent network */}
-      <section className="section section--soft" aria-labelledby="network-title">
+      {/* 3. Talent network */}
+      <section className="section" aria-labelledby="network-title">
         <div className="container">
           <SectionHead
             eyebrow="The talent network"
@@ -99,27 +81,14 @@ export default function Home() {
           <Reveal className="network-note">
             <Badge tone="sample">Sample</Badge>
             <p>These are illustrative sample profiles, not real candidates.</p>
-            <Link to="/talent#network" className="link-arrow">
+            <Link to="/talent" className="link-arrow">
               Explore the talent network <ArrowRight size={16} aria-hidden="true" />
             </Link>
           </Reveal>
         </div>
       </section>
 
-      {/* 5. How it works */}
-      <section className="section" aria-labelledby="hiw-title">
-        <div className="container">
-          <SectionHead
-            center
-            eyebrow="How it works"
-            title={<span id="hiw-title">Better introductions, in four steps.</span>}
-            lead="The same simple idea, from either side of the table."
-          />
-          <HowItWorksTabs />
-        </div>
-      </section>
-
-      {/* 6. Roles */}
+      {/* 4. Roles */}
       <section className="section section--soft" aria-labelledby="roles-title">
         <div className="container">
           <SectionHead
@@ -147,44 +116,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. Not another job board */}
-      <CompareSection id="difference" eyebrow="The difference" title={<>Not another job board. <em>A better way to meet.</em></>} lead="The Sales Floor is a curated network, not a feed of postings or a stack of resumes." />
-
-      {/* 8. Explore */}
-      <section className="section" aria-labelledby="explore-title">
-        <div className="container">
-          <SectionHead
-            eyebrow="Explore"
-            title={<span id="explore-title">Find your way around the floor.</span>}
-            lead="Whether you’re selling or hiring, here’s where to start."
-          />
-          <ExploreGrid />
-        </div>
-      </section>
-
-      {/* 9. Insights */}
-      <section className="section section--soft" aria-labelledby="insights-title">
-        <div className="container">
-          <div className="section-split">
-            <SectionHead eyebrow="Resources" title={<span id="insights-title">From the floor.</span>} lead="Advice for sales careers and sales hiring. Sample content shown while the hub is being built." />
-            <Reveal>
-              <Link to="/resources" className="link-arrow">
-                Browse resources <ArrowRight size={16} aria-hidden="true" />
-              </Link>
-            </Reveal>
-          </div>
-          <div className="grid grid--3">
-            {ARTICLES.slice(1, 4).map((article, index) => (
-              <ArticleCard key={article.slug} article={article} delay={index * 100} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 10. FAQ */}
+      {/* 5. FAQ */}
       <FaqSection />
 
-      {/* 11. Final CTA */}
+      {/* 6. Final CTA */}
       <FinalCta />
     </>
   );
