@@ -1,4 +1,3 @@
-import { lazy, Suspense } from 'react';
 import { BrowserRouter, HashRouter, Route, Routes } from 'react-router';
 import Layout from './components/layout/Layout.jsx';
 import Home from './pages/Home.jsx';
@@ -15,9 +14,6 @@ import NotFound from './pages/NotFound.jsx';
 // `__HASH_ROUTER__` is set by vite.config.js: the single-file preview build uses hash URLs
 // (#/talent) so it works from any static viewer; the normal build uses clean URLs (/talent).
 const Router = __HASH_ROUTER__ ? HashRouter : BrowserRouter;
-
-// Click-to-select review tool: only compiled in for `dev` and `build:artifact` (see vite.config.js).
-const PickMode = __PICK_MODE__ ? lazy(() => import('./components/dev/PickMode.jsx')) : null;
 
 export default function App() {
   return (
@@ -36,11 +32,6 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
-      {PickMode && (
-        <Suspense fallback={null}>
-          <PickMode />
-        </Suspense>
-      )}
     </Router>
   );
 }

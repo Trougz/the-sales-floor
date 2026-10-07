@@ -8,7 +8,6 @@
     "dev": "vite",
     "build": "vite build",
     "build:preview": "vite build --mode preview",
-    "build:artifact": "vite build --mode artifact",
     "preview": "vite preview"
   },
   "dependencies": {
