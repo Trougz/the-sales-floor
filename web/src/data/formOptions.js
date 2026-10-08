@@ -1,6 +1,6 @@
 /** Option lists for the forms. Values on the candidate side match the live intake form so the backend mapping stays 1:1. */
 
-export const TARGET_ROLES = ['SDR', 'BDR', 'Account Executive', 'Sales Manager', 'Not sure yet'];
+export const TARGET_ROLES = ['SDR', 'BDR', 'Account Executive'];
 
 export const OTE_RANGES = ['$50k-$80k', '$80k-$110k', '$110k-$140k', '$140k-$250k', '$250k+'].map((value) => ({
   value,
