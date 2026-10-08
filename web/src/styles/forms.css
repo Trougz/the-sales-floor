@@ -171,6 +171,10 @@
   color: var(--ink-faint);
 }
 
+.field--hint-center .field__hint {
+  text-align: center;
+}
+
 .field__error {
   display: flex;
   align-items: flex-start;

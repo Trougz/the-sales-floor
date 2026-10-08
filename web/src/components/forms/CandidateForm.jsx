@@ -108,7 +108,7 @@ export default function CandidateForm() {
           <TextField form={form} name="phone" type="tel" label="Phone" required autoComplete="tel" placeholder="+1 (555) 000-0000" />
           <TextField form={form} name="linkedin" type="url" label="LinkedIn URL" required autoComplete="url" placeholder="linkedin.com/in/yourname" />
           <SelectField form={form} name="state" label="State / province" required groups={STATE_GROUPS} placeholder="Select your state or province" autoComplete="address-level1" />
-          <ChoiceGroup form={form} name="location" label="Preferred work style" optional options={WORK_STYLES} hint="Pick as many as you’d consider." />
+          <ChoiceGroup form={form} name="location" className="field--hint-center" label="Preferred work style" optional options={WORK_STYLES} hint="Pick as many as you’d consider." />
           <ChoiceGroup form={form} name="relocation" kind="radio" segmented label="Open to relocation?" required options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} />
         </div>
       </FormSection>
