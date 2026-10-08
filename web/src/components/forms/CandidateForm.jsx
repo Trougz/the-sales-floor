@@ -117,7 +117,7 @@ export default function CandidateForm() {
       <FormSection number="2" title="Sales experience" description="Your experience and what you’re looking for.">
         <ChoiceGroup form={form} name="target_roles" label="Role you’re looking for" optional options={TARGET_ROLES} />
         <ChoiceGroup form={form} name="industry" label="Industries you’re interested in" optional options={INDUSTRIES} />
-        <ChoiceGroup form={form} name="crm" label="CRM and sales tools" optional options={CRM_TOOLS} hint="Tools you’ve used day to day." />
+        <ChoiceGroup form={form} name="crm" label="CRM and sales tools" optional options={CRM_TOOLS} />
         <TextArea form={form} name="awards" label="President’s Club / awards" optional rows={3} placeholder="e.g. President’s Club 2024, Top SDR Q3 2023…" />
       </FormSection>
 
