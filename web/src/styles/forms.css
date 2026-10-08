@@ -359,12 +359,6 @@
   opacity: 1;
 }
 
-/* Centre a field's label, control and message in its grid cell (used for the relocation toggle). */
-.field--center {
-  justify-items: center;
-  text-align: center;
-}
-
 .choices--segmented {
   display: inline-flex;
   width: fit-content;

@@ -2,7 +2,7 @@ import { Lock } from 'lucide-react';
 import useForm from '../../hooks/useForm.js';
 import { submitForm } from '../../services/forms.js';
 import { compact, email, phone, required, resumeFile, url, wholeNumber } from '../../services/validators.js';
-import { CRM_TOOLS, INDUSTRIES, STATE_GROUPS, TARGET_ROLES } from '../../data/formOptions.js';
+import { CRM_TOOLS, INDUSTRIES, STATE_GROUPS, TARGET_ROLES, WORK_STYLES } from '../../data/formOptions.js';
 import Button from '../ui/Button.jsx';
 import { ChoiceGroup, FileField, SelectField, TextArea, TextField } from './Field.jsx';
 import FormSuccess from './FormSuccess.jsx';
@@ -15,6 +15,7 @@ const INITIAL = {
   phone: '',
   linkedin: '',
   state: '',
+  location: [],
   relocation: '',
   // Sales experience
   target_roles: [],
@@ -100,14 +101,15 @@ export default function CandidateForm() {
         </div>
       </div>
 
-      <FormSection number="1" title="About you" description="How we’ll reach you, and where you’re based.">
+      <FormSection number="1" title="About you" description="How we’ll reach you, and where and how you want to work.">
         <div className="form-grid">
           <TextField form={form} name="name" label="Full name" required autoComplete="name" placeholder="Jane Smith" />
           <TextField form={form} name="email" type="email" label="Email" required autoComplete="email" placeholder="jane@company.com" />
           <TextField form={form} name="phone" type="tel" label="Phone" required autoComplete="tel" placeholder="+1 (555) 000-0000" />
           <TextField form={form} name="linkedin" type="url" label="LinkedIn URL" required autoComplete="url" placeholder="linkedin.com/in/yourname" />
           <SelectField form={form} name="state" label="State / province" required groups={STATE_GROUPS} placeholder="Select your state or province" autoComplete="address-level1" />
-          <ChoiceGroup form={form} name="relocation" kind="radio" segmented className="field--center" label="Open to relocation?" required options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} />
+          <ChoiceGroup form={form} name="location" label="Preferred work style" optional options={WORK_STYLES} hint="Pick as many as you’d consider." />
+          <ChoiceGroup form={form} name="relocation" kind="radio" segmented label="Open to relocation?" required options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} />
         </div>
       </FormSection>
 
