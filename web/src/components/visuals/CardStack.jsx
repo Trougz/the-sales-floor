@@ -10,7 +10,6 @@ import { SAMPLE_PROFILES } from '../../data/profiles.js';
 export default function CardStack() {
   return (
     <div className="card-stack" aria-hidden="true">
-      <div className="card-stack__glow" />
 
       <div className="card-stack__profile">
         <ProfileCard profile={SAMPLE_PROFILES[0]} />

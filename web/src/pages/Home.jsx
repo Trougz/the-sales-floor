@@ -84,7 +84,7 @@ export default function Home() {
       </section>
 
       {/* 4. Roles */}
-      <section className="section section--soft" aria-labelledby="roles-title">
+      <section className="section" aria-labelledby="roles-title">
         <div className="container">
           <SectionHead
             eyebrow="Roles"

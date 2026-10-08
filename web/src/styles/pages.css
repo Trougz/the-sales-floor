@@ -210,14 +210,6 @@
   margin-inline: auto;
 }
 
-.card-stack__glow {
-  position: absolute;
-  inset: 6% -6% 2%;
-  z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(217, 58, 38, 0.22), transparent);
-}
-
 .card-stack__profile {
   position: absolute;
   top: 34px;

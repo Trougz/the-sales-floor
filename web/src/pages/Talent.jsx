@@ -70,7 +70,7 @@ export default function Talent() {
       </section>
 
       {/* Roles */}
-      <section className="section section--soft" id="roles" aria-labelledby="roles-title">
+      <section className="section" id="roles" aria-labelledby="roles-title">
         <div className="container">
           <SectionHead eyebrow="Roles" title={<span id="roles-title">The roles we recruit for.</span>} lead="Software sales at startups and growth-stage companies, across the core seats on a modern sales team." />
           <div className="grid grid--3">

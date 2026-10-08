@@ -61,7 +61,7 @@ export default function Companies() {
       </section>
 
       {/* Roles */}
-      <section className="section section--soft" id="roles" aria-labelledby="roles-title">
+      <section className="section" id="roles" aria-labelledby="roles-title">
         <div className="container">
           <SectionHead eyebrow="Roles" title={<span id="roles-title">The sales seats we help you fill.</span>} lead="From the first outbound rep to the closer who carries the number." />
           <div className="grid grid--3">
