@@ -602,33 +602,6 @@
 }
 
 /* ---------- Talent page ---------- */
-.feature-card {
-  display: grid;
-  gap: 14px;
-  align-content: start;
-}
-
-.feature-card p {
-  color: var(--ink-dim);
-}
-
-.feature-card--cta {
-  align-content: center;
-  justify-items: start;
-  background: var(--red);
-  border-color: var(--red);
-  color: #fff;
-}
-
-.feature-card--cta h3 {
-  font-size: clamp(2rem, 3vw, 2.6rem);
-  font-weight: 900;
-}
-
-.feature-card--cta p {
-  color: #fff;
-}
-
 /* ---------- Form layout (Talent + Companies) ---------- */
 .form-layout {
   display: grid;

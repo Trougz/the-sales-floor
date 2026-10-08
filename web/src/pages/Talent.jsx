@@ -1,13 +1,11 @@
 import { ShieldCheck } from 'lucide-react';
 import usePageMeta from '../hooks/usePageMeta.js';
 import Button from '../components/ui/Button.jsx';
-import Reveal from '../components/ui/Reveal.jsx';
 import SectionHead from '../components/ui/SectionHead.jsx';
 import CardStack from '../components/visuals/CardStack.jsx';
 import RoleCard from '../components/sections/RoleCard.jsx';
 import TalentFormLayout from '../components/sections/TalentFormLayout.jsx';
 import { CORE_ROLES } from '../data/roles.js';
-import { WHY_JOIN } from '../data/principles.js';
 
 export default function Talent() {
   usePageMeta('For Sales Talent', 'Join The Sales Floor talent network. Tell us what you’re looking for and get introduced to relevant companies, without endless applications or recruiter spam.');
@@ -37,34 +35,6 @@ export default function Talent() {
           </div>
           <div className="page-hero__visual hero-in" style={{ '--d': '300ms' }}>
             <CardStack />
-          </div>
-        </div>
-      </section>
-
-      {/* Why join */}
-      <section className="section" aria-labelledby="why-join-title">
-        <div className="container">
-          <SectionHead eyebrow="Why join" title={<span id="why-join-title">Stop applying. Start being <em>introduced.</em></span>} lead="The best sales roles rarely come from the fiftieth application. Here’s what changes when you join the network." />
-          <div className="grid grid--3">
-            {WHY_JOIN.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <Reveal key={item.title} as="article" delay={index * 80} className="card card--hover feature-card">
-                  <span className="icon-tile">
-                    <Icon size={24} aria-hidden="true" />
-                  </span>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </Reveal>
-              );
-            })}
-            <Reveal as="article" delay={WHY_JOIN.length * 80} className="card feature-card feature-card--cta">
-              <h3>Ready when you are.</h3>
-              <p>Build your profile once. We’ll take it from there.</p>
-              <Button to="/talent#join" variant="light" arrow>
-                Join the Talent Network
-              </Button>
-            </Reveal>
           </div>
         </div>
       </section>
