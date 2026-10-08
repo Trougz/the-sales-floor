@@ -2,7 +2,7 @@ import { Lock } from 'lucide-react';
 import useForm from '../../hooks/useForm.js';
 import { submitForm } from '../../services/forms.js';
 import { compact, email, phone, required, resumeFile, url, wholeNumber } from '../../services/validators.js';
-import { CRM_TOOLS, INDUSTRIES, STATE_GROUPS, TARGET_ROLES, WORK_STYLES } from '../../data/formOptions.js';
+import { CRM_TOOLS, INDUSTRIES, STATE_GROUPS, TARGET_ROLES } from '../../data/formOptions.js';
 import Button from '../ui/Button.jsx';
 import { ChoiceGroup, FileField, SelectField, TextArea, TextField } from './Field.jsx';
 import FormSuccess from './FormSuccess.jsx';
@@ -14,15 +14,13 @@ const INITIAL = {
   email: '',
   phone: '',
   linkedin: '',
+  state: '',
+  relocation: '',
   // Sales experience
   target_roles: [],
   years: '',
   crm: [],
   awards: '',
-  // Location & work style
-  state: '',
-  relocation: '',
-  location: [],
   // Industry, resume
   industry: [],
   resume: null,
@@ -102,12 +100,14 @@ export default function CandidateForm() {
         </div>
       </div>
 
-      <FormSection number="1" title="About you" description="How we’ll reach you.">
+      <FormSection number="1" title="About you" description="How we’ll reach you, and where you’re based.">
         <div className="form-grid">
           <TextField form={form} name="name" label="Full name" required autoComplete="name" placeholder="Jane Smith" />
           <TextField form={form} name="email" type="email" label="Email" required autoComplete="email" placeholder="jane@company.com" />
           <TextField form={form} name="phone" type="tel" label="Phone" required autoComplete="tel" placeholder="+1 (555) 000-0000" />
           <TextField form={form} name="linkedin" type="url" label="LinkedIn URL" required autoComplete="url" placeholder="linkedin.com/in/yourname" />
+          <SelectField form={form} name="state" label="State / province" required groups={STATE_GROUPS} placeholder="Select your state or province" autoComplete="address-level1" />
+          <ChoiceGroup form={form} name="relocation" kind="radio" segmented label="Open to relocation?" required options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} />
         </div>
       </FormSection>
 
@@ -120,19 +120,11 @@ export default function CandidateForm() {
         <TextArea form={form} name="awards" label="President’s Club / awards" optional rows={3} placeholder="e.g. President’s Club 2024, Top SDR Q3 2023…" />
       </FormSection>
 
-      <FormSection number="3" title="Location & work style" description="Where and how you want to work.">
-        <div className="form-grid">
-          <SelectField form={form} name="state" label="State / province" required groups={STATE_GROUPS} placeholder="Select your state or province" autoComplete="address-level1" />
-          <ChoiceGroup form={form} name="relocation" kind="radio" segmented label="Open to relocation?" required options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} />
-        </div>
-        <ChoiceGroup form={form} name="location" label="Preferred work style" optional options={WORK_STYLES} hint="Pick as many as you’d consider." />
-      </FormSection>
-
-      <FormSection number="4" title="Industry" description="Where you’d like to sell.">
+      <FormSection number="3" title="Industry" description="Where you’d like to sell.">
         <ChoiceGroup form={form} name="industry" label="Industries you’re interested in" optional options={INDUSTRIES} />
       </FormSection>
 
-      <FormSection number="5" title="Resume" description="Only shared with a company when you’re being considered for a role there.">
+      <FormSection number="4" title="Resume" description="Only shared with a company when you’re being considered for a role there.">
         <FileField form={form} name="resume" label="Resume" required />
       </FormSection>
 

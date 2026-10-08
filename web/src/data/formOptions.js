@@ -7,8 +7,6 @@ export const OTE_RANGES = ['$50k-$80k', '$80k-$110k', '$110k-$140k', '$140k-$250
   label: value.replace(/-/g, ' – '),
 }));
 
-export const WORK_STYLES = ['Remote', 'Hybrid', 'In-office'];
-
 export const INDUSTRIES = ['SaaS', 'Fintech', 'Martech', 'Healthtech', 'Cybersecurity', 'HR Tech', 'Open to All'];
 
 export const CRM_TOOLS = ['Salesforce', 'HubSpot', 'Apollo', 'Outreach', 'Gong', 'ZoomInfo'];
