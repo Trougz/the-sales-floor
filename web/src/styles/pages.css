@@ -112,12 +112,6 @@
   width: 100%;
 }
 
-.hero__caption {
-  margin-top: 36px;
-  font-size: 0.8rem;
-  color: var(--ink-faint);
-}
-
 @media (max-width: 520px) {
   .hero__ctas,
   .hero__ctas .btn {
@@ -623,26 +617,6 @@
   }
 }
 
-.roles-inline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px 18px;
-  margin-top: clamp(24px, 3vw, 36px);
-  padding: 18px 22px;
-  border: 1.5px dashed var(--border-strong);
-  border-radius: 20px;
-}
-
-.roles-inline__label {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--ink-dim);
-}
-
 /* ---------- Talent page ---------- */
 .feature-card {
   display: grid;
@@ -669,23 +643,6 @@
 
 .feature-card--cta p {
   color: #fff;
-}
-
-.roles-note {
-  display: grid;
-  gap: 8px;
-  justify-items: start;
-  margin: clamp(48px, 6vw, 80px) 0 28px;
-  max-width: 640px;
-}
-
-.roles-note h3 {
-  font-size: 2rem;
-  font-weight: 900;
-}
-
-.roles-note p {
-  color: var(--ink-dim);
 }
 
 /* ---------- Form layout (Talent + Companies) ---------- */

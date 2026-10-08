@@ -6,10 +6,8 @@ import RequestCard from '../components/visuals/RequestCard.jsx';
 import RoleCard from '../components/sections/RoleCard.jsx';
 import StepList from '../components/sections/StepList.jsx';
 import CompanyFormLayout from '../components/sections/CompanyFormLayout.jsx';
-import { CORE_ROLES, LEADERSHIP_ROLE } from '../data/roles.js';
+import { CORE_ROLES } from '../data/roles.js';
 import { COMPANY_PAGE_STEPS } from '../data/steps.js';
-
-const COMPANY_ROLES = [...CORE_ROLES, LEADERSHIP_ROLE];
 
 export default function Companies() {
   usePageMeta('For Companies', 'Hire sales talent through The Sales Floor. Skip the resume pile and meet relevant SDRs, BDRs, Account Executives, and sales leaders through a curated network.');
@@ -31,9 +29,6 @@ export default function Companies() {
             <div className="page-hero__ctas hero-in" style={{ '--d': '280ms' }}>
               <Button to="/companies#hire" size="lg" arrow>
                 Hire Sales Talent
-              </Button>
-              <Button to="/process" size="lg" variant="outline">
-                See How It Works
               </Button>
             </div>
           </div>
@@ -69,9 +64,9 @@ export default function Companies() {
       {/* Roles */}
       <section className="section section--soft" id="roles" aria-labelledby="roles-title">
         <div className="container">
-          <SectionHead eyebrow="Roles" title={<span id="roles-title">The sales seats we help you fill.</span>} lead="From the first outbound rep to the leader who builds the team." />
-          <div className="grid grid--4">
-            {COMPANY_ROLES.map((role, index) => (
+          <SectionHead eyebrow="Roles" title={<span id="roles-title">The sales seats we help you fill.</span>} lead="From the first outbound rep to the closer who carries the number." />
+          <div className="grid grid--3">
+            {CORE_ROLES.map((role, index) => (
               <RoleCard key={role.id} role={role} audience="company" delay={index * 80} />
             ))}
           </div>

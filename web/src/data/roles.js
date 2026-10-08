@@ -1,4 +1,4 @@
-import { Crown, Headphones, Rocket, Target, TrendingUp, Trophy, Users, Phone } from 'lucide-react';
+import { Headphones, Phone, Target } from 'lucide-react';
 
 /**
  * CONFIRMED roles — the ones The Sales Floor recruits for today (SDR, BDR, AE).
@@ -33,25 +33,3 @@ export const CORE_ROLES = [
     skills: ['Discovery & demos', 'Negotiation & close', 'Pipeline ownership'],
   },
 ];
-
-/**
- * EXPANDING roles — NOT confirmed on the current live site (which lists SDR / BDR / AE, and mentions
- * Sales Managers only in passing). Shown with an "Expanding" marker so nothing is over-promised.
- * Promote an entry into CORE_ROLES once it's a real, staffed offering.
- */
-export const EXPANDING_ROLES = [
-  { id: 'mm-ae', title: 'Mid-Market AE', icon: TrendingUp, blurb: 'Full-cycle AEs selling to mid-sized teams with shorter, multi-threaded deals.' },
-  { id: 'ent-ae', title: 'Enterprise AE', icon: Trophy, blurb: 'Strategic sellers running long, complex cycles into large accounts.' },
-  { id: 'founding-ae', title: 'Founding AE', icon: Rocket, blurb: 'Builders who can sell before the playbook exists and help write it.' },
-  { id: 'manager', title: 'Sales Manager', icon: Users, blurb: 'First-line leaders who coach, inspect pipeline, and grow a team.' },
-];
-
-/** Shown on the Companies page alongside the core roles. */
-export const LEADERSHIP_ROLE = {
-  id: 'leadership',
-  short: 'Leadership',
-  title: 'Sales Leadership',
-  icon: Crown,
-  company: 'Front-line managers and sales leaders who build, coach, and scale a team.',
-  skills: ['Team building', 'Coaching & inspection', 'Forecasting'],
-};

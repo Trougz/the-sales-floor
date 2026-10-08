@@ -3,11 +3,10 @@ import usePageMeta from '../hooks/usePageMeta.js';
 import Button from '../components/ui/Button.jsx';
 import Reveal from '../components/ui/Reveal.jsx';
 import SectionHead from '../components/ui/SectionHead.jsx';
-import Badge from '../components/ui/Badge.jsx';
 import CardStack from '../components/visuals/CardStack.jsx';
 import RoleCard from '../components/sections/RoleCard.jsx';
 import TalentFormLayout from '../components/sections/TalentFormLayout.jsx';
-import { CORE_ROLES, EXPANDING_ROLES } from '../data/roles.js';
+import { CORE_ROLES } from '../data/roles.js';
 import { WHY_JOIN } from '../data/principles.js';
 
 export default function Talent() {
@@ -30,9 +29,6 @@ export default function Talent() {
             <div className="page-hero__ctas hero-in" style={{ '--d': '280ms' }}>
               <Button to="/talent#join" size="lg" arrow>
                 Join the Talent Network
-              </Button>
-              <Button to="/process" size="lg" variant="outline">
-                See How It Works
               </Button>
             </div>
             <p className="page-hero__note hero-in" style={{ '--d': '360ms' }}>
@@ -80,17 +76,6 @@ export default function Talent() {
           <div className="grid grid--3">
             {CORE_ROLES.map((role, index) => (
               <RoleCard key={role.id} role={role} audience="talent" delay={index * 90} />
-            ))}
-          </div>
-
-          <div className="roles-note">
-            <Badge tone="outline">Expanding</Badge>
-            <h3>On our radar</h3>
-            <p>Roles we’re expanding toward. They aren’t part of our core offering yet, but if one of these is what you’re after, tell us in your profile.</p>
-          </div>
-          <div className="grid grid--4">
-            {EXPANDING_ROLES.map((role, index) => (
-              <RoleCard key={role.id} role={role} expanding delay={index * 80} />
             ))}
           </div>
         </div>

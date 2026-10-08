@@ -625,38 +625,6 @@
   margin-top: 4px;
 }
 
-.role-card--expanding {
-  background: transparent;
-  border-style: dashed;
-  border-color: var(--border-strong);
-}
-
-.role-card--expanding h3 {
-  font-size: 1.5rem;
-}
-
-.role-card--expanding:hover {
-  background: var(--surface);
-}
-
-.roles-note {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  margin: clamp(40px, 5vw, 64px) 0 24px;
-}
-
-.roles-note h3 {
-  font-size: 1.6rem;
-}
-
-.roles-note p {
-  flex-basis: 100%;
-  max-width: 60ch;
-  color: var(--ink-dim);
-}
-
 /* ---------- FAQ ---------- */
 .faq__tabs {
   display: flex;

@@ -5,14 +5,13 @@ import Button from '../components/ui/Button.jsx';
 import Flame from '../components/ui/Flame.jsx';
 import Reveal from '../components/ui/Reveal.jsx';
 import SectionHead from '../components/ui/SectionHead.jsx';
-import Badge from '../components/ui/Badge.jsx';
 import NetworkVisual from '../components/visuals/NetworkVisual.jsx';
 import ProfileCard from '../components/visuals/ProfileCard.jsx';
 import LogoStrip from '../components/sections/LogoStrip.jsx';
 import RoleCard from '../components/sections/RoleCard.jsx';
 import FaqSection from '../components/sections/FaqSection.jsx';
 import FinalCta from '../components/sections/FinalCta.jsx';
-import { CORE_ROLES, EXPANDING_ROLES } from '../data/roles.js';
+import { CORE_ROLES } from '../data/roles.js';
 import { SAMPLE_PROFILES } from '../data/profiles.js';
 
 const HERO_PROOF = ['Free for sales talent', 'Sales-native recruiters', 'No recruiter spam'];
@@ -55,7 +54,6 @@ export default function Home() {
           <div className="hero__visual hero-in" style={{ '--d': '480ms' }}>
             <p className="sr-only">Illustration: sample sales talent profiles on the left and sample hiring companies on the right, connected through The Sales Floor in the middle.</p>
             <NetworkVisual />
-            <p className="hero__caption">Sample profiles and companies, shown for illustration only.</p>
           </div>
         </div>
       </section>
@@ -79,8 +77,6 @@ export default function Home() {
             ))}
           </div>
           <Reveal className="network-note">
-            <Badge tone="sample">Sample</Badge>
-            <p>These are illustrative sample profiles, not real candidates.</p>
             <Link to="/talent" className="link-arrow">
               Explore the talent network <ArrowRight size={16} aria-hidden="true" />
             </Link>
@@ -101,18 +97,6 @@ export default function Home() {
               <RoleCard key={role.id} role={role} delay={index * 90} />
             ))}
           </div>
-          <Reveal className="roles-inline">
-            <span className="roles-inline__label">
-              <Badge tone="outline">Expanding</Badge> Also growing into
-            </span>
-            <ul className="chips">
-              {EXPANDING_ROLES.map((role) => (
-                <li key={role.id} className="chip">
-                  {role.title}
-                </li>
-              ))}
-            </ul>
-          </Reveal>
         </div>
       </section>
 
