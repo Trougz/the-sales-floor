@@ -76,11 +76,6 @@ export default function Join() {
               );
             })}
           </div>
-          {!audience && (
-            <p className="join-choice__hint hero-in" style={{ '--d': '360ms' }}>
-              Choose one and the form appears below.
-            </p>
-          )}
         </div>
       </section>
 

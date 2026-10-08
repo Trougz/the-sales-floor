@@ -1352,13 +1352,6 @@
   color: var(--red-bright);
 }
 
-.join-choice__hint {
-  margin-top: 20px;
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--ink-faint);
-}
-
 @media (max-width: 640px) {
   .join-choice {
     grid-template-columns: minmax(0, 1fr);
