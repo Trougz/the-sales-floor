@@ -7,6 +7,7 @@
 export const NAV_ITEMS = [
   { label: 'For Talent', to: '/talent' },
   { label: 'For Companies', to: '/companies' },
+  { label: 'About', to: '/about' },
 ];
 
 /** The single button on the right of the header (and at the bottom of the mobile menu): the combined talent / company form. */
