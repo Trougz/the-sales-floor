@@ -156,6 +156,42 @@
   color: var(--ink);
 }
 
+/* A group's label is a <legend>, which is not a grid item, so .field's 8px row gap never applied to it:
+   chips sat flush under their label while inputs sat 8px below theirs. Give legends the same gap so
+   groups line up with inputs in a neighbouring cell. */
+.field--group > .field__label {
+  margin-bottom: 8px;
+}
+
+/* Centre a chip row on the height of a text input (52px) so it lines up with one in the next cell. */
+.field--match-input .choices {
+  align-items: center;
+  min-height: 52px;
+}
+
+/* Stretch a chip row to the full width of its cell, so its outer edges are flush with the inputs above
+   and beside it (and the relocation toggle with the select above it). Chips share the extra width. */
+.field--fill .choices {
+  width: 100%;
+}
+
+.field--fill .choice {
+  flex: 1 1 auto;
+}
+
+.field--fill .choice__box {
+  justify-content: center;
+  width: 100%;
+}
+
+.field--fill .choices--segmented {
+  display: flex;
+}
+
+.field--fill .choices--segmented .choice {
+  flex: 1 1 0;
+}
+
 .field__req {
   color: var(--red-deep);
 }
@@ -169,10 +205,6 @@
 .field__hint {
   font-size: 0.82rem;
   color: var(--ink-faint);
-}
-
-.field--hint-center .field__hint {
-  text-align: center;
 }
 
 .field__error {
