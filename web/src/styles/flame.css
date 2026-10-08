@@ -10,7 +10,8 @@
    - Eased, not linear. 14 stops on a smootherstep curve: it lingers at both ends and drops through
      the middle, the way smoke thins, instead of a mechanical straight fade.
    - Grain. A fine static film-grain layer (overlay blend) breaks up banding and gives it a printed,
-     physical surface. Subtle by design: it should read as texture, not as noise.
+     physical surface. Subtle by design: it should read as texture, not as noise. It is confined to
+     the ramp and fades out before the flat black (see the ::before rule below).
    - No blobs. The only glow is a flat ember bed hugging the bottom edge, where heat actually is;
      the flames themselves are crisp vector shapes.
 
@@ -43,7 +44,6 @@ main:has(.page > :last-child.section--dark) + .site-footer {
   padding-bottom: clamp(56px, 7vw, 96px);
   background-color: var(--dark);
   background-image:
-    var(--grain),
     linear-gradient(
       to bottom,
       color-mix(in oklab, var(--descent-from) 100.0%, var(--soot)) 0%,
@@ -61,10 +61,9 @@ main:has(.page > :last-child.section--dark) + .site-footer {
       color-mix(in oklab, var(--soot) 0.9%, var(--dark)) 92%,
       color-mix(in oklab, var(--soot) 0.0%, var(--dark)) 100%
     );
-  background-size: 220px 220px, 100% var(--descent-h);
-  background-position: 0 0, top;
-  background-repeat: repeat, no-repeat;
-  background-blend-mode: overlay, normal;
+  background-size: 100% var(--descent-h);
+  background-position: top;
+  background-repeat: no-repeat;
 }
 
 /* ---------- Footer: descent (when the page has no CTA band), ember bed, flames ---------- */
@@ -75,7 +74,6 @@ main:has(.page > :last-child.section--dark) + .site-footer {
   border-top: 0;
   background-color: var(--dark);
   background-image:
-    var(--grain),
     linear-gradient(to top, rgba(217, 58, 38, 0.46), rgba(217, 58, 38, 0.16) 48%, rgba(217, 58, 38, 0)),
     linear-gradient(
       to bottom,
@@ -94,10 +92,35 @@ main:has(.page > :last-child.section--dark) + .site-footer {
       color-mix(in oklab, var(--soot) 0.9%, var(--dark)) 92%,
       color-mix(in oklab, var(--soot) 0.0%, var(--dark)) 100%
     );
-  background-size: 220px 220px, 100% var(--ember-h), 100% var(--descent-h);
-  background-position: 0 0, bottom, top;
-  background-repeat: repeat, no-repeat, no-repeat;
-  background-blend-mode: overlay, normal, normal;
+  background-size: 100% var(--ember-h), 100% var(--descent-h);
+  background-position: bottom, top;
+  background-repeat: no-repeat, no-repeat;
+}
+
+/* Grain lives in the ramp zone only, and fades out before the flat black begins. Laid over flat
+   near-black it measurably darkened the band (about 3/255), which showed as a seam against the
+   plain dark sections (About's philosophy band, the newsletter band). With no ramp, --descent-h
+   is 0 and so is the grain: every dark surface is exactly --dark. */
+.final-cta::before,
+.site-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  height: var(--descent-h);
+  background-image: var(--grain);
+  background-size: 220px 220px;
+  mix-blend-mode: overlay;
+  -webkit-mask-image: linear-gradient(to bottom, #000 35%, transparent);
+  mask-image: linear-gradient(to bottom, #000 35%, transparent);
+  pointer-events: none;
+}
+
+.final-cta .container {
+  position: relative;
+  z-index: 1;
 }
 
 .site-footer .container {
