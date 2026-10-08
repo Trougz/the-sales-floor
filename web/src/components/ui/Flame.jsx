@@ -1,4 +1,4 @@
-/** The flame: a decorative brand accent (hero eyebrow, network hub, flow diagram). Not the logo — that is <LogoMark /> (the funnel). Hand-drawn path carried over from the live site. */
+/** The flame: decorative art only (flow diagram, article-card covers). Not the logo — that is <LogoMark /> (the funnel). Hand-drawn path carried over from the live site. */
 export default function Flame({ className = '', ...rest }) {
   return (
     <svg className={`flame ${className}`.trim()} viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" {...rest}>

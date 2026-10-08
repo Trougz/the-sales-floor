@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Check } from 'lucide-react';
-import Flame from '../ui/Flame.jsx';
+import LogoMark from '../ui/LogoMark.jsx';
 import useMediaQuery from '../../hooks/useMediaQuery.js';
 import useReducedMotion from '../../hooks/useReducedMotion.js';
 import { SAMPLE_COMPANIES, SAMPLE_PROFILES } from '../../data/profiles.js';
@@ -72,7 +72,7 @@ export default function NetworkVisual() {
             <span className="network__ring network__ring--1" />
             <span className="network__ring network__ring--2" />
             <div className="network__core">
-              <Flame />
+              <LogoMark />
             </div>
           </div>
           <p className="network__hub-title">The Sales Floor</p>

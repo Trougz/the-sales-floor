@@ -348,13 +348,13 @@
     0 24px 50px -14px var(--red-glow);
 }
 
-.network__core .flame {
-  width: 38px;
-  height: 50px;
+.network__core {
+  color: var(--on-dark); /* the mark's lower bands follow the text colour */
 }
 
-.network__core .flame path {
-  fill: var(--red-bright);
+.network__core .logo-mark {
+  width: 48px;
+  height: auto;
 }
 
 .network__ring {

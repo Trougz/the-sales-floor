@@ -66,9 +66,8 @@
   color: var(--ink-dim);
 }
 
-.hero__eyebrow .flame {
-  width: 12px;
-  height: 16px;
+.hero__eyebrow .logo-mark {
+  height: 14px;
 }
 
 .hero h1 {
