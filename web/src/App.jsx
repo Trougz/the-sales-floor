@@ -8,6 +8,7 @@ import About from './pages/About.jsx';
 import Resources from './pages/Resources.jsx';
 import Article from './pages/Article.jsx';
 import Contact from './pages/Contact.jsx';
+import Join from './pages/Join.jsx';
 import Privacy from './pages/Privacy.jsx';
 import NotFound from './pages/NotFound.jsx';
 
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="resources" element={<Resources />} />
           <Route path="resources/:slug" element={<Article />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="join" element={<Join />} />
           <Route path="privacy" element={<Privacy />} />
           <Route path="*" element={<NotFound />} />
         </Route>

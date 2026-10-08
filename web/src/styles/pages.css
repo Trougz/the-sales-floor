@@ -1253,3 +1253,114 @@
   font-weight: 600;
   color: var(--ink-faint);
 }
+
+/* ---------- Join page (combined talent / company form) ---------- */
+.join-choice {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 24px);
+  max-width: 880px;
+  margin: clamp(32px, 5vw, 56px) auto 0;
+}
+
+.join-choice__option {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px 18px;
+  align-items: center;
+  padding: clamp(20px, 2.6vw, 30px);
+  border-radius: 26px;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  text-align: left;
+  transition:
+    transform 0.3s var(--ease),
+    box-shadow 0.3s var(--ease),
+    border-color 0.2s ease;
+}
+
+.join-choice__option:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.join-choice__option[aria-pressed='true'] {
+  border-color: var(--red);
+  box-shadow:
+    0 0 0 4px var(--red-dim),
+    var(--shadow-md);
+}
+
+.join-choice__option .icon-tile {
+  grid-row: 1 / span 2;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+}
+
+.join-choice__title {
+  align-self: end;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+  line-height: 1;
+}
+
+.join-choice__desc {
+  align-self: start;
+  font-size: 0.95rem;
+  color: var(--ink-dim);
+}
+
+.join-choice__check {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--red);
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity 0.2s ease,
+    transform 0.3s var(--ease);
+}
+
+.join-choice__option[aria-pressed='true'] .join-choice__check {
+  opacity: 1;
+  transform: none;
+}
+
+.join-choice__option--hiring {
+  background: var(--dark);
+  border-color: var(--dark);
+  color: var(--on-dark);
+}
+
+.join-choice__option--hiring .join-choice__desc {
+  color: var(--on-dark-dim);
+}
+
+.join-choice__option--hiring .icon-tile {
+  background: rgba(255, 107, 87, 0.16);
+  color: var(--red-bright);
+}
+
+.join-choice__hint {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--ink-faint);
+}
+
+@media (max-width: 640px) {
+  .join-choice {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

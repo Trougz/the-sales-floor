@@ -9,8 +9,8 @@ export const NAV_ITEMS = [
   { label: 'For Companies', to: '/companies' },
 ];
 
-/** The single button on the right of the header (and at the bottom of the mobile menu). Points at About for now. */
-export const NAV_ACTION = { label: 'Join The Sales Floor', to: '/about' };
+/** The single button on the right of the header (and at the bottom of the mobile menu): the combined talent / company form. */
+export const NAV_ACTION = { label: 'Join The Sales Floor', to: '/join' };
 
 export const CTA_PRIMARY = { label: 'Join the Talent Network', to: '/talent#join' };
 export const CTA_SECONDARY = { label: 'Hire Sales Talent', to: '/companies#hire' };

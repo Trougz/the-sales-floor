@@ -1,4 +1,4 @@
-import { Lock, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import usePageMeta from '../hooks/usePageMeta.js';
 import Button from '../components/ui/Button.jsx';
 import Reveal from '../components/ui/Reveal.jsx';
@@ -6,15 +6,9 @@ import SectionHead from '../components/ui/SectionHead.jsx';
 import Badge from '../components/ui/Badge.jsx';
 import CardStack from '../components/visuals/CardStack.jsx';
 import RoleCard from '../components/sections/RoleCard.jsx';
-import CandidateForm from '../components/forms/CandidateForm.jsx';
+import TalentFormLayout from '../components/sections/TalentFormLayout.jsx';
 import { CORE_ROLES, EXPANDING_ROLES } from '../data/roles.js';
 import { WHY_JOIN } from '../data/principles.js';
-
-const AFTER_JOINING = [
-  { title: 'We review your profile', body: 'A sales-focused recruiter looks at your background and what you told us you want.' },
-  { title: 'We reach out when there’s a fit', body: 'No blasts. If something is relevant, we’ll contact you directly.' },
-  { title: 'You decide what happens next', body: 'Every introduction is your call. You’re never obligated to move forward.' },
-];
 
 export default function Talent() {
   usePageMeta('For Sales Talent', 'Join The Sales Floor talent network. Tell us what you’re looking for and get introduced to relevant companies, without endless applications or recruiter spam.');
@@ -104,37 +98,7 @@ export default function Talent() {
 
       {/* Form */}
       <section className="section" id="join" aria-labelledby="join-title">
-        <div className="container form-layout">
-          <div className="form-layout__aside">
-            <Reveal className="form-layout__sticky">
-              <span className="eyebrow">Join the network</span>
-              <h2 id="join-title">
-                Tell us about yourself and <em>what you want.</em>
-              </h2>
-              <p className="lead">One profile, about two minutes. When there’s a genuine fit, we reach out directly.</p>
-
-              <ol className="next-steps" aria-label="What happens after you join">
-                {AFTER_JOINING.map((item, index) => (
-                  <li key={item.title}>
-                    <span className="next-steps__num" aria-hidden="true">
-                      {index + 1}
-                    </span>
-                    <span>
-                      <strong>{item.title}</strong>
-                      <span>{item.body}</span>
-                    </span>
-                  </li>
-                ))}
-              </ol>
-              <p className="form-layout__privacy">
-                <Lock size={15} aria-hidden="true" /> Your resume is only shared with a company when you’re being considered for a role there.
-              </p>
-            </Reveal>
-          </div>
-          <div className="form-layout__main">
-            <CandidateForm />
-          </div>
-        </div>
+        <TalentFormLayout />
       </section>
     </>
   );
