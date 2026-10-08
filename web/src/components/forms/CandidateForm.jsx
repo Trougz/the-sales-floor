@@ -2,7 +2,7 @@ import { Lock } from 'lucide-react';
 import useForm from '../../hooks/useForm.js';
 import { submitForm } from '../../services/forms.js';
 import { compact, email, phone, required, resumeFile, url, wholeNumber } from '../../services/validators.js';
-import { CRM_TOOLS, CURRENT_TITLES, INDUSTRIES, OTE_RANGES, STATE_GROUPS, TARGET_ROLES, WORK_STYLES } from '../../data/formOptions.js';
+import { CRM_TOOLS, INDUSTRIES, STATE_GROUPS, TARGET_ROLES, WORK_STYLES } from '../../data/formOptions.js';
 import Button from '../ui/Button.jsx';
 import { ChoiceGroup, FileField, SelectField, TextArea, TextField } from './Field.jsx';
 import FormSuccess from './FormSuccess.jsx';
@@ -15,15 +15,9 @@ const INITIAL = {
   phone: '',
   linkedin: '',
   // Sales experience
-  company: '',
-  title: '',
   target_roles: [],
   years: '',
-  quota: '',
   awards: '',
-  // Compensation
-  ote: '',
-  desired_ote: '',
   // Location & work style
   state: '',
   relocation: '',
@@ -34,8 +28,9 @@ const INITIAL = {
   resume: null,
 };
 
-// Required set mirrors the live intake form (title, quota, current OTE are optional there too).
-const REQUIRED_FIELDS = ['name', 'email', 'phone', 'linkedin', 'company', 'years', 'desired_ote', 'state', 'relocation', 'resume'];
+// No longer mirrors the live intake form / Django view, which still require `company` and `desired_ote`
+// (see the header of services/forms.js).
+const REQUIRED_FIELDS = ['name', 'email', 'phone', 'linkedin', 'years', 'state', 'relocation', 'resume'];
 
 const validate = (v) =>
   compact({
@@ -43,11 +38,7 @@ const validate = (v) =>
     email: email(v.email),
     phone: phone(v.phone),
     linkedin: url(v.linkedin, { host: 'linkedin.com' }),
-    company: required('Enter your current company.')(v.company),
     years: wholeNumber(v.years, { min: 0, max: 50, label: 'your years in B2B sales' }),
-    quota: wholeNumber(v.quota, { max: 999, optional: true, label: 'a percentage' }),
-    ote: wholeNumber(v.ote, { max: 5000000, optional: true, label: 'your current OTE in dollars' }),
-    desired_ote: required('Select the range you’re targeting.')(v.desired_ote),
     state: required('Select your state or province.')(v.state),
     relocation: required('Let us know whether you’d relocate.')(v.relocation),
     resume: resumeFile(v.resume),
@@ -120,25 +111,15 @@ export default function CandidateForm() {
         </div>
       </FormSection>
 
-      <FormSection number="2" title="Sales experience" description="Where you are now and what you’re looking for.">
+      <FormSection number="2" title="Sales experience" description="Your experience and what you’re looking for.">
         <div className="form-grid">
-          <TextField form={form} name="company" label="Current company" required autoComplete="organization" placeholder="Acme Corp" />
-          <SelectField form={form} name="title" label="Current title" optional options={CURRENT_TITLES} placeholder="Select your title" />
           <TextField form={form} name="years" label="Years in B2B sales" required numeric maxDigits={2} placeholder="e.g. 3" />
-          <TextField form={form} name="quota" label="% to quota, last period" optional numeric maxDigits={3} placeholder="e.g. 112" hint="Your most recent full period." />
         </div>
         <ChoiceGroup form={form} name="target_roles" label="Role you’re looking for" optional options={TARGET_ROLES} />
         <TextArea form={form} name="awards" label="President’s Club / awards" optional rows={3} placeholder="e.g. President’s Club 2024, Top SDR Q3 2023…" />
       </FormSection>
 
-      <FormSection number="3" title="Compensation" description="In USD. Helps us avoid wasting your time.">
-        <div className="form-grid">
-          <TextField form={form} name="ote" label="Current OTE (base + commission)" optional numeric prefix="$" placeholder="120000" maxDigits={7} />
-          <SelectField form={form} name="desired_ote" label="Desired OTE" required options={OTE_RANGES} placeholder="Select a range" />
-        </div>
-      </FormSection>
-
-      <FormSection number="4" title="Location & work style" description="Where and how you want to work.">
+      <FormSection number="3" title="Location & work style" description="Where and how you want to work.">
         <div className="form-grid">
           <SelectField form={form} name="state" label="State / province" required groups={STATE_GROUPS} placeholder="Select your state or province" autoComplete="address-level1" />
           <ChoiceGroup form={form} name="relocation" kind="radio" segmented label="Open to relocation?" required options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} />
@@ -146,15 +127,15 @@ export default function CandidateForm() {
         <ChoiceGroup form={form} name="location" label="Preferred work style" optional options={WORK_STYLES} hint="Pick as many as you’d consider." />
       </FormSection>
 
-      <FormSection number="5" title="Industry" description="Where you’d like to sell.">
+      <FormSection number="4" title="Industry" description="Where you’d like to sell.">
         <ChoiceGroup form={form} name="industry" label="Industries you’re interested in" optional options={INDUSTRIES} />
       </FormSection>
 
-      <FormSection number="6" title="Sales stack" description="Tools you’ve used day to day.">
+      <FormSection number="5" title="Sales stack" description="Tools you’ve used day to day.">
         <ChoiceGroup form={form} name="crm" label="CRM and sales tools" optional options={CRM_TOOLS} />
       </FormSection>
 
-      <FormSection number="7" title="Resume" description="Only shared with a company when you’re being considered for a role there.">
+      <FormSection number="6" title="Resume" description="Only shared with a company when you’re being considered for a role there.">
         <FileField form={form} name="resume" label="Resume" required />
       </FormSection>
 
