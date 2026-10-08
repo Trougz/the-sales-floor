@@ -31,9 +31,6 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background:
-    radial-gradient(60% 55% at 50% 0%, rgba(217, 58, 38, 0.15), transparent 72%),
-    radial-gradient(40% 40% at 90% 30%, rgba(217, 58, 38, 0.07), transparent 70%);
 }
 
 .hero__bg::after,
@@ -756,21 +753,6 @@
 }
 
 /* ---------- Companies page ---------- */
-.problem {
-  overflow: clip;
-  isolation: isolate;
-}
-
-.problem__glow {
-  position: absolute;
-  z-index: -1;
-  left: -10%;
-  top: 0;
-  width: min(760px, 100%);
-  aspect-ratio: 1;
-  background: radial-gradient(closest-side, rgba(217, 58, 38, 0.3), transparent);
-}
-
 .problem__inner {
   display: grid;
   gap: 28px;
@@ -931,21 +913,6 @@
   .founder__photo {
     max-width: 320px;
   }
-}
-
-.philosophy {
-  overflow: clip;
-  isolation: isolate;
-}
-
-.philosophy__glow {
-  position: absolute;
-  z-index: -1;
-  left: -12%;
-  bottom: -10%;
-  width: min(700px, 90%);
-  aspect-ratio: 1;
-  background: radial-gradient(closest-side, rgba(217, 58, 38, 0.26), transparent);
 }
 
 .philosophy__grid {

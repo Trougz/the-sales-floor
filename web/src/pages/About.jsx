@@ -44,7 +44,6 @@ export default function About() {
       </section>
 
       <section className="section section--dark philosophy" id="philosophy" aria-labelledby="philosophy-title">
-        <div className="philosophy__glow" aria-hidden="true" />
         <div className="container philosophy__grid">
           <SectionHead eyebrow="Philosophy" title={<span id="philosophy-title">What we believe about <em>recruiting.</em></span>} lead="Five beliefs that shape who we introduce, and who we don’t." />
           <ol className="beliefs">

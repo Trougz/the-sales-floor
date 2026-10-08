@@ -40,7 +40,6 @@ export default function Companies() {
 
       {/* The problem */}
       <section className="section section--dark problem" aria-labelledby="problem-title">
-        <div className="problem__glow" aria-hidden="true" />
         <div className="container">
           <Reveal className="problem__inner">
             <span className="eyebrow">The problem</span>
