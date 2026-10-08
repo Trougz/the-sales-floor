@@ -18,14 +18,24 @@
   border-radius: 8px;
 }
 
-.logo .flame {
-  width: 20px;
-  height: 26px;
+.logo-mark {
+  flex-shrink: 0;
+  height: 1em; /* scales with the wordmark: 64 x 56 box, cap height ~0.7em */
+  width: auto;
+  aspect-ratio: 64 / 56;
   transition: transform 0.4s var(--ease);
 }
 
-.logo:hover .flame {
-  transform: rotate(-8deg) scale(1.1);
+.logo-mark__top {
+  fill: var(--red);
+}
+
+.logo-mark__body {
+  fill: currentColor;
+}
+
+.logo:hover .logo-mark {
+  transform: scale(1.08);
 }
 
 .logo--on-dark {

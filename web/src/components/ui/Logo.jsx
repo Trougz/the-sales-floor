@@ -1,10 +1,10 @@
 import { Link } from 'react-router';
-import Flame from './Flame.jsx';
+import LogoMark from './LogoMark.jsx';
 
 export default function Logo({ onDark = false }) {
   return (
     <Link to="/" className={`logo${onDark ? ' logo--on-dark' : ''}`} aria-label="The Sales Floor — home">
-      <Flame />
+      <LogoMark />
       <span>The Sales Floor</span>
     </Link>
   );
