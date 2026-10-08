@@ -1,8 +1,8 @@
 import { Lock } from 'lucide-react';
 import useForm from '../../hooks/useForm.js';
 import { submitForm } from '../../services/forms.js';
-import { compact, email, phone, required, resumeFile, url, wholeNumber } from '../../services/validators.js';
-import { CRM_TOOLS, INDUSTRIES, STATE_GROUPS, TARGET_ROLES, WORK_STYLES } from '../../data/formOptions.js';
+import { compact, email, phone, required, resumeFile, url } from '../../services/validators.js';
+import { CRM_TOOLS, INDUSTRIES, STATE_GROUPS, TARGET_ROLES, WORK_STYLES, YEARS_IN_SALES } from '../../data/formOptions.js';
 import Button from '../ui/Button.jsx';
 import { ChoiceGroup, FileField, SelectField, TextArea, TextField } from './Field.jsx';
 import FormSuccess from './FormSuccess.jsx';
@@ -37,7 +37,7 @@ const validate = (v) =>
     email: email(v.email),
     phone: phone(v.phone),
     linkedin: url(v.linkedin, { host: 'linkedin.com' }),
-    years: wholeNumber(v.years, { min: 0, max: 50, label: 'your years in B2B sales' }),
+    years: required('Select your years in B2B sales.')(v.years),
     state: required('Select your state or province.')(v.state),
     relocation: required('Let us know whether you’d relocate.')(v.relocation),
     resume: resumeFile(v.resume),
@@ -108,9 +108,9 @@ export default function CandidateForm() {
           <TextField form={form} name="phone" type="tel" label="Phone" required autoComplete="tel" placeholder="+1 (555) 000-0000" />
           <TextField form={form} name="linkedin" type="url" label="LinkedIn URL" required autoComplete="url" placeholder="linkedin.com/in/yourname" />
           <SelectField form={form} name="state" label="State / province" required groups={STATE_GROUPS} placeholder="Select your state or province" autoComplete="address-level1" />
-          <ChoiceGroup form={form} name="location" className="field--match-input field--fill" label="Preferred work style" optional options={WORK_STYLES} />
+          <SelectField form={form} name="years" label="Years in B2B sales" required options={YEARS_IN_SALES} placeholder="Select a range" />
           <ChoiceGroup form={form} name="relocation" kind="radio" segmented className="field--fill" label="Open to relocation?" required options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} />
-          <TextField form={form} name="years" label="Years in B2B sales" required numeric maxDigits={2} placeholder="e.g. 3" />
+          <ChoiceGroup form={form} name="location" className="field--match-input field--fill" label="Preferred work style" optional options={WORK_STYLES} />
         </div>
       </FormSection>
 

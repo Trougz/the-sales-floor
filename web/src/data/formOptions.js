@@ -7,6 +7,14 @@ export const OTE_RANGES = ['$50k-$80k', '$80k-$110k', '$110k-$140k', '$140k-$250
   label: value.replace(/-/g, ' – '),
 }));
 
+/** Years in B2B sales. Ranges overlap at 3 by request (1-3 and 3-5); the backend currently wants a whole number. */
+export const YEARS_IN_SALES = [
+  { value: '0', label: '0' },
+  { value: '1-3', label: '1 – 3' },
+  { value: '3-5', label: '3 – 5' },
+  { value: '5+', label: '5+' },
+];
+
 export const WORK_STYLES = ['Remote', 'Hybrid', 'In-office'];
 
 export const INDUSTRIES = ['SaaS', 'Fintech', 'Martech', 'Healthtech', 'Cybersecurity', 'HR Tech', 'Open to All'];

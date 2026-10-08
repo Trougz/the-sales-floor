@@ -10,6 +10,10 @@
  * Fields these forms collect that the API does NOT accept yet (need backend support before sending):
  *   candidate: target_roles
  *
+ * `years` is now a range dropdown ('0', '1-3', '3-5', '5+'), but the Django view does int(data['years']) and
+ * the AI ranking reads it as a number: a real POST would crash that view until it accepts ranges (or maps
+ * them to a number).
+ *
  * Fields the API still REQUIRES (or uses) that the candidate form no longer collects: company and
  * desired_ote are in the Django view's REQUIRED_FIELDS, so a real POST would be rejected (400) until
  * the view is relaxed; title, quota and ote are optional there but feed the AI ranking.
