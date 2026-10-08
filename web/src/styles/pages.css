@@ -1352,6 +1352,12 @@
   color: var(--red-bright);
 }
 
+.join-community {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(20px, 3vw, 32px);
+}
+
 @media (max-width: 640px) {
   .join-choice {
     grid-template-columns: minmax(0, 1fr);

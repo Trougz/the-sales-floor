@@ -4,6 +4,8 @@ import { Briefcase, Check, UserRound } from 'lucide-react';
 import usePageMeta from '../hooks/usePageMeta.js';
 import TalentFormLayout from '../components/sections/TalentFormLayout.jsx';
 import CompanyFormLayout from '../components/sections/CompanyFormLayout.jsx';
+import Button from '../components/ui/Button.jsx';
+import { COMMUNITY_ACTION } from '../data/navigation.js';
 
 const OPTIONS = [
   { id: 'talent', Icon: UserRound, tone: 'talent', title: 'I’m Sales Talent', desc: 'Join the network and get introduced to relevant companies.' },
@@ -75,6 +77,12 @@ export default function Join() {
                 </button>
               );
             })}
+          </div>
+
+          <div className="join-community hero-in" style={{ '--d': '380ms' }}>
+            <Button to={COMMUNITY_ACTION.to} variant="outline" size="lg">
+              {COMMUNITY_ACTION.label}
+            </Button>
           </div>
         </div>
       </section>
