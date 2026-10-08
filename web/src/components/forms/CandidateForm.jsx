@@ -17,10 +17,10 @@ const INITIAL = {
   state: '',
   location: [],
   relocation: '',
+  years: '',
   // Sales experience
   target_roles: [],
   industry: [],
-  years: '',
   crm: [],
   awards: '',
   // Resume
@@ -101,7 +101,7 @@ export default function CandidateForm() {
         </div>
       </div>
 
-      <FormSection number="1" title="About you" description="How we’ll reach you, and where and how you want to work.">
+      <FormSection number="1" title="About you" description="How we’ll reach you, where you’re based, and your experience.">
         <div className="form-grid">
           <TextField form={form} name="name" label="Full name" required autoComplete="name" placeholder="Jane Smith" />
           <TextField form={form} name="email" type="email" label="Email" required autoComplete="email" placeholder="jane@company.com" />
@@ -110,13 +110,11 @@ export default function CandidateForm() {
           <SelectField form={form} name="state" label="State / province" required groups={STATE_GROUPS} placeholder="Select your state or province" autoComplete="address-level1" />
           <ChoiceGroup form={form} name="location" className="field--match-input field--fill" label="Preferred work style" optional options={WORK_STYLES} />
           <ChoiceGroup form={form} name="relocation" kind="radio" segmented className="field--fill" label="Open to relocation?" required options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} />
+          <TextField form={form} name="years" label="Years in B2B sales" required numeric maxDigits={2} placeholder="e.g. 3" />
         </div>
       </FormSection>
 
       <FormSection number="2" title="Sales experience" description="Your experience and what you’re looking for.">
-        <div className="form-grid">
-          <TextField form={form} name="years" label="Years in B2B sales" required numeric maxDigits={2} placeholder="e.g. 3" />
-        </div>
         <ChoiceGroup form={form} name="target_roles" label="Role you’re looking for" optional options={TARGET_ROLES} />
         <ChoiceGroup form={form} name="industry" label="Industries you’re interested in" optional options={INDUSTRIES} />
         <ChoiceGroup form={form} name="crm" label="CRM and sales tools" optional options={CRM_TOOLS} hint="Tools you’ve used day to day." />

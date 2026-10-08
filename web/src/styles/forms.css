@@ -192,6 +192,11 @@
   flex: 1 1 0;
 }
 
+/* The segmented pill is 55px by default; trim it to the 52px of a text input so rows line up. */
+.field--fill .choices--segmented .choice__box {
+  padding-block: 8.5px;
+}
+
 .field__req {
   color: var(--red-deep);
 }
