@@ -17,14 +17,14 @@ const INITIAL = {
   // Sales experience
   target_roles: [],
   years: '',
+  crm: [],
   awards: '',
   // Location & work style
   state: '',
   relocation: '',
   location: [],
-  // Industry, stack, resume
+  // Industry, resume
   industry: [],
-  crm: [],
   resume: null,
 };
 
@@ -116,6 +116,7 @@ export default function CandidateForm() {
           <TextField form={form} name="years" label="Years in B2B sales" required numeric maxDigits={2} placeholder="e.g. 3" />
         </div>
         <ChoiceGroup form={form} name="target_roles" label="Role you’re looking for" optional options={TARGET_ROLES} />
+        <ChoiceGroup form={form} name="crm" label="CRM and sales tools" optional options={CRM_TOOLS} hint="Tools you’ve used day to day." />
         <TextArea form={form} name="awards" label="President’s Club / awards" optional rows={3} placeholder="e.g. President’s Club 2024, Top SDR Q3 2023…" />
       </FormSection>
 
@@ -131,11 +132,7 @@ export default function CandidateForm() {
         <ChoiceGroup form={form} name="industry" label="Industries you’re interested in" optional options={INDUSTRIES} />
       </FormSection>
 
-      <FormSection number="5" title="Sales stack" description="Tools you’ve used day to day.">
-        <ChoiceGroup form={form} name="crm" label="CRM and sales tools" optional options={CRM_TOOLS} />
-      </FormSection>
-
-      <FormSection number="6" title="Resume" description="Only shared with a company when you’re being considered for a role there.">
+      <FormSection number="5" title="Resume" description="Only shared with a company when you’re being considered for a role there.">
         <FileField form={form} name="resume" label="Resume" required />
       </FormSection>
 
