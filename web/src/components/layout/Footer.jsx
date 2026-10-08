@@ -1,12 +1,12 @@
 import { Link } from 'react-router';
 import Logo from '../ui/Logo.jsx';
-import Flame from '../ui/Flame.jsx';
+import FooterFlames from '../visuals/FooterFlames.jsx';
 import { FOOTER_COLUMNS } from '../../data/navigation.js';
 
 export default function Footer() {
   return (
     <footer className="site-footer section--dark">
-      <Flame className="site-footer__watermark" />
+      <FooterFlames />
       <div className="container">
         <div className="site-footer__top">
           <div className="site-footer__brand">

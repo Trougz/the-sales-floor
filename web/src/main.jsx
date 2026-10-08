@@ -7,6 +7,7 @@ import './styles/layout.css';
 import './styles/forms.css';
 import './styles/sections.css';
 import './styles/pages.css';
+import './styles/flame.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

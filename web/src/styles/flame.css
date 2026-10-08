@@ -1,0 +1,136 @@
+/* ==========================================================================
+   Flame descent: the page cools from paper into soot at the bottom, then burns.
+
+   Everything for this idea lives here + components/visuals/FooterFlames.jsx. To back it out,
+   delete this file, its import in main.jsx, and <FooterFlames /> in Footer.jsx.
+
+   Why it looks the way it does (and not like a generic gradient):
+   - Warm throughout. The ramp runs paper -> charred-paper brown (--soot) -> near-black, never
+     through neutral grey, which is what makes two-stop gradients look dead.
+   - Eased, not linear. 14 stops on a smootherstep curve: it lingers at both ends and drops through
+     the middle, the way smoke thins, instead of a mechanical straight fade.
+   - Grain. A fine static film-grain layer (overlay blend) breaks up banding and gives it a printed,
+     physical surface. Subtle by design: it should read as texture, not as noise.
+   - No blobs. The only glow is a flat ember bed hugging the bottom edge, where heat actually is;
+     the flames themselves are crisp vector shapes.
+
+   The descent runs on every page: at the top of the footer, or at the top of the closing CTA band
+   when the page has one. Where the section above is already dark (About, Resources, Articles) the
+   ramp collapses to nothing and the page just burns.
+   ========================================================================== */
+
+:root {
+  --soot: #2c211e; /* charred paper: the warm midpoint of the descent */
+  --descent-h: clamp(280px, 40vw, 560px);
+  --descent-from: var(--bg); /* must match the section directly above, or a seam shows */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='.4' intercept='.3'/%3E%3CfeFuncG type='linear' slope='.4' intercept='.3'/%3E%3CfeFuncB type='linear' slope='.4' intercept='.3'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* What sits above sets the ramp's starting tone / whether it is needed at all. */
+.section--soft + .final-cta,
+main:has(.page > :last-child.section--soft) + .site-footer {
+  --descent-from: var(--bg-soft);
+}
+
+.section--dark + .final-cta,
+main:has(.page > :last-child.section--dark) + .site-footer {
+  --descent-h: 0px;
+}
+
+/* ---------- Closing CTA band: the descent happens behind its headline ---------- */
+.final-cta {
+  padding-top: calc(var(--descent-h) * 0.6 + clamp(24px, 4vw, 56px));
+  padding-bottom: clamp(56px, 7vw, 96px);
+  background-color: var(--dark);
+  background-image:
+    var(--grain),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--descent-from) 100.0%, var(--soot)) 0%,
+      color-mix(in oklab, var(--descent-from) 99.3%, var(--soot)) 8%,
+      color-mix(in oklab, var(--descent-from) 94.8%, var(--soot)) 15%,
+      color-mix(in oklab, var(--descent-from) 84.7%, var(--soot)) 23%,
+      color-mix(in oklab, var(--descent-from) 68.5%, var(--soot)) 31%,
+      color-mix(in oklab, var(--descent-from) 47.1%, var(--soot)) 38%,
+      color-mix(in oklab, var(--descent-from) 22.2%, var(--soot)) 46%,
+      color-mix(in oklab, var(--soot) 95.1%, var(--dark)) 54%,
+      color-mix(in oklab, var(--soot) 64.7%, var(--dark)) 62%,
+      color-mix(in oklab, var(--soot) 38.5%, var(--dark)) 69%,
+      color-mix(in oklab, var(--soot) 18.7%, var(--dark)) 77%,
+      color-mix(in oklab, var(--soot) 6.3%, var(--dark)) 85%,
+      color-mix(in oklab, var(--soot) 0.9%, var(--dark)) 92%,
+      color-mix(in oklab, var(--soot) 0.0%, var(--dark)) 100%
+    );
+  background-size: 220px 220px, 100% var(--descent-h);
+  background-position: 0 0, top;
+  background-repeat: repeat, no-repeat;
+  background-blend-mode: overlay, normal;
+}
+
+/* ---------- Footer: descent (when the page has no CTA band), ember bed, flames ---------- */
+.site-footer {
+  --ember-h: clamp(140px, 18vw, 260px);
+  padding-top: calc(var(--descent-h) * 0.6 + clamp(48px, 6vw, 88px));
+  padding-bottom: clamp(150px, 19vw, 270px); /* room under the copyright line for the flames */
+  border-top: 0;
+  background-color: var(--dark);
+  background-image:
+    var(--grain),
+    linear-gradient(to top, rgba(217, 58, 38, 0.46), rgba(217, 58, 38, 0.16) 48%, rgba(217, 58, 38, 0)),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--descent-from) 100.0%, var(--soot)) 0%,
+      color-mix(in oklab, var(--descent-from) 99.3%, var(--soot)) 8%,
+      color-mix(in oklab, var(--descent-from) 94.8%, var(--soot)) 15%,
+      color-mix(in oklab, var(--descent-from) 84.7%, var(--soot)) 23%,
+      color-mix(in oklab, var(--descent-from) 68.5%, var(--soot)) 31%,
+      color-mix(in oklab, var(--descent-from) 47.1%, var(--soot)) 38%,
+      color-mix(in oklab, var(--descent-from) 22.2%, var(--soot)) 46%,
+      color-mix(in oklab, var(--soot) 95.1%, var(--dark)) 54%,
+      color-mix(in oklab, var(--soot) 64.7%, var(--dark)) 62%,
+      color-mix(in oklab, var(--soot) 38.5%, var(--dark)) 69%,
+      color-mix(in oklab, var(--soot) 18.7%, var(--dark)) 77%,
+      color-mix(in oklab, var(--soot) 6.3%, var(--dark)) 85%,
+      color-mix(in oklab, var(--soot) 0.9%, var(--dark)) 92%,
+      color-mix(in oklab, var(--soot) 0.0%, var(--dark)) 100%
+    );
+  background-size: 220px 220px, 100% var(--ember-h), 100% var(--descent-h);
+  background-position: 0 0, bottom, top;
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-blend-mode: overlay, normal, normal;
+}
+
+.site-footer .container {
+  z-index: 1;
+}
+
+.footer-flames {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: clamp(210px, 25vw, 360px);
+  pointer-events: none;
+}
+
+.footer-flames__tongue {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: flame-flicker var(--t, 6s) ease-in-out var(--d, 0s) infinite alternate;
+}
+
+@keyframes flame-flicker {
+  from {
+    transform: scaleY(0.97) skewX(-1.2deg);
+  }
+  to {
+    transform: scaleY(1.05) skewX(1.4deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-flames__tongue {
+    animation: none;
+  }
+}
