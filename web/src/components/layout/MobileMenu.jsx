@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router';
 import Button from '../ui/Button.jsx';
-import { CTA_PRIMARY, CTA_SECONDARY, NAV_ITEMS } from '../../data/navigation.js';
+import { NAV_ACTION, NAV_ITEMS } from '../../data/navigation.js';
 
 /** Full-height slide-down menu for < 1240px. */
 export default function MobileMenu({ open, onNavigate }) {
@@ -18,11 +18,8 @@ export default function MobileMenu({ open, onNavigate }) {
         </ul>
       </nav>
       <div className="mobile-menu__ctas">
-        <Button to={CTA_PRIMARY.to} size="lg" arrow onClick={onNavigate}>
-          {CTA_PRIMARY.label}
-        </Button>
-        <Button to={CTA_SECONDARY.to} variant="outline" size="lg" onClick={onNavigate}>
-          {CTA_SECONDARY.label}
+        <Button to={NAV_ACTION.to} size="lg" arrow onClick={onNavigate}>
+          {NAV_ACTION.label}
         </Button>
       </div>
     </div>

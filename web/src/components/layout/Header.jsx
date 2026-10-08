@@ -4,7 +4,7 @@ import { Menu, X } from 'lucide-react';
 import Logo from '../ui/Logo.jsx';
 import Button from '../ui/Button.jsx';
 import MobileMenu from './MobileMenu.jsx';
-import { CTA_PRIMARY, CTA_SECONDARY, NAV_ITEMS } from '../../data/navigation.js';
+import { NAV_ACTION, NAV_ITEMS } from '../../data/navigation.js';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -64,11 +64,8 @@ export default function Header() {
         </nav>
 
         <div className="site-header__actions">
-          <Button to={CTA_SECONDARY.to} variant="outline" className="btn--compact">
-            {CTA_SECONDARY.label}
-          </Button>
-          <Button to={CTA_PRIMARY.to} className="btn--compact">
-            {CTA_PRIMARY.label}
+          <Button to={NAV_ACTION.to} className="btn--compact">
+            {NAV_ACTION.label}
           </Button>
         </div>
 
