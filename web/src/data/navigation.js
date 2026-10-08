@@ -7,7 +7,6 @@
 export const NAV_ITEMS = [
   { label: 'For Talent', to: '/talent' },
   { label: 'For Companies', to: '/companies' },
-  { label: 'How It Works', to: '/process' },
   { label: 'About', to: '/about' },
 ];
 
