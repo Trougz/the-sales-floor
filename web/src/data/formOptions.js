@@ -17,7 +17,7 @@ export const YEARS_IN_SALES = [
 
 export const WORK_STYLES = ['Remote', 'Hybrid', 'In-office'];
 
-export const INDUSTRIES = ['SaaS', 'Fintech', 'Martech', 'Healthtech', 'Cybersecurity', 'HR Tech', 'Open to All'];
+export const INDUSTRIES = ['SaaS', 'Fintech', 'Martech', 'HR Tech', 'Open to All'];
 
 export const CRM_TOOLS = ['Salesforce', 'HubSpot', 'Apollo', 'Outreach', 'Gong', 'ZoomInfo'];
 
