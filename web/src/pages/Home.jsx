@@ -2,7 +2,6 @@ import { ArrowRight, Check } from 'lucide-react';
 import { Link } from 'react-router';
 import usePageMeta from '../hooks/usePageMeta.js';
 import Button from '../components/ui/Button.jsx';
-import LogoMark from '../components/ui/LogoMark.jsx';
 import Reveal from '../components/ui/Reveal.jsx';
 import SectionHead from '../components/ui/SectionHead.jsx';
 import NetworkVisual from '../components/visuals/NetworkVisual.jsx';
@@ -27,7 +26,7 @@ export default function Home() {
         <div className="hero__bg" aria-hidden="true" />
         <div className="container hero__inner">
           <span className="hero__eyebrow hero-in" style={{ '--d': '0ms' }}>
-            <LogoMark /> A curated talent network for sales
+            A curated talent network for sales
           </span>
           <h1 id="hero-title" className="hero-in" style={{ '--d': '80ms' }}>
             The private network connecting proven salespeople with companies that are <em>actually hiring.</em>
