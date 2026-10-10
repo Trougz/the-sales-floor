@@ -1,3 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 52">
-  <path fill="#D93A26" d="M20 2C20 12 7 15 7 28C7 38 13 46 21 50C17 44 15 37 19 30C21 34 25 36 27 32C29 39 34 41 34 32C34 24 27 20 27 12C27 19 23 19 23 14C23 7 20 6 20 2Z" />
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 106 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f2d88c"/><stop offset="1" stop-color="#cf9f38"/></linearGradient></defs><path fill="url(#g)" d="M0 0h100L84 28H16zM20 33h60L68 59H32zM36 64h28l-4 30H40z"/><g font-family="Georgia,serif" font-weight="700" fill="#0d0c0a" text-anchor="middle"><text x="50" y="24" font-size="26">T</text><text x="50" y="55" font-size="26">S</text><text x="50" y="88" font-size="24">F</text></g></svg>
